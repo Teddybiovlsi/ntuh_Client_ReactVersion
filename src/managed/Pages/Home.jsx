@@ -10,7 +10,7 @@ import {
   Navbar,
   Container,
 } from "react-bootstrap";
-import { get, post } from "../axios";
+import { get, post } from "../../client/axios";
 import { check } from "prettier";
 import StatusCode from "../../sys/StatusCode";
 import Loading from "../../components/Loading";

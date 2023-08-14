@@ -16,7 +16,7 @@ import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
 import AlertBootstrap from "../../components/AlertBootstrap";
 import zxcvbn from "zxcvbn";
-import { post } from "../axios";
+import { post } from "../../client/axios";
 import styles from "../../styles/Form/Registration.module.scss";
 import { useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";

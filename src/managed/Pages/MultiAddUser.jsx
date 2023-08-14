@@ -3,7 +3,7 @@ import { Form, Modal, Table } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
-import { post } from "../axios";
+import { post } from "../../client/axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import styles from "../../styles/pages/HomePage.module.scss";

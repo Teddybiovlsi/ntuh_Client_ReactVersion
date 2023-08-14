@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { get, del, put } from "../axios";
+import { get, del, put } from "../../client/axios";
 import {
   Col,
   Container,

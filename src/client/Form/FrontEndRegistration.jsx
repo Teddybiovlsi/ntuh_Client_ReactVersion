@@ -15,7 +15,7 @@ import useBoolean from "./shared/useBoolean";
 import FormEmail from "./shared/FormEmail";
 import FormPwd from "./shared/FormPwd";
 import zxcvbn from "zxcvbn";
-import { post } from "../axios";
+import { post } from "../../client/axios";
 import { Navigate, json, useLocation, useNavigate } from "react-router-dom";
 import StatusCode from "../../sys/StatusCode";
 import PageTitleHeading from "../../components/PageTitleHeading";

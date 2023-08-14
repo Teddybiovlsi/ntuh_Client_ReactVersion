@@ -8,7 +8,7 @@ import DynamicQuestionandAnswer from "./shared/DynamicQuestionandAnswer";
 import styles from "../../styles/Form/FormStyles.module.scss";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
-import { get, put } from "../axios";
+import { get, put } from "../../client/axios";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 

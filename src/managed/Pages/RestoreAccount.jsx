@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Container, Form, Table } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import moment from "moment/moment";
-import { get } from "../axios";
+import { get } from "../../client/axios";
 import ToolTipBtn from "../../components/ToolTipBtn";
 import LoadingComponent from "../../components/LoadingComponent";
 import styles from "../../styles/pages/HomePage.module.scss";

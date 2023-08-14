@@ -6,7 +6,7 @@ import InputVideoQAFunction from "./shared/InputVideoQAFunction";
 import InputFormPreviewFunction from "./shared/InputFormPreviewFunction";
 import InputVideoTypeFunction from "./shared/InputVideoTypeFunction";
 import StatusCode from "../../sys/StatusCode";
-import { post } from "../axios";
+import { post } from "../../client/axios";
 
 export default function CreateVideo({ VideoMode = false }) {
   const [videoInfo, setVideoInfo] = useState([

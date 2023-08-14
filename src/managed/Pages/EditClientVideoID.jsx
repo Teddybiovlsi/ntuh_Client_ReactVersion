@@ -13,7 +13,7 @@ import {
   FormLabel,
 } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import { get, post } from "../axios";
+import { get, post } from "../../client/axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import FilterPageSize from "../JsonFile/FilterPageContentSize.json";
 import ReactPaginate from "react-paginate";
