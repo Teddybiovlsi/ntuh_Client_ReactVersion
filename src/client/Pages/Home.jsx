@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import {
@@ -16,6 +16,9 @@ export default function Home() {
   const [usrName, setUsrName] = useState(
     JSON.parse(localStorage?.getItem("user")).client_name
   );
+
+  const [showChoseVideoModal, setShowChoseVideoModal] = useState(false);
+  const handleCloseChoseVideoModal = () => setShowChoseVideoModal(false);
   //   console.log("usrName", usrName);
   //   若中文姓名為三個字，則顯示中間字為＊，例如：王小明 => 王＊明
   //   若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王＊＊明
@@ -51,7 +54,13 @@ export default function Home() {
       <Container>
         <Row>
           <Col sm={2} xs={4}>
-            <Link to="/" className={styles.videoContainer}>
+            <Link
+              type="button"
+              className={styles.videoContainer}
+              onClick={() => {
+                setShowChoseVideoModal(true);
+              }}
+            >
               <Row>
                 <MdOutlineVideoLibrary className="fs-1" />
                 <p className="text-center fs-5">衛教資訊</p>
@@ -92,6 +101,33 @@ export default function Home() {
           </Col>
         </Row>
       </Container>
+      {/*  */}
+      <Modal show={showChoseVideoModal} onHide={handleCloseChoseVideoModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇欲觀看類型</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className={`d-flex flex-column justify-content-center`}>
+            <Link
+              to={{
+                pathname: "/pratice",
+              }}
+              className={styles.linkContainer_link}
+            >
+              <h3 className="mt-1 mb-1">練習用衛教資訊</h3>
+            </Link>
+
+            <Link
+              to={{
+                pathname: "/test",
+              }}
+              className={styles.linkContainer_link}
+            >
+              <h3 className="mt-1 mb-1">測驗用衛教資訊</h3>
+            </Link>
+          </div>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }

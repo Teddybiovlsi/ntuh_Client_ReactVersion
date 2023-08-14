@@ -4,8 +4,9 @@ import { Container } from "react-bootstrap";
 import { useEffect } from "react";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get } from "../axios";
-import styles from "../../styles/pages/VideoList.module.scss";
 import { Link } from "react-router-dom";
+import { MdOutlineArrowForwardIos as BiRightArrow } from "react-icons/md";
+import styles from "../../styles/pages/VideoList.module.scss";
 
 export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const [loading, setLoading] = useState(true);
@@ -85,15 +86,21 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       {originVideoData.map((video, index) => {
         return (
           <Link
-            to={`/video/${video.id}`}
-            key={video.id}
+            to={`/video`}
+            state={{
+              videoUUID: video.videoCertainID,
+              videoPath: video.video_url,
+            }}
             className={styles.videoListLink}
           >
             <div key={video.id} className={styles.videoListContainer}>
-              <h3 className="m-0">
+              <p className="fs-3 m-0">
                 {index + 1 + ". "}
                 {video.Title}
-              </h3>
+                <div className="float-end me-2">
+                  <BiRightArrow />
+                </div>
+              </p>
             </div>
           </Link>
         );
