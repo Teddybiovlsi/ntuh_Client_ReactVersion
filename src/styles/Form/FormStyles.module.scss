@@ -1,0 +1,50 @@
+@use "./FormStyleRWD.module.scss";
+
+div {
+  h1 {
+    text-align: center;
+  }
+}
+
+.ExamVideoInputCard,
+.ExamTitleCard,
+.ExamVideoInfoCard,
+.ExamVideoTypeCard,
+.ExamQusetionCard {
+  border-radius: 20px;
+  box-shadow: 10px 5px 5px #464d90;
+  overflow: auto;
+}
+
+.PreviewCard {
+  width: 50vw;
+  height: 90vh;
+  border-radius: 20px;
+  box-shadow: 10px 5px 5px black;
+  overflow: auto;
+}
+
+.FormTitle {
+  border-radius: 20px 20px 0px 0px;
+  padding: 10px 20px 0px 0px;
+  background-color: #989dcc;
+}
+
+.FormTitle {
+  h1 {
+    strong {
+      color: #ffe3cf;
+    }
+  }
+}
+
+.deleteQAMessage {
+  position: absolute;
+  right: 1vw;
+  top: 1vh;
+}
+
+.noticficationMessage {
+  padding: 0;
+  margin: 0;
+}
