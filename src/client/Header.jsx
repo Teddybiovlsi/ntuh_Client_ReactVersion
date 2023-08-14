@@ -13,15 +13,7 @@ import { Link } from "react-router-dom";
 import { BsGlobeAmericas } from "react-icons/bs";
 
 export default function Header({ expand = "lg" }) {
-  // const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
-  // // const expTimeFormat = Date.parse(Date(user.expTime));
-  // // const nowTimeFormat = Date.now();
-  // // console.log("expTimeFormat", expTimeFormat);
-  // // console.log("nowTimeFormat", nowTimeFormat);
-  // // console.log("compare", new Date(user?.expTime) > new Date());
-  // // useEffect(() => {
-  // //   console.log("user", user);
-  // // }, [user]);
+  const [user, setUser] = useState(JSON.parse(localStorage?.getItem("user")));
 
   return (
     <Navbar
@@ -33,7 +25,7 @@ export default function Header({ expand = "lg" }) {
       fixed="top"
     >
       <Container fluid>
-        <LinkContainer to="/">
+        <LinkContainer to="/Home">
           <Navbar.Brand>台大分院雲林分院衛教系統</Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
@@ -50,10 +42,10 @@ export default function Header({ expand = "lg" }) {
           <Offcanvas.Body>
             <Nav className="me-auto">
               <NavDropdown title="衛教資訊" id="collasible-nav-dropdown">
-                <LinkContainer to="/">
+                <LinkContainer to="/Pratice">
                   <NavDropdown.Item>練習用</NavDropdown.Item>
                 </LinkContainer>{" "}
-                <LinkContainer to="/">
+                <LinkContainer to="/test">
                   <NavDropdown.Item>測驗用</NavDropdown.Item>
                 </LinkContainer>{" "}
               </NavDropdown>
@@ -61,12 +53,17 @@ export default function Header({ expand = "lg" }) {
               <LinkContainer to="/">
                 <Nav.Link>衛教天地</Nav.Link>
               </LinkContainer>
+              {/* 使用教學Nav */}
+              <LinkContainer to="/tutorial">
+                <Nav.Link>使用教學</Nav.Link>
+              </LinkContainer>
               {/*  */}
               {/* 問題建議Nav */}
               <LinkContainer to="/comment">
                 <Nav.Link>問題建議</Nav.Link>
               </LinkContainer>
             </Nav>
+            {/* 語系選擇 不一定會做 */}
             {/* <Nav>
               <NavDropdown
                 title={<BsGlobeAmericas />}
@@ -80,12 +77,7 @@ export default function Header({ expand = "lg" }) {
                 </LinkContainer>{" "}
               </NavDropdown>
             </Nav> */}
-            {/* <Nav>
-              {user !== null && (
-                <div className="d-flex align-items-center justify-content-center me-2">
-                  <p className="m-0 ">{`${user.name}你好`}</p>
-                </div>
-              )}
+            <Nav>
               {user !== null ? (
                 <Button
                   variant="outline-primary"
@@ -97,11 +89,11 @@ export default function Header({ expand = "lg" }) {
                   登出
                 </Button>
               ) : (
-                <Link to="/">
+                <Link to="/Login">
                   <Button variant="outline-primary">登入</Button>
                 </Link>
               )}
-            </Nav> */}
+            </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
