@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import VideoList from "./client/Pages/VideoList";
 import VideoPlayer from "./client/Pages/VideoPlayer";
+import AuthProtected from "./AuthProtected";
 
 export default function App() {
   const location = useLocation();
@@ -27,19 +28,24 @@ export default function App() {
       <Header />
       <main className="app_main">
         <Routes>
-          <Route path="/Home" element={<Home />} />
+          <Route index path="/" element={<LogIn />} />
           <Route
-            path="/pratice"
-            element={<VideoList PageTitle={0} loadingText="載入中請稍後" />}
-          />
-          <Route
-            path="/test"
-            element={<VideoList PageTitle={1} loadingText="載入中請稍後" />}
-          />
-          <Route path="/video" element={<VideoPlayer />} />
-
-          <Route path="/comment" element={<UserComment />} />
-          <Route path="/Login" element={<LogIn />} />
+            element={
+              <AuthProtected user={JSON.parse(localStorage?.getItem("user"))} />
+            }
+          >
+            <Route path="/Home" element={<Home />} />
+            <Route
+              path="/pratice"
+              element={<VideoList PageTitle={0} loadingText="載入中請稍後" />}
+            />
+            <Route
+              path="/test"
+              element={<VideoList PageTitle={1} loadingText="載入中請稍後" />}
+            />
+            <Route path="/video" element={<VideoPlayer />} />
+            <Route path="/comment" element={<UserComment />} />
+          </Route>
         </Routes>
       </main>
     </div>

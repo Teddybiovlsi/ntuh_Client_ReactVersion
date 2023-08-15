@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Col, Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
@@ -17,7 +17,6 @@ export const VideoJS = (props) => {
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
   const [answerState, setAnswerState] = useState([]);
-  const [hasAnswer, setHasAnswer] = useState(false);
 
   const [screen, setScreen] = useState({
     width: "",
@@ -127,7 +126,7 @@ export const VideoJS = (props) => {
       player.on("loadedmetadata", () => {
         const video = player;
         if (video.videoHeight() > video.videoWidth()) {
-          player.aspectRatio("16:9");
+          player.aspectRatio("16:7");
         } else {
           player.fluid(true);
         }
@@ -273,71 +272,86 @@ export const VideoJS = (props) => {
         {sendstate && (
           <div id="video-container-textfield" className="text-overlay">
             <Form>
-              <h1 className="text-overlay_title">第{tempQuestionNum}題</h1>
-              <Col className="fs-5">
+              <h1 className="text-overlay_title pt-2 pb-2">
+                第{tempQuestionNum}題
+              </h1>
+              <Col className="fs-4 mt-2 mb-2">
                 {info[tempQuestionNum - 1].video_question}
+                {/* {info[0].video_question} */}
               </Col>
-              <Col className="fs-5 mt-3">
-                <Form.Check
-                  type="radio"
-                  label={info[tempQuestionNum - 1].option_1[0]}
-                  value={info[tempQuestionNum - 1].option_1[0]}
-                  name="option_1"
-                  id="formHorizontalRadios1"
-                  checked={
-                    optionChecked === info[tempQuestionNum - 1].option_1[0]
-                      ? true
-                      : false
-                  }
-                  onChange={handleCheckedAnswer}
-                />
-                <Form.Check
-                  type="radio"
-                  label={info[tempQuestionNum - 1].option_2[0]}
-                  value={info[tempQuestionNum - 1].option_2[0]}
-                  name="option_2"
-                  id="formHorizontalRadios2"
-                  checked={
-                    optionChecked === info[tempQuestionNum - 1].option_2[0]
-                      ? true
-                      : false
-                  }
-                  onChange={handleCheckedAnswer}
-                />
-                {info[tempQuestionNum - 1].option_3 !== undefined && (
+              <Row>
+                <Col className="fs-4" md={6} xs={6}>
                   <Form.Check
                     type="radio"
-                    label={info[tempQuestionNum - 1].option_3[0]}
-                    value={info[tempQuestionNum - 1].option_3[0]}
-                    name="option_3"
-                    id="formHorizontalRadios3"
+                    label={info[tempQuestionNum - 1].option_1[0]}
+                    value={info[tempQuestionNum - 1].option_1[0]}
+                    name="option_1"
+                    id="formHorizontalRadios1"
+                    className="selectOption"
                     checked={
-                      optionChecked === info[tempQuestionNum - 1].option_3[0]
+                      optionChecked === info[tempQuestionNum - 1].option_1[0]
                         ? true
                         : false
                     }
                     onChange={handleCheckedAnswer}
                   />
-                )}
-                {info[tempQuestionNum - 1].option_4 !== undefined && (
+                </Col>
+                <Col className="fs-4" md={6} xs={6}>
                   <Form.Check
                     type="radio"
-                    label={info[tempQuestionNum - 1].option_4[0]}
-                    value={info[tempQuestionNum - 1].option_4[0]}
-                    name="option_4"
-                    id="formHorizontalRadios4"
+                    label={info[tempQuestionNum - 1].option_2[0]}
+                    value={info[tempQuestionNum - 1].option_2[0]}
+                    name="option_2"
+                    id="formHorizontalRadios2"
+                    className="selectOption"
                     checked={
-                      optionChecked === info[tempQuestionNum - 1].option_4[0]
+                      optionChecked === info[tempQuestionNum - 1].option_2[0]
                         ? true
                         : false
                     }
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setOptionChecked(e.target.value);
-                    }}
+                    onChange={handleCheckedAnswer}
                   />
+                </Col>
+                {info[tempQuestionNum - 1].option_3 !== undefined && (
+                  <Col className="fs-4" md={6} xs={6}>
+                    <Form.Check
+                      type="radio"
+                      label={info[tempQuestionNum - 1].option_3[0]}
+                      value={info[tempQuestionNum - 1].option_3[0]}
+                      name="option_3"
+                      id="formHorizontalRadios3"
+                      className="selectOption"
+                      checked={
+                        optionChecked === info[tempQuestionNum - 1].option_3[0]
+                          ? true
+                          : false
+                      }
+                      onChange={handleCheckedAnswer}
+                    />
+                  </Col>
                 )}
-              </Col>
+                {info[tempQuestionNum - 1].option_4 !== undefined && (
+                  <Col className="fs-4" md={6} xs={6}>
+                    <Form.Check
+                      type="radio"
+                      label={info[tempQuestionNum - 1].option_4[0]}
+                      value={info[tempQuestionNum - 1].option_4[0]}
+                      name="option_4"
+                      id="formHorizontalRadios4"
+                      className="selectOption"
+                      checked={
+                        optionChecked === info[tempQuestionNum - 1].option_4[0]
+                          ? true
+                          : false
+                      }
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setOptionChecked(e.target.value);
+                      }}
+                    />
+                  </Col>
+                )}
+              </Row>
               <Col className="sendBtn">
                 <BtnBootstrap
                   id="resetBtn"

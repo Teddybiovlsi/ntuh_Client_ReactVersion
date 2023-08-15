@@ -16,8 +16,8 @@ export default function VideoPlayer() {
 
   const videoJsOptions = {
     controls: true,
-    autoplay: false,
-    playbackRates: [0.5, 1, 1.5, 2],
+    // autoplay: true,
+    // playbackRates: [0.5, 1, 1.5, 2],
     responsive: true,
     fluid: true,
     muted: true,

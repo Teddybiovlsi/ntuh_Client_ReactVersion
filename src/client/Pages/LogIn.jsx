@@ -69,13 +69,13 @@ export default function LogIn() {
           autoClose: 3000,
         });
       } else {
-        // toast.update(clientSubmit, {
-        //   render: `${error.response.data.message}`,
-        //   type: "error",
-        //   isLoading: false,
-        //   autoClose: 3000,
-        // });
-        console.log(error.response.data.message);
+        toast.update(clientSubmit, {
+          render: `${error.response.data.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        // console.log(error.response.data.message);
       }
     }
   };

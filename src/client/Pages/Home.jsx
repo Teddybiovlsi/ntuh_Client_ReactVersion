@@ -11,8 +11,11 @@ import { AiFillSetting } from "react-icons/ai";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   const [usrName, setUsrName] = useState(
     JSON.parse(localStorage?.getItem("user")).client_name
   );
@@ -24,12 +27,16 @@ export default function Home() {
   //   若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王＊＊明
   //   若中文姓名為兩個字，則顯示第二個字為＊，例如：王明 => 王＊
   useEffect(() => {
-    if (usrName.length === 2) {
-      setUsrName(usrName[0] + "O");
-    } else if (usrName.length === 3) {
-      setUsrName(usrName[0] + "O" + usrName[2]);
+    if (usrName == "undefined") {
+      navigate("/");
     } else {
-      setUsrName(usrName[0] + "OO" + usrName[3]);
+      if (usrName.length === 2) {
+        setUsrName(usrName[0] + "O");
+      } else if (usrName.length === 3) {
+        setUsrName(usrName[0] + "O" + usrName[2]);
+      } else {
+        setUsrName(usrName[0] + "OO" + usrName[3]);
+      }
     }
   }, [usrName]);
 
@@ -42,10 +49,16 @@ export default function Home() {
             <Card.Body>
               <Card.Text>影片總觀看時間：OO小時OO分鐘</Card.Text>
               <Card.Text>
-                完成觀看影片數量(練習用)：OOO[點擊繼續觀看練習用影片]
+                完成觀看影片數量(練習用)：OOO
+                <Link to={"/pratice"} className="text-decoration-none">
+                  [點擊繼續觀看練習用影片]
+                </Link>
               </Card.Text>
               <Card.Text>
-                完成觀看影片數量(測驗用)：OOO[點擊繼續觀看測驗用影片]
+                完成觀看影片數量(測驗用)：OOO
+                <Link to={"/test"} className="text-decoration-none">
+                  [點擊繼續觀看測驗用影片]
+                </Link>
               </Card.Text>
             </Card.Body>
           </Card>
