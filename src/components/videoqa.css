@@ -1,6 +1,6 @@
-#video-container {
-  /* position: relative; */
-}
+/* #video-container {
+  position: relative;
+} */
 
 /* Add some content at the bottom of the video/page */
 .content {
@@ -28,10 +28,18 @@
   color: black;
 }
 
+
+
 .video-js {
   width: 100%;
   height: auto;
 }
+/*  */
+.videoPlayer.fullscreen .video-js {
+  width: 100%;
+  height: 100vh;
+}
+
 
 .video-js .vjs-fullscreen-control {
   display: none;
@@ -55,6 +63,10 @@
 .vjs-control .vjs-button {
   cursor: pointer;
 }
+.vjs-progress-control{
+  pointer-events: none;
+} 
+
 .text-overlay {
   background-color: rgba(154, 111, 170, 0.1);
 }
@@ -114,17 +126,54 @@
   min-width: 100%;
   margin: 0 auto;
 }
-.videoPlayer.fullscreen video{
+.videoPlayer.fullscreen{
   object-fit: contain;
 }
 
-.videoPlayer.fullscreen video{
+.videoPlayer.fullscreen{
   object-fit: contain;
+  min-width: 0px !important;
+  min-height: 0px !important;
   height: 100% !important;
-  width: 100%;
+  width: 100% !important;
   padding-top: 0 !important;
   margin: 0 auto !important;
 }
+
+
+.selectOption input[type="radio"] {
+  display: none;
+}
+/* Applying styles when checking the buttons */
+.selectOption input[type="radio"]:checked ~ label {
+  /* background-color: var(--color-blue-grayed); */
+  background-color: pink;
+  /* border-color: pink; */
+  /* border-color: var(--color-blue); */
+}
+
+.selectOption input[type="radio"]:checked ~ label:before {
+  background-color: var(--color-blue);
+  border-color: var(--color-blue);
+  color: white;
+}
+
+.selectOption label {
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  border: 2px solid pink;
+  border-radius: 15px;
+}
+
+/* .selectOption {
+  background-color: gray;
+  padding: 20px;
+} */
+
+
 
 
 @media (min-width: 576px) {
@@ -136,7 +185,7 @@
     background-color: #fff;
   }
   .videoPlayer {
-    width: 100%;
+    width: 70%;
   }
 }
 @media (min-width: 768px) {
@@ -156,16 +205,26 @@
   .video-container_Container {
     display: flex;
     flex-direction: row;
+    overflow: hidden;
   }
 }
 @media (min-width: 992px) {
-  .videoPlayer.portrait{
-    width: 25%;
-  }
   .text-overlay {
     position: unset;
     width: 30%;
   }
+  .videoPlayer.fullscreen+.text-overlay{
+    position: absolute;
+    left: 25%;
+    top: 50%;
+    transform: translateY(-50%);
+    bottom: auto;
+    width: 50%;
+    z-index: 9999;
+    margin: 0 auto;
+  }
+
+
   .videoPlayer.fullscreen {
     position: fixed;
     min-height: auto;
