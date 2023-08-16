@@ -7,7 +7,7 @@ import {
   BsTools,
   BsFillQuestionCircleFill,
 } from "react-icons/bs";
-import { AiFillSetting } from "react-icons/ai";
+import { AiFillSetting, AiTwotoneReconciliation } from "react-icons/ai";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <>
-      <Col>
+      <Col className="mb-3">
         <Row>
           <Card>
             <Card.Title>{usrName} 您好</Card.Title>
@@ -89,6 +89,14 @@ export default function Home() {
             </Link>
           </Col>
           <Col sm={2} xs={4}>
+            <Link to="/" className={styles.recordContainer}>
+              <Row>
+                <AiTwotoneReconciliation className="fs-1" />
+                <p className="text-center fs-5">練習紀錄</p>
+              </Row>
+            </Link>
+          </Col>
+          <Col sm={2} xs={4}>
             <Link to="/" className={styles.tutorialContainer}>
               <Row>
                 <BsTools className="fs-1" />
@@ -104,7 +112,7 @@ export default function Home() {
               </Row>
             </Link>
           </Col>
-          <Col sm={2} xs={6}>
+          <Col sm={2} xs={4}>
             <Link to="/" className={styles.settingContainer}>
               <Row>
                 <AiFillSetting className="fs-1" />

@@ -59,13 +59,23 @@ export default function Header({ expand = "lg" }) {
               <LinkContainer to="/">
                 <Nav.Link>衛教天地</Nav.Link>
               </LinkContainer>
+              {/* 練習紀錄 */}
+              {user !== null ? (
+                <NavDropdown title="練習紀錄" id="collasible-nav-dropdown">
+                  <LinkContainer to="/record/pratice">
+                    <NavDropdown.Item>練習用</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                  <LinkContainer to="/record/test">
+                    <NavDropdown.Item>測驗用</NavDropdown.Item>
+                  </LinkContainer>{" "}
+                </NavDropdown>
+              ) : null}
               {/* 使用教學Nav */}
               {user !== null ? (
                 <LinkContainer to="/tutorial">
                   <Nav.Link>使用教學</Nav.Link>
                 </LinkContainer>
               ) : null}
-              {/*  */}
               {/* 問題建議Nav */}
               {user !== null ? (
                 <LinkContainer to="/comment">

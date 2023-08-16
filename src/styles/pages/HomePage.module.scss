@@ -1,5 +1,6 @@
 .videoContainer,
 .infoContainer,
+.recordContainer,
 .tutorialContainer,
 .suggestionContainer,
 .settingContainer{
@@ -16,6 +17,12 @@
     color: #F1BBCA;
   }
 }
+.recordContainer{
+  :hover{
+    color: #BAE7B3;
+  }
+}
+
 .tutorialContainer{
   :hover{
     color: #D3A4CC;
