@@ -14,6 +14,8 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
   const [open, setOpen] = useState([]);
 
   const [originVideoData, setOriginVideoData] = useState([]);
+  const [QuestionData, setQuestionData] = useState([]);
+
   const [errorMessage, setErrorMessage] = useState('');
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const usrToken = JSON.parse(localStorage?.getItem('user'))?.client_token;
@@ -42,6 +44,8 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setOriginVideoData(checkIsArray ? data : [data]);
+
+      // setQuestionData(checkIsArray ? data. : [data]);
       //   filterVideoData with videoType is zero
       const filterVideoData = data.filter(
         (video) => video.videoType === PageTitle
@@ -129,7 +133,15 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
             </div>
             <Collapse in={open[index]}>
               <div id={`collapse-text-${index}`}>
-                此處塞章節內容
+                {video.QuestionData.map((question, index) => {
+                  return (
+                    <Link key={question.quiz_id * 1011}>
+                      <div className={styles.videoListContainer}>
+                        <div className='fs-5 m-0'>{`第${index + 1}章 `}</div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </Collapse>
           </div>
