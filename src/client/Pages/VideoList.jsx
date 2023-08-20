@@ -111,7 +111,7 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
             <div
               type={'button'}
               className={styles.videoListContainer}
-              onClick={(e) => {
+              onClick={() => {
                 setOpen((prev) => {
                   const copy = [...prev];
                   copy[index] = !copy[index];
