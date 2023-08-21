@@ -20,17 +20,19 @@ export default function Home() {
   const [showChoseVideoModal, setShowChoseVideoModal] = useState(false);
   const handleCloseChoseVideoModal = () => setShowChoseVideoModal(false);
 
-  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (usrName === null) {
+      localStorage.clear();
+      navigate("/");
+    }
+  }, []);
 
-  // if (loading) {
-  //   return <LoadingComponent title="" text="使用者資訊載入中" />;
-  // }
   return (
     <>
       <Col className="mb-3">
         <Row>
           <Card>
-            {/* <Card.Title>{usrName} 您好</Card.Title> */}
+            <Card.Title>{usrName.client_name} 您好</Card.Title>
             <Card.Body>
               <Card.Text>影片總觀看時間：OO小時OO分鐘</Card.Text>
               <Card.Text>
