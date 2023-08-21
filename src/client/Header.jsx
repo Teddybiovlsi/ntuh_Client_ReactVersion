@@ -119,8 +119,7 @@ export default function Header({ expand = "lg" }) {
                   <NavDropdown.Item
                     as={"button"}
                     onClick={() => {
-                      localStorage.removeItem("client");
-                      setUser(null);
+                      localStorage.removeItem("user");
                       navigate("/");
                     }}
                   >
