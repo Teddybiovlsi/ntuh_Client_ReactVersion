@@ -7,7 +7,6 @@ import { get } from "../axios";
 import { Link } from "react-router-dom";
 import { MdOutlineArrowForwardIos as BiRightArrow } from "react-icons/md";
 import styles from "../../styles/pages/VideoList.module.scss";
-import { LinkContainer } from "react-router-bootstrap";
 
 export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const [loading, setLoading] = useState(false);
@@ -18,6 +17,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
+  const [eachVideoDuration, setEachVideoDuration] = useState([]);
 
   const usrToken = JSON.parse(localStorage?.getItem("user"))?.client_token;
   const usrVideo = JSON.parse(localStorage?.getItem("user"))?.video;
@@ -75,6 +75,22 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
     }
   };
 
+  useEffect(() => {
+    if (originVideoData.length !== 0) {
+      const eachVideoDurationArray = [];
+      originVideoData.forEach((video) => {
+        const videoDuration = Math.round(video.videoDuration);
+
+        // remove point and convert to minute:second
+        const videoDurationMinute = Math.floor(videoDuration / 60);
+        const videoDurationSecond = videoDuration % 60;
+        const videoDurationString = `${videoDurationMinute}:${videoDurationSecond}`;
+        eachVideoDurationArray.push(videoDurationString);
+      });
+      setEachVideoDuration(eachVideoDurationArray);
+    }
+  }, [originVideoData]);
+
   if (loading) {
     return (
       <LoadingComponent
@@ -124,12 +140,19 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                 });
               }}
             >
-              <div className="fs-3 m-0">
-                {index + 1 + ". "}
-                {video.Title}
-                <div className="float-end me-2">
-                  <BiRightArrow />
+              <div>
+                <div className="fs-3 m-0">
+                  {index + 1 + ". "}
+                  {video.Title}
+                  <div className="float-end me-2">
+                    <BiRightArrow />
+                  </div>
                 </div>
+                {eachVideoDuration[index] ? (
+                  <div className={`m-0 ${styles.eachVideoListDuration}`}>
+                    總時長：{eachVideoDuration[index]}
+                  </div>
+                ) : null}
               </div>
             </div>
             <Collapse in={open[index]}>
