@@ -8,13 +8,14 @@ export default function AuthProtected({ user, redirectPath = "/", children }) {
   if (!user) {
     return <Navigate to="/" />;
   } else {
-    if (new Date(user.expTime) < nowTime) {
-      // console.log("憑證過期");
-      localStorage.removeItem("user");
-      return <Navigate to={redirectPath} />;
-    } else {
-      // console.log("憑證未過期", user.expTime, nowTime);
-      return children ?? <Outlet />;
-    }
+    // if (new Date(user.expTime) < nowTime) {
+    //   // console.log("憑證過期");
+    //   localStorage.removeItem("client");
+    //   return <Navigate to={redirectPath} />;
+    // } else {
+    //   // console.log("憑證未過期", user.expTime, nowTime);
+    //   return children ?? <Outlet />;
+    // }
+    return children ?? <Outlet />;
   }
 }

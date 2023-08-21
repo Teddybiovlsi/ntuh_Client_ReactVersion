@@ -17,7 +17,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const [usrName, setUsrName] = useState(
-    JSON.parse(localStorage?.getItem("user")).client_name
+    JSON.parse(localStorage?.getItem("client")).client_name
   );
 
   const [showChoseVideoModal, setShowChoseVideoModal] = useState(false);
@@ -27,7 +27,7 @@ export default function Home() {
   //   若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王＊＊明
   //   若中文姓名為兩個字，則顯示第二個字為＊，例如：王明 => 王＊
   useEffect(() => {
-    if (usrName == "undefined") {
+    if (usrName === "undefined" || usrName === null) {
       navigate("/");
     } else {
       if (usrName.length === 2) {

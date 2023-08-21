@@ -12,7 +12,7 @@ import AuthProtected from "./AuthProtected";
 
 export default function App() {
   const location = useLocation();
-  const user = JSON.parse(localStorage?.getItem("user"));
+  const user = JSON.parse(localStorage?.getItem("client"));
 
   useEffect(() => {
     if (user) {
@@ -31,7 +31,9 @@ export default function App() {
           <Route index path="/" element={<LogIn />} />
           <Route
             element={
-              <AuthProtected user={JSON.parse(localStorage?.getItem("user"))} />
+              <AuthProtected
+                user={JSON.parse(localStorage?.getItem("client"))}
+              />
             }
           >
             <Route path="/Home" element={<Home />} />

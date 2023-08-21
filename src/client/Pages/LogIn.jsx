@@ -21,7 +21,7 @@ export default function LogIn() {
   const [ErrorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("user") !== null) {
+    if (localStorage.getItem("client") !== null) {
       navigate("/Home");
     }
   }, []);
@@ -82,11 +82,11 @@ export default function LogIn() {
 
   useEffect(() => {
     if (tempuser !== null) {
-      localStorage.setItem("user", JSON.stringify(tempuser));
+      localStorage.setItem("client", JSON.stringify(tempuser));
     }
   }, [tempuser]);
 
-  if (localStorage.getItem("user") == null) {
+  if (localStorage.getItem("client") === null) {
     return (
       <Container>
         <h1 className="text-center">歡迎光臨台大衛教系統</h1>

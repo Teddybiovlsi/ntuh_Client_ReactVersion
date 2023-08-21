@@ -13,8 +13,8 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const [originVideoData, setOriginVideoData] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
-  const usrToken = JSON.parse(localStorage?.getItem("user"))?.client_token;
-  const usrVideo = JSON.parse(localStorage?.getItem("user"))?.video;
+  const usrToken = JSON.parse(localStorage?.getItem("client"))?.client_token;
+  const usrVideo = JSON.parse(localStorage?.getItem("client"))?.video;
 
   useEffect(() => {
     setLoading(true);
