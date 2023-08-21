@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import VideoJS from "../../components/VideoJS";
+// import VideoJS from "../../components/VideoJS";
 import { useLocation } from "react-router-dom";
-import { get } from "../axios";
 import "video.js/dist/video-js.css";
 import Loading from "../../components/Loading";
 import "../../components/videoqa.css";
+import { ChapterVideoJS } from "../../components/ChapterVideoJS";
+// import { get } from "../axios";
 
 export default function VideoChapterPlayer() {
   const location = useLocation();
@@ -14,12 +15,11 @@ export default function VideoChapterPlayer() {
   const VideoInterruptTime = location.state?.videoInterruptTime;
   const info = location.state?.info;
 
-  console.log("VideoPath", VideoPath);
-  console.log("VideoCurrentTime", VideoCurrentTime);
-  console.log("VideoInterruptTime", VideoInterruptTime);
-  console.log("info", info);
+  //   console.log("VideoPath", VideoPath);
+  //   console.log("VideoCurrentTime", VideoCurrentTime);
+  //   console.log("VideoInterruptTime", VideoInterruptTime);
+  //   console.log("info", info);
 
-  //   const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
 
   const videoJsOptions = {
@@ -37,34 +37,16 @@ export default function VideoChapterPlayer() {
     ],
   };
 
-  //   useEffect(() => {
-  //     let ignore = false;
-  //     if (!ignore) {
-  //       async function fetchVideoData({ api }) {
-  //         try {
-  //           setLoading(true);
-  //           const response = await get(api);
-  //           const VideoInfo = await response.data.data;
-  //           setInfo(VideoInfo);
-  //           setLoading(false);
-  //         } catch (error) {}
-  //       }
-
-  //       fetchVideoData({
-  //         api: `videoQA/${VideoUUID}`,
-  //       });
-  //     }
-  //     return () => {
-  //       ignore = true;
-  //     };
-  //   }, []);
-
   if (loading) return <Loading />;
 
   return (
     <>
-      {/* <VideoJS options={videoJsOptions} info={info} /> */}
-      <div>測試</div>
+      <ChapterVideoJS
+        options={videoJsOptions}
+        VideoCurrentTime={VideoCurrentTime}
+        info={info}
+      />
+      {/* <div>測試</div> */}
     </>
   );
 }

@@ -11,7 +11,7 @@ export const ChapterVideoJS = (props) => {
   // const [currentTime, setCurrentTime] = useState(null);
   const playerRef = useRef(null);
   // 取得當前章節的資料
-  const { options, currentTime, info } = props;
+  const { options, VideoCurrentTime, info } = props;
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -25,6 +25,8 @@ export const ChapterVideoJS = (props) => {
   });
   // calculate the total length of the array
   let arrayNum = 0;
+
+  console.log("currentTime", VideoCurrentTime);
 
   const handleCheckedAnswer = (e) => {
     setOptionChecked(e.target.value);
@@ -95,7 +97,7 @@ export const ChapterVideoJS = (props) => {
         videojs.log("player is ready");
       }));
 
-      player.currentTime(currentTime);
+      player.currentTime(VideoCurrentTime);
 
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
@@ -384,4 +386,4 @@ export const ChapterVideoJS = (props) => {
   );
 };
 
-export default VideoJS;
+export default ChapterVideoJS;
