@@ -1,20 +1,26 @@
 import React from "react";
 import { useState } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Collapse } from "react-bootstrap";
 import { useEffect } from "react";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get } from "../axios";
 import { Link } from "react-router-dom";
 import { MdOutlineArrowForwardIos as BiRightArrow } from "react-icons/md";
 import styles from "../../styles/pages/VideoList.module.scss";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState([]);
+
   const [originVideoData, setOriginVideoData] = useState([]);
+  const [QuestionData, setQuestionData] = useState([]);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
-  const usrToken = JSON.parse(localStorage?.getItem("client"))?.client_token;
-  const usrVideo = JSON.parse(localStorage?.getItem("client"))?.video;
+
+  const usrToken = JSON.parse(localStorage?.getItem("user"))?.client_token;
+  const usrVideo = JSON.parse(localStorage?.getItem("user"))?.video;
 
   useEffect(() => {
     setLoading(true);
@@ -39,10 +45,22 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       // if checkIsArray is true, set videoData to data
       // otherwise, set videoData to [data]
       setOriginVideoData(checkIsArray ? data : [data]);
+
+      // setQuestionData(checkIsArray ? data. : [data]);
       //   filterVideoData with videoType is zero
       const filterVideoData = data.filter(
         (video) => video.videoType === PageTitle
       );
+
+      //  if originVideoData length is third then setOpen to [false, false, false]
+      //  if originVideoData length is second then setOpen to [false, false]
+      //  if originVideoData length is first then setOpen to [false]
+      //  if originVideoData length is zero then setOpen to []
+      const setOpenArray = [];
+      for (let i = 0; i < filterVideoData.length; i++) {
+        setOpenArray.push(false);
+      }
+      setOpen(setOpenArray);
 
       filterVideoData.length === 0
         ? setArrayIsEmpty(true)
@@ -85,24 +103,51 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       }衛教資訊`}</h1>
       {originVideoData.map((video, index) => {
         return (
-          <Link
-            to={`/video`}
-            state={{
-              videoUUID: video.videoCertainID,
-              videoPath: video.video_url,
-            }}
-            className={styles.videoListLink}
-          >
-            <div key={video.id} className={styles.videoListContainer}>
-              <p className="fs-3 m-0">
+          // <Link
+          //   to={`/video`}
+          //   state={{
+          //     videoUUID: video.videoCertainID,
+          //     videoPath: video.video_url,
+          //   }}
+          //   className={styles.videoListLink}
+          //   key={video.videoCertainID}
+          // >
+          <div key={video.videoCertainID}>
+            <div
+              type={"button"}
+              className={styles.videoListContainer}
+              onClick={() => {
+                setOpen((prev) => {
+                  const copy = [...prev];
+                  copy[index] = !copy[index];
+                  return copy;
+                });
+              }}
+            >
+              <div className="fs-3 m-0">
                 {index + 1 + ". "}
                 {video.Title}
                 <div className="float-end me-2">
                   <BiRightArrow />
                 </div>
-              </p>
+              </div>
             </div>
-          </Link>
+            <Collapse in={open[index]}>
+              <div id={`collapse-text-${index}`}>
+                {video.QuestionData.map((question, index) => {
+                  return (
+                    <Link key={question.quiz_id * 1011}>
+                      <div className={styles.videoListContainer}>
+                        <div className="fs-5 m-0">{`第${index + 1}章 `}</div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </Collapse>
+          </div>
+
+          // </Link>
         );
       })}
     </Container>

@@ -21,7 +21,7 @@ export default function LogIn() {
   const [ErrorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("client") !== null) {
+    if (localStorage.getItem("user") !== null) {
       navigate("/Home");
     }
   }, []);
@@ -47,6 +47,18 @@ export default function LogIn() {
       const response = await post("client/login", data);
 
       const userInfo = await response.data;
+
+      if (userInfo.client_name.length === 2) {
+        userInfo.client_name =
+          userInfo.client_name[0] + "O" + userInfo.client_name[1];
+      } else if (userInfo.client_name.length === 3) {
+        userInfo.client_name =
+          userInfo.client_name[0] + "O" + userInfo.client_name[2];
+      } else {
+        userInfo.client_name =
+          userInfo.client_name[0] + "OO" + userInfo.client_name[3];
+      }
+
       setTempUser(userInfo);
       toast.update(clientSubmit, {
         render: "登入成功，3秒後將回到當前頁面",
@@ -75,7 +87,6 @@ export default function LogIn() {
           isLoading: false,
           autoClose: 3000,
         });
-        // console.log(error.response.data.message);
       }
     }
   };
@@ -86,7 +97,7 @@ export default function LogIn() {
     }
   }, [tempuser]);
 
-  if (localStorage.getItem("client") === null) {
+  if (localStorage.getItem("user") == null) {
     return (
       <Container>
         <h1 className="text-center">歡迎光臨台大衛教系統</h1>
