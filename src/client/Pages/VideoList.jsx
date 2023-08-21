@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Container, Collapse } from "react-bootstrap";
+import { Container, Collapse, Row, Col } from "react-bootstrap";
 import { useEffect } from "react";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get } from "../axios";
@@ -18,6 +18,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
+  const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
 
   const usrToken = JSON.parse(localStorage?.getItem("user"))?.client_token;
   const usrVideo = JSON.parse(localStorage?.getItem("user"))?.video;
@@ -65,7 +66,10 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       filterVideoData.length === 0
         ? setArrayIsEmpty(true)
         : setArrayIsEmpty(false);
-      setLoading(false);
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     } catch (error) {
       console.log("error", error);
       // if error.response is true, get error message
@@ -74,7 +78,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       }
     }
   };
-
+  // 設定每個影片的總時長
   useEffect(() => {
     if (originVideoData.length !== 0) {
       const eachVideoDurationArray = [];
@@ -88,6 +92,40 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
         eachVideoDurationArray.push(videoDurationString);
       });
       setEachVideoDuration(eachVideoDurationArray);
+    }
+  }, [originVideoData]);
+  // 設定每個影片的章節總時長
+  useEffect(() => {
+    if (originVideoData.length !== 0) {
+      const eachVideoChapterDurationArray = [];
+      originVideoData.forEach((video) => {
+        const videoChapterDurationArray = [];
+        video.QuestionData.forEach((question, index) => {
+          if (index === 0) {
+            const questionDuration = Math.round(question.video_interrupt_time);
+            // remove point and convert to minute:second
+            const questionDurationMinute = Math.floor(questionDuration / 60);
+            const questionDurationSecond = questionDuration % 60;
+            const questionDurationString = `${questionDurationMinute}:${questionDurationSecond}`;
+            videoChapterDurationArray.push(questionDurationString);
+          } else if (index !== 0) {
+            const questionDuration = Math.round(
+              question.video_interrupt_time -
+                video.QuestionData[index - 1].video_interrupt_time
+            );
+            // remove point and convert to minute:second
+            const questionDurationMinute = Math.floor(questionDuration / 60);
+            const questionDurationSecond = questionDuration % 60;
+            const questionDurationString = `${questionDurationMinute}:${questionDurationSecond}`;
+            videoChapterDurationArray.push(questionDurationString);
+          }
+
+          // if index is last one
+          // if (index === video.QuestionData.length - 1) {
+        });
+        eachVideoChapterDurationArray.push(videoChapterDurationArray);
+      });
+      setEachVideoChapterDuration(eachVideoChapterDurationArray);
     }
   }, [originVideoData]);
 
@@ -117,17 +155,8 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       <h1 className="fw-bold text-center">{`${
         PageTitle ? "測驗用" : "練習用"
       }衛教資訊`}</h1>
-      {originVideoData.map((video, index) => {
+      {originVideoData.map((video, eachQuestionIndex) => {
         return (
-          // <Link
-          //   to={`/video`}
-          //   state={{
-          //     videoUUID: video.videoCertainID,
-          //     videoPath: video.video_url,
-          //   }}
-          //   className={styles.videoListLink}
-          //   key={video.videoCertainID}
-          // >
           <div key={video.videoCertainID}>
             <div
               type={"button"}
@@ -135,33 +164,79 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
               onClick={() => {
                 setOpen((prev) => {
                   const copy = [...prev];
-                  copy[index] = !copy[index];
+                  copy[eachQuestionIndex] = !copy[eachQuestionIndex];
                   return copy;
                 });
               }}
             >
-              <div>
-                <div className="fs-3 m-0">
-                  {index + 1 + ". "}
-                  {video.Title}
-                  <div className="float-end me-2">
-                    <BiRightArrow />
-                  </div>
-                </div>
-                {eachVideoDuration[index] ? (
-                  <div className={`m-0 ${styles.eachVideoListDuration}`}>
-                    總時長：{eachVideoDuration[index]}
-                  </div>
-                ) : null}
-              </div>
+              <Container>
+                <Row className="align-items-center">
+                  <Col>
+                    <Row>
+                      <div className="fs-3 m-0">
+                        {eachQuestionIndex + 1 + ". "}
+                        {video.Title}
+                      </div>
+                    </Row>
+                    <Row>
+                      {eachVideoDuration[eachQuestionIndex] ? (
+                        <div className={`m-0 ${styles.eachVideoListDuration}`}>
+                          總時長：{eachVideoDuration[eachQuestionIndex]}
+                        </div>
+                      ) : null}
+                    </Row>
+                  </Col>
+                  <Col className="align-items-center">
+                    <div className="float-end align-items-center fs-3">
+                      <BiRightArrow />
+                    </div>
+                  </Col>
+                </Row>
+              </Container>
             </div>
-            <Collapse in={open[index]}>
-              <div id={`collapse-text-${index}`}>
+            <Collapse in={open[eachQuestionIndex]}>
+              <div id={`collapse-text-${eachQuestionIndex}`}>
                 {video.QuestionData.map((question, index) => {
                   return (
-                    <Link key={question.quiz_id * 1011}>
+                    <Link
+                      key={index * 1011}
+                      to={"/video/chapter"}
+                      state={{
+                        videoPath: video.video_url,
+                        videoCurrentTime:
+                          index === 0
+                            ? 0
+                            : video.QuestionData[index - 1]
+                                .video_interrupt_time,
+                        videoInterruptTime: question.video_interrupt_time,
+                        info: question,
+                      }}
+                      className={styles.videoListLink}
+                    >
                       <div className={styles.videoListContainer}>
-                        <div className="fs-5 m-0">{`第${index + 1}章 `}</div>
+                        <div className="fs-5 m-0">
+                          <Container>
+                            <Row className="align-items-center">
+                              <Col>
+                                <Row>
+                                  <div>{`第 ${index + 1} 章`}</div>
+                                </Row>
+                                <Row>
+                                  <div>
+                                    {`時長：${eachVideoChapterDuration[eachQuestionIndex][index]}`}
+                                  </div>
+                                </Row>
+                              </Col>
+                              <Col className="align-items-center">
+                                <div className="float-end align-items-center">
+                                  Progress bar
+                                </div>
+                              </Col>
+                              {/* <Col>{eachQuestionIndex}</Col> */}
+                              {/* <Col>{`時長 ${question[eachQuestionIndex][index]}`}</Col> */}
+                            </Row>
+                          </Container>
+                        </div>
                       </div>
                     </Link>
                   );
@@ -169,8 +244,6 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
               </div>
             </Collapse>
           </div>
-
-          // </Link>
         );
       })}
     </Container>

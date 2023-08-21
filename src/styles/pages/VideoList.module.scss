@@ -1,3 +1,4 @@
+// 超連結CSS
 .videoListLink {
   text-decoration: none;
   color: #a9abd1;
@@ -6,14 +7,14 @@
    background-color:#FFF8F7;
   }
 }
-
+// 每個div的CSS
 .videoListContainer {
   padding: 0.5rem 0;
   margin: 1rem 0;
   border: 1px solid rgba($color: #e08fac, $alpha: 0.5);
   border-radius: 0.5rem;
 }
-
+// 每個影片總時間CSS
 .eachVideoListDuration{
   font-size: 1.25rem;
   color: rgba($color: black, $alpha: 0.5);

@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import VideoList from "./client/Pages/VideoList";
 import VideoPlayer from "./client/Pages/VideoPlayer";
 import AuthProtected from "./AuthProtected";
+import VideoChapterPlayer from "./client/Pages/VideoChapterPlayer";
 
 export default function App() {
   const location = useLocation();
@@ -44,6 +45,7 @@ export default function App() {
               element={<VideoList PageTitle={1} loadingText="載入中請稍後" />}
             />
             <Route path="/video" element={<VideoPlayer />} />
+            <Route path="/video/chapter" element={<VideoChapterPlayer />} />
             <Route path="/comment" element={<UserComment />} />
           </Route>
         </Routes>
