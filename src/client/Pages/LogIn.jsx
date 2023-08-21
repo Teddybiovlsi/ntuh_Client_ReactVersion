@@ -48,6 +48,9 @@ export default function LogIn() {
 
       const userInfo = await response.data;
 
+      //   若中文姓名為三個字，則顯示中間字為＊，例如：王小明 => 王＊明
+      //   若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王＊＊明
+      //   若中文姓名為兩個字，則顯示第二個字為＊，例如：王明 => 王＊
       if (userInfo.client_name.length === 2) {
         userInfo.client_name =
           userInfo.client_name[0] + "O" + userInfo.client_name[1];
@@ -60,6 +63,8 @@ export default function LogIn() {
       }
 
       setTempUser(userInfo);
+      console.log(userInfo);
+
       toast.update(clientSubmit, {
         render: "登入成功，3秒後將回到當前頁面",
         type: "success",
@@ -93,7 +98,7 @@ export default function LogIn() {
 
   useEffect(() => {
     if (tempuser !== null) {
-      localStorage.setItem("client", JSON.stringify(tempuser));
+      localStorage.setItem("user", JSON.stringify(tempuser));
     }
   }, [tempuser]);
 

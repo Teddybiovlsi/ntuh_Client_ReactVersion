@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { MdOutlineVideoLibrary } from "react-icons/md";
@@ -8,50 +8,29 @@ import {
   BsFillQuestionCircleFill,
 } from "react-icons/bs";
 import { AiFillSetting, AiTwotoneReconciliation } from "react-icons/ai";
-import styles from "../../styles/pages/HomePage.module.scss";
-import { useState } from "react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingComponent from "../../components/LoadingComponent";
+import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  const [usrName, setUsrName] = useState(
-    JSON.parse(localStorage?.getItem("user")).client_name
-  );
+  const usrName = JSON.parse(localStorage?.getItem("user"));
 
   const [showChoseVideoModal, setShowChoseVideoModal] = useState(false);
   const handleCloseChoseVideoModal = () => setShowChoseVideoModal(false);
 
-  const [loading, setLoading] = useState(false);
-  //   console.log("usrName", usrName);
-  //   若中文姓名為三個字，則顯示中間字為＊，例如：王小明 => 王＊明
-  //   若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王＊＊明
-  //   若中文姓名為兩個字，則顯示第二個字為＊，例如：王明 => 王＊
-  useEffect(() => {
-    if (usrName == "undefined") {
-      navigate("/");
-    } else {
-      if (usrName.length === 2) {
-        setUsrName(usrName[0] + "O");
-      } else if (usrName.length === 3) {
-        setUsrName(usrName[0] + "O" + usrName[2]);
-      } else {
-        setUsrName(usrName[0] + "OO" + usrName[3]);
-      }
-    }
-  }, []);
+  const [loading, setLoading] = useState(true);
 
-  if (loading) {
-    return <LoadingComponent title="" text="使用者資訊載入中" />;
-  }
+  // if (loading) {
+  //   return <LoadingComponent title="" text="使用者資訊載入中" />;
+  // }
   return (
     <>
       <Col className="mb-3">
         <Row>
           <Card>
-            <Card.Title>{user.client_name} 您好</Card.Title>
+            {/* <Card.Title>{usrName} 您好</Card.Title> */}
             <Card.Body>
               <Card.Text>影片總觀看時間：OO小時OO分鐘</Card.Text>
               <Card.Text>

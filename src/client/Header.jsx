@@ -14,7 +14,8 @@ import { BsGlobeAmericas } from "react-icons/bs";
 import { AiFillSetting } from "react-icons/ai";
 
 export default function Header({ expand = "lg" }) {
-  const [user, setUser] = useState(JSON.parse(localStorage?.getItem("client")));
+  // const [user, setUser] = useState(JSON.parse(localStorage?.getItem("client")));
+  const user = JSON.parse(localStorage?.getItem("user"));
 
   const navigate = useNavigate();
 

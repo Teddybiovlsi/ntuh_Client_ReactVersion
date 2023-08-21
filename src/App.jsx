@@ -31,9 +31,7 @@ export default function App() {
           <Route index path="/" element={<LogIn />} />
           <Route
             element={
-              <AuthProtected
-                user={JSON.parse(localStorage?.getItem("client"))}
-              />
+              <AuthProtected user={JSON.parse(localStorage?.getItem("user"))} />
             }
           >
             <Route path="/Home" element={<Home />} />
