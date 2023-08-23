@@ -187,10 +187,16 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                     </Row>
                   </Col>
                   <Col className="align-items-center">
+                    <div className="float-end align-items-center">
+                      Progress bar
+                    </div>
+                  </Col>
+
+                  {/* <Col className="align-items-center">
                     <div className="float-end align-items-center fs-3">
                       <BiRightArrow />
                     </div>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Container>
             </div>
@@ -226,11 +232,6 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                                     {`時長：${eachVideoChapterDuration[eachQuestionIndex][index]}`}
                                   </div>
                                 </Row>
-                              </Col>
-                              <Col className="align-items-center">
-                                <div className="float-end align-items-center">
-                                  Progress bar
-                                </div>
                               </Col>
                               {/* <Col>{eachQuestionIndex}</Col> */}
                               {/* <Col>{`時長 ${question[eachQuestionIndex][index]}`}</Col> */}
