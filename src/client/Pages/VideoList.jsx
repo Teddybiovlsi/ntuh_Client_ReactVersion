@@ -1,27 +1,31 @@
-import React from "react";
-import { useState } from "react";
-import { Container, Collapse, Row, Col } from "react-bootstrap";
-import { useEffect } from "react";
-import LoadingComponent from "../../components/LoadingComponent";
-import { get } from "../axios";
-import { Link } from "react-router-dom";
-import { MdOutlineArrowForwardIos as BiRightArrow } from "react-icons/md";
-import styles from "../../styles/pages/VideoList.module.scss";
+import React from 'react';
+import { useState } from 'react';
+import { Container, Collapse, Row, Col, ProgressBar } from 'react-bootstrap';
+import { useEffect } from 'react';
+import LoadingComponent from '../../components/LoadingComponent';
+import { get } from '../axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { MdOutlineArrowForwardIos as BiRightArrow } from 'react-icons/md';
+import styles from '../../styles/pages/VideoList.module.scss';
 
-export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
+export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState([]);
 
   const [originVideoData, setOriginVideoData] = useState([]);
   const [QuestionData, setQuestionData] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
   const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
 
-  const usrToken = JSON.parse(localStorage?.getItem("user"))?.client_token;
-  const usrVideo = JSON.parse(localStorage?.getItem("user"))?.video;
+  const [videoProgress, setVideoProgress] = useState([25]);
+
+  const usrToken = JSON.parse(localStorage?.getItem('user'))?.client_token;
+  const usrVideo = JSON.parse(localStorage?.getItem('user'))?.video;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -71,9 +75,16 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
         setLoading(false);
       }, 2000);
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
       // if error.response is true, get error message
       if (error.response) {
+        console.log('error.response', error.response.data.message);
+        if (error.response.data.message === '發生錯誤，請重新登入') {
+          localStorage.removeItem('user');
+          alert('登入逾時，請重新登入');
+          navigate('/');
+        }
+
         // setErrorMessage(StatusCode(error.response.status));
       }
     }
@@ -132,7 +143,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   if (loading) {
     return (
       <LoadingComponent
-        title={(PageTitle ? "測驗用" : "練習用") + "衛教資訊"}
+        title={(PageTitle ? '測驗用' : '練習用') + '衛教資訊'}
         text={loadingText}
       />
     );
@@ -140,11 +151,11 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   if (arrayIsEmpty) {
     return (
       <Container>
-        <h1 className="text-center">
-          {(PageTitle ? "測驗用" : "練習用") + "衛教資訊"}
+        <h1 className='text-center'>
+          {(PageTitle ? '測驗用' : '練習用') + '衛教資訊'}
         </h1>
-        <h2 className="m-3 p-3 text-center">{`沒有對應的${
-          PageTitle ? "測驗用" : "練習用"
+        <h2 className='m-3 p-3 text-center'>{`沒有對應的${
+          PageTitle ? '測驗用' : '練習用'
         }衛教資訊`}</h2>
       </Container>
     );
@@ -152,14 +163,14 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
 
   return (
     <Container>
-      <h1 className="fw-bold text-center">{`${
-        PageTitle ? "測驗用" : "練習用"
+      <h1 className='fw-bold text-center'>{`${
+        PageTitle ? '測驗用' : '練習用'
       }衛教資訊`}</h1>
       {originVideoData.map((video, eachQuestionIndex) => {
         return (
           <div key={video.videoCertainID}>
             <div
-              type={"button"}
+              type={'button'}
               className={styles.videoListContainer}
               onClick={() => {
                 setOpen((prev) => {
@@ -170,11 +181,11 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
               }}
             >
               <Container>
-                <Row className="align-items-center">
+                <Row className='align-items-center'>
                   <Col>
                     <Row>
-                      <div className="fs-3 m-0">
-                        {eachQuestionIndex + 1 + ". "}
+                      <div className='fs-3 m-0'>
+                        {eachQuestionIndex + 1 + '. '}
                         {video.Title}
                       </div>
                     </Row>
@@ -186,10 +197,13 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                       ) : null}
                     </Row>
                   </Col>
-                  <Col className="align-items-center">
-                    <div className="float-end align-items-center">
-                      Progress bar
-                    </div>
+                  <Col className='align-items-center' md={5}>
+                    {/* <div className='float-end align-items-center'> */}
+                    <ProgressBar
+                      now={videoProgress}
+                      label={`${videoProgress}%`}
+                    />
+                    {/* </div> */}
                   </Col>
 
                   {/* <Col className="align-items-center">
@@ -206,7 +220,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                   return (
                     <Link
                       key={index * 1011}
-                      to={"/video/chapter"}
+                      to={'/video/chapter'}
                       state={{
                         videoPath: video.video_url,
                         videoCurrentTime:
@@ -220,9 +234,9 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                       className={styles.videoListLink}
                     >
                       <div className={styles.videoListContainer}>
-                        <div className="fs-5 m-0">
+                        <div className='fs-5 m-0'>
                           <Container>
-                            <Row className="align-items-center">
+                            <Row className='align-items-center'>
                               <Col>
                                 <Row>
                                   <div>{`第 ${index + 1} 章`}</div>
