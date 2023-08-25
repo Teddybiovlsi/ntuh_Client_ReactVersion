@@ -220,6 +220,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                       key={index * 1011}
                       to={"/video/chapter"}
                       state={{
+                        videoID: video.videoCertainID,
                         videoPath: video.video_url,
                         videoCurrentTime:
                           index === 0

@@ -14,12 +14,14 @@ export const ChapterVideoJS = (props) => {
   // const [currentTime, setCurrentTime] = useState(null);
   const playerRef = useRef(null);
   // 取得當前章節的資料
-  const { options, VideoCurrentTime, info } = props;
+  const { VideoID, VideoCurrentTime, options, info } = props;
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
+  const [wrongAnswer, setWrongAnswer] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState(false);
   const [haveAnswerOrNot, setHaveAnswerOrNot] = useState(false);
   const [answerState, setAnswerState] = useState([]);
 
@@ -27,6 +29,36 @@ export const ChapterVideoJS = (props) => {
     width: "",
     height: "",
   });
+
+  const shuffleArray = (array) => {
+    const shuffledArray = [...array];
+    console.log("shuffledArray", shuffledArray.length);
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [
+        shuffledArray[j],
+        shuffledArray[i],
+      ];
+    }
+
+    return shuffledArray;
+  };
+
+  const [shuffledInfo, setShuffledInfo] = useState(info);
+
+  const handleShuffle = () => {
+    const newChoice = { ...info.choice };
+    const values = Object.values(newChoice);
+    const shuffledValues = shuffleArray(values);
+
+    Object.keys(newChoice).forEach((key, index) => {
+      newChoice[key] = shuffledValues[index];
+    });
+
+    const newShuffledInfo = { ...info, choice: newChoice };
+    setShuffledInfo(newShuffledInfo);
+  };
+
   // calculate the total length of the array
   let arrayNum = 0;
 
@@ -134,6 +166,7 @@ export const ChapterVideoJS = (props) => {
       // Add event listener for loadedmetadata
       player.on("loadedmetadata", () => {
         const video = player;
+        handleShuffle();
         if (video.videoHeight() > video.videoWidth()) {
           player.aspectRatio("16:7");
         } else {
@@ -142,22 +175,20 @@ export const ChapterVideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
-        if (arrayNum === 1) {
-          player.pause();
-          player.controls(false);
-          console.log("鎖定，不可控制，且未回答問題");
-        }
-
         if (arrayNum < tempQuestionNum) {
           if (player.currentTime() >= info.video_interrupt_time) {
             player.pause();
             setSendstate(true);
             setTimeout(() => {
+              setHaveAnswerOrNot(true);
               setSendstate(false);
               player.play();
             }, info.video_duration * 1000);
             arrayNum++;
           }
+        } else {
+          player.pause();
+          player.controls(false);
         }
       });
 
@@ -187,6 +218,29 @@ export const ChapterVideoJS = (props) => {
     };
   }, [playerRef]);
 
+  useEffect(() => {
+    console.log("sendstate", sendstate);
+    console.log("haveAnswerOrNot", haveAnswerOrNot);
+    if (
+      haveAnswerOrNot === true &&
+      sendstate === false &&
+      correctAnswer === false &&
+      wrongAnswer === false
+    ) {
+      setAnswerState([
+        ...answerState,
+        {
+          token: JSON.parse(localStorage.getItem("user")).client_token,
+          videoID: VideoID,
+          quizID: [shuffledInfo.quiz_id],
+          answerStatus: [false],
+        },
+      ]);
+      playerRef.current.pause();
+      alert("測試未回答");
+    }
+  }, [sendstate]);
+
   document.addEventListener("fullscreenchange", exitHandler);
   document.addEventListener("webkitfullscreenchange", exitHandler);
   document.addEventListener("mozfullscreenchange", exitHandler);
@@ -213,60 +267,73 @@ export const ChapterVideoJS = (props) => {
 
   function handleSubmitAnswer() {
     let answer = "";
-    if (info.option_3 !== undefined && info.option_4 !== undefined) {
+    if (
+      shuffledInfo.choice.option_3 !== undefined &&
+      shuffledInfo.choice.option_4 !== undefined
+    ) {
       // find the answer which option[1] is 1
-      if (info.option_1[1] === 1) {
-        answer = info.option_1[0];
-      } else if (info.option_2[1] === 1) {
-        answer = info.option_2[0];
-      } else if (info.option_3[1] === 1) {
-        answer = info.option_3[0];
-      } else if (info.option_4[1] === 1) {
-        answer = info.option_4[0];
+      if (shuffledInfo.choice.option_1[1] === 1) {
+        answer = shuffledInfo.choice.option_1[0];
+      } else if (shuffledInfo.choice.option_2[1] === 1) {
+        answer = shuffledInfo.choice.option_2[0];
+      } else if (shuffledInfo.choice.option_3[1] === 1) {
+        answer = shuffledInfo.choice.option_3[0];
+      } else if (shuffledInfo.choice.option_4[1] === 1) {
+        answer = shuffledInfo.choice.option_4[0];
       }
-    } else if (info.option_3 !== undefined && info.option_4 === undefined) {
+    } else if (
+      shuffledInfo.choice.option_3 !== undefined &&
+      shuffledInfo.choice.option_4 === undefined
+    ) {
       // find the answer which option[1] is 1
-      if (info.option_1[1] === 1) {
-        answer = info.option_1[0];
-      } else if (info.option_2[1] === 1) {
-        answer = info.option_2[0];
-      } else if (info.option_3[1] === 1) {
-        answer = info.option_3[0];
+      if (shuffledInfo.choice.option_1[1] === 1) {
+        answer = shuffledInfo.choice.option_1[0];
+      } else if (shuffledInfo.choice.option_2[1] === 1) {
+        answer = shuffledInfo.choice.option_2[0];
+      } else if (shuffledInfo.choice.option_3[1] === 1) {
+        answer = shuffledInfo.choice.option_3[0];
       }
     } else {
       // find the answer which option[1] is 1
-      if (info.option_1[1] === 1) {
-        answer = info.option_1[0];
-      } else if (info.option_2[1] === 1) {
-        answer = info.option_2[0];
+      if (shuffledInfo.choice.option_1[1] === 1) {
+        answer = shuffledInfo.choice.option_1[0];
+      } else if (shuffledInfo.choice.option_2[1] === 1) {
+        answer = shuffledInfo.choice.option_2[0];
       }
     }
     if (optionChecked === answer) {
       setAnswerState([
         ...answerState,
         {
-          tempQuestionNum: info.quiz_id,
-          correctAnswer: true,
-          wrongAnswer: "",
-          timeOutNoAnswer: false,
+          token: JSON.parse(localStorage.getItem("user")).client_token,
+          videoID: VideoID,
+          quizID: [shuffledInfo.quiz_id],
+          answerStatus: [true],
         },
       ]);
       setSendstate(false);
+      setCorrectAnswer(true);
       // playerRef.current.play();
       alert("答對了");
+      // navigate("/", { replace: true });
+      console.log("answerState", answerState);
+
       // navigate("/videoChapterPlayer", { replace: true }");
     } else {
       setAnswerState([
         ...answerState,
         {
-          tempQuestionNum: info.quiz_id,
-          correctAnswer: false,
-          wrongAnswer: optionChecked,
-          timeOutNoAnswer: false,
+          token: JSON.parse(localStorage.getItem("user")).client_token,
+          videoID: VideoID,
+          quizID: [shuffledInfo.quiz_id],
+          answerStatus: [false],
         },
       ]);
       setSendstate(false);
-      playerRef.current.play();
+      setWrongAnswer(true);
+      // playerRef.current.play();
+      alert("答錯了");
+      // navigate("/", { replace: true });
     }
   }
 
@@ -284,23 +351,25 @@ export const ChapterVideoJS = (props) => {
           <div id="video-container-textfield" className="text-overlay">
             <Form>
               <h1 className="text-overlay_title pt-2 pb-2">
-                第{tempQuestionNum}題
+                第{tempQuestionNum + 1}題
               </h1>
               <Col className="fs-4 mt-2 mb-2">
-                {info.video_question}
+                {shuffledInfo.video_question}
                 {/* {info[0].video_question} */}
               </Col>
               <Row>
                 <Col className="fs-4" md={6} xs={6}>
                   <Form.Check
                     type="radio"
-                    label={info.choice.option_1[0]}
-                    value={info.choice.option_1[0]}
+                    label={shuffledInfo.choice.option_1[0]}
+                    value={shuffledInfo.choice.option_1[0]}
                     name="option_1"
                     id="formHorizontalRadios1"
                     className="selectOption"
                     checked={
-                      optionChecked === info.choice.option_1[0] ? true : false
+                      optionChecked === shuffledInfo.choice.option_1[0]
+                        ? true
+                        : false
                     }
                     onChange={handleCheckedAnswer}
                   />
@@ -308,44 +377,50 @@ export const ChapterVideoJS = (props) => {
                 <Col className="fs-4" md={6} xs={6}>
                   <Form.Check
                     type="radio"
-                    label={info.choice.option_2[0]}
-                    value={info.choice.option_2[0]}
+                    label={shuffledInfo.choice.option_2[0]}
+                    value={shuffledInfo.choice.option_2[0]}
                     name="option_2"
                     id="formHorizontalRadios2"
                     className="selectOption"
                     checked={
-                      optionChecked === info.choice.option_2[0] ? true : false
+                      optionChecked === shuffledInfo.choice.option_2[0]
+                        ? true
+                        : false
                     }
                     onChange={handleCheckedAnswer}
                   />
                 </Col>
-                {/* {info.option_3 !== undefined && (
+                {shuffledInfo.choice.option_3 !== undefined && (
                   <Col className="fs-4" md={6} xs={6}>
                     <Form.Check
                       type="radio"
-                      label={info.option_3[0]}
-                      value={info.option_3[0]}
+                      label={shuffledInfo.choice.option_3[0]}
+                      value={shuffledInfo.choice.option_3[0]}
                       name="option_3"
                       id="formHorizontalRadios3"
                       className="selectOption"
                       checked={
-                        optionChecked === info.option_3[0] ? true : false
+                        optionChecked === shuffledInfo.choice.option_3[0]
+                          ? true
+                          : false
                       }
                       onChange={handleCheckedAnswer}
                     />
                   </Col>
                 )}
-                {info.option_4 !== undefined && (
+                {shuffledInfo.choice.option_4 !== undefined && (
                   <Col className="fs-4" md={6} xs={6}>
                     <Form.Check
                       type="radio"
-                      label={info.option_4[0]}
-                      value={info.option_4[0]}
+                      label={shuffledInfo.choice.option_4[0]}
+                      value={shuffledInfo.choice.option_4[0]}
                       name="option_4"
                       id="formHorizontalRadios4"
                       className="selectOption"
                       checked={
-                        optionChecked === info.option_4[0] ? true : false
+                        optionChecked === shuffledInfo.choice.option_4[0]
+                          ? true
+                          : false
                       }
                       onChange={(e) => {
                         console.log(e.target.value);
@@ -353,7 +428,7 @@ export const ChapterVideoJS = (props) => {
                       }}
                     />
                   </Col>
-                )} */}
+                )}
               </Row>
               <Col className="sendBtn">
                 <BtnBootstrap

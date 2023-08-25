@@ -13,6 +13,8 @@ export default function VideoChapterPlayer() {
   const VideoPath = location.state?.videoPath;
   const VideoCurrentTime = location.state?.videoCurrentTime;
   const VideoInterruptTime = location.state?.videoInterruptTime;
+  const VideoID = location.state?.videoID;
+
   const info = location.state?.info;
 
   //   console.log("VideoPath", VideoPath);
@@ -42,8 +44,9 @@ export default function VideoChapterPlayer() {
   return (
     <>
       <ChapterVideoJS
-        options={videoJsOptions}
+        VideoID={VideoID}
         VideoCurrentTime={VideoCurrentTime}
+        options={videoJsOptions}
         info={info}
       />
       {/* <div>測試</div> */}
