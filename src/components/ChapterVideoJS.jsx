@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Form, Row, Toast } from "react-bootstrap";
 import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
 import { useNavigate } from "react-router-dom";
+import ToastAlert from "./ToastAlert";
+import { toast } from "react-toastify";
+import { post } from "../client/axios";
 
 export const ChapterVideoJS = (props) => {
   const navigate = useNavigate();
@@ -314,7 +317,7 @@ export const ChapterVideoJS = (props) => {
       setSendstate(false);
       setCorrectAnswer(true);
       // playerRef.current.play();
-      alert("答對了");
+      // alert("答對了");
       // navigate("/", { replace: true });
       console.log("answerState", answerState);
 
@@ -332,10 +335,59 @@ export const ChapterVideoJS = (props) => {
       setSendstate(false);
       setWrongAnswer(true);
       // playerRef.current.play();
-      alert("答錯了");
       // navigate("/", { replace: true });
     }
   }
+
+  useEffect(() => {
+    if (answerState.length > 0) {
+      console.log("answerState", answerState[0]);
+      handleSubmitAnswerToAPI({ api: "client/record" });
+    }
+  }, [answerState]);
+
+  const handleSubmitAnswerToAPI = async ({ api }) => {
+    // 顯示loading圖示
+    let id = toast.loading("上傳中...");
+    // 透過try catch來處理錯誤
+    // console.log("answerState", answerState);
+
+    try {
+      // 透過await來等待promise resolve
+      const res = await post(api, answerState[0]);
+      let outputMessage = "";
+      if (answerState[0].answerStatus[0] === true) {
+        outputMessage = "答對了，2秒後將回到影片清單頁\n請稍後...";
+      } else {
+        if (haveAnswerOrNot === true) {
+          outputMessage =
+            "未回答，請重新練習\n2秒後將回到影片清單頁\n請稍後...";
+        } else {
+          outputMessage =
+            "答錯了，請重新練習\n2秒後將回到影片清單頁\n請稍後...";
+        }
+      }
+      // 關閉loading圖示
+      toast.update(id, {
+        render: outputMessage,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      setTimeout(() => {
+        // navigate to pervious page
+        navigate(-1, { replace: true });
+      }, 2000);
+    } catch (err) {
+      console.log("err", err.response.data);
+      toast.update(id, {
+        render: "上傳失敗，請稍後再試",
+        type: "fail",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
 
   return (
     <div id="video-container">
@@ -455,6 +507,7 @@ export const ChapterVideoJS = (props) => {
           </div>
         )}
       </div>
+      <ToastAlert />
     </div>
   );
 };
