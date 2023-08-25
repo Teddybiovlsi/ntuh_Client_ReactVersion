@@ -64,7 +64,7 @@
   cursor: pointer;
 }
 .vjs-progress-control{
-  pointer-events: none;
+  /* pointer-events: none; */
 } 
 
 .text-overlay {

@@ -5,8 +5,11 @@ import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
+import { useNavigate } from "react-router-dom";
 
 export const ChapterVideoJS = (props) => {
+  const navigate = useNavigate();
+
   const videoRef = useRef(null);
   // const [currentTime, setCurrentTime] = useState(null);
   const playerRef = useRef(null);
@@ -17,6 +20,7 @@ export const ChapterVideoJS = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
+  const [haveAnswerOrNot, setHaveAnswerOrNot] = useState(false);
   const [answerState, setAnswerState] = useState([]);
 
   const [screen, setScreen] = useState({
@@ -138,14 +142,20 @@ export const ChapterVideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
-        if (arrayNum < info.length) {
-          if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
+        if (arrayNum === 1) {
+          player.pause();
+          player.controls(false);
+          console.log("鎖定，不可控制，且未回答問題");
+        }
+
+        if (arrayNum < tempQuestionNum) {
+          if (player.currentTime() >= info.video_interrupt_time) {
             player.pause();
             setSendstate(true);
             setTimeout(() => {
               setSendstate(false);
               player.play();
-            }, info[arrayNum].video_duration * 1000);
+            }, info.video_duration * 1000);
             arrayNum++;
           }
         }
@@ -203,57 +213,53 @@ export const ChapterVideoJS = (props) => {
 
   function handleSubmitAnswer() {
     let answer = "";
-    if (
-      info[tempQuestionNum - 1].option_3 !== undefined &&
-      info[tempQuestionNum - 1].option_4 !== undefined
-    ) {
+    if (info.option_3 !== undefined && info.option_4 !== undefined) {
       // find the answer which option[1] is 1
-      if (info[tempQuestionNum - 1].option_1[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_1[0];
-      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_2[0];
-      } else if (info[tempQuestionNum - 1].option_3[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_3[0];
-      } else if (info[tempQuestionNum - 1].option_4[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_4[0];
+      if (info.option_1[1] === 1) {
+        answer = info.option_1[0];
+      } else if (info.option_2[1] === 1) {
+        answer = info.option_2[0];
+      } else if (info.option_3[1] === 1) {
+        answer = info.option_3[0];
+      } else if (info.option_4[1] === 1) {
+        answer = info.option_4[0];
       }
-    } else if (
-      info[tempQuestionNum - 1].option_3 !== undefined &&
-      info[tempQuestionNum - 1].option_4 === undefined
-    ) {
+    } else if (info.option_3 !== undefined && info.option_4 === undefined) {
       // find the answer which option[1] is 1
-      if (info[tempQuestionNum - 1].option_1[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_1[0];
-      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_2[0];
-      } else if (info[tempQuestionNum - 1].option_3[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_3[0];
+      if (info.option_1[1] === 1) {
+        answer = info.option_1[0];
+      } else if (info.option_2[1] === 1) {
+        answer = info.option_2[0];
+      } else if (info.option_3[1] === 1) {
+        answer = info.option_3[0];
       }
     } else {
       // find the answer which option[1] is 1
-      if (info[tempQuestionNum - 1].option_1[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_1[0];
-      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_2[0];
+      if (info.option_1[1] === 1) {
+        answer = info.option_1[0];
+      } else if (info.option_2[1] === 1) {
+        answer = info.option_2[0];
       }
     }
     if (optionChecked === answer) {
       setAnswerState([
         ...answerState,
         {
-          tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
+          tempQuestionNum: info.quiz_id,
           correctAnswer: true,
           wrongAnswer: "",
           timeOutNoAnswer: false,
         },
       ]);
       setSendstate(false);
-      playerRef.current.play();
+      // playerRef.current.play();
+      alert("答對了");
+      // navigate("/videoChapterPlayer", { replace: true }");
     } else {
       setAnswerState([
         ...answerState,
         {
-          tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
+          tempQuestionNum: info.quiz_id,
           correctAnswer: false,
           wrongAnswer: optionChecked,
           timeOutNoAnswer: false,
@@ -281,22 +287,20 @@ export const ChapterVideoJS = (props) => {
                 第{tempQuestionNum}題
               </h1>
               <Col className="fs-4 mt-2 mb-2">
-                {info[tempQuestionNum - 1].video_question}
+                {info.video_question}
                 {/* {info[0].video_question} */}
               </Col>
               <Row>
                 <Col className="fs-4" md={6} xs={6}>
                   <Form.Check
                     type="radio"
-                    label={info[tempQuestionNum - 1].option_1[0]}
-                    value={info[tempQuestionNum - 1].option_1[0]}
+                    label={info.choice.option_1[0]}
+                    value={info.choice.option_1[0]}
                     name="option_1"
                     id="formHorizontalRadios1"
                     className="selectOption"
                     checked={
-                      optionChecked === info[tempQuestionNum - 1].option_1[0]
-                        ? true
-                        : false
+                      optionChecked === info.choice.option_1[0] ? true : false
                     }
                     onChange={handleCheckedAnswer}
                   />
@@ -304,50 +308,44 @@ export const ChapterVideoJS = (props) => {
                 <Col className="fs-4" md={6} xs={6}>
                   <Form.Check
                     type="radio"
-                    label={info[tempQuestionNum - 1].option_2[0]}
-                    value={info[tempQuestionNum - 1].option_2[0]}
+                    label={info.choice.option_2[0]}
+                    value={info.choice.option_2[0]}
                     name="option_2"
                     id="formHorizontalRadios2"
                     className="selectOption"
                     checked={
-                      optionChecked === info[tempQuestionNum - 1].option_2[0]
-                        ? true
-                        : false
+                      optionChecked === info.choice.option_2[0] ? true : false
                     }
                     onChange={handleCheckedAnswer}
                   />
                 </Col>
-                {info[tempQuestionNum - 1].option_3 !== undefined && (
+                {/* {info.option_3 !== undefined && (
                   <Col className="fs-4" md={6} xs={6}>
                     <Form.Check
                       type="radio"
-                      label={info[tempQuestionNum - 1].option_3[0]}
-                      value={info[tempQuestionNum - 1].option_3[0]}
+                      label={info.option_3[0]}
+                      value={info.option_3[0]}
                       name="option_3"
                       id="formHorizontalRadios3"
                       className="selectOption"
                       checked={
-                        optionChecked === info[tempQuestionNum - 1].option_3[0]
-                          ? true
-                          : false
+                        optionChecked === info.option_3[0] ? true : false
                       }
                       onChange={handleCheckedAnswer}
                     />
                   </Col>
                 )}
-                {info[tempQuestionNum - 1].option_4 !== undefined && (
+                {info.option_4 !== undefined && (
                   <Col className="fs-4" md={6} xs={6}>
                     <Form.Check
                       type="radio"
-                      label={info[tempQuestionNum - 1].option_4[0]}
-                      value={info[tempQuestionNum - 1].option_4[0]}
+                      label={info.option_4[0]}
+                      value={info.option_4[0]}
                       name="option_4"
                       id="formHorizontalRadios4"
                       className="selectOption"
                       checked={
-                        optionChecked === info[tempQuestionNum - 1].option_4[0]
-                          ? true
-                          : false
+                        optionChecked === info.option_4[0] ? true : false
                       }
                       onChange={(e) => {
                         console.log(e.target.value);
@@ -355,7 +353,7 @@ export const ChapterVideoJS = (props) => {
                       }}
                     />
                   </Col>
-                )}
+                )} */}
               </Row>
               <Col className="sendBtn">
                 <BtnBootstrap
