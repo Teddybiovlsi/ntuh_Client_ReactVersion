@@ -1,37 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Container, Row, Form, Table } from 'react-bootstrap';
+import { get } from '../axios';
+import LoadingComponent from '../../components/LoadingComponent';
 
 export default function RecordPage() {
-  const dataVideo = [
-    {
-      id: 1,
-      title: '翻身',
-    },
-    {
-      id: 2,
-      title: '翻身百',
-    },
-    {
-      id: 3,
-      title: '翻身百科',
-    },
-  ];
-  const dataRecord = [
-    {
-      id: 1,
-      title: '翻身',
-      chacpter: '第四章',
-      finsh: true,
-      date: '2021-09-01',
-    },
-    {
-      id: 2,
-      title: '翻身',
-      chacpter: '第五章',
-      finsh: false,
-      date: '2021-09-02',
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [dataRecord, setDataRecord] = useState([]);
+  const usrToken = JSON.parse(localStorage?.getItem('user'))?.client_token;
+
+
+
+  function formatDateToISODate(year, month, day) {
+    const formattedMonth = (month < 10) ? `${month}` : month;
+    const formattedDay = (day < 10) ? `${day}` : day;
+    return `${year}-${formattedMonth}-${formattedDay}`;
+  }
+  
+  const options = { timeZone: 'Asia/Taipei' };
+  const currentDate = new Date();
+  
+  const taipeiYear = currentDate.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+  const taipeiMonth = currentDate.toLocaleDateString('en-US', { ...options, month: '2-digit' });
+  const taipeiDay = currentDate.toLocaleDateString('en-US', { ...options, day: '2-digit' });
+  
+  const isoDateInTaipei = formatDateToISODate(taipeiYear, taipeiMonth, taipeiDay);
+  console.log(isoDateInTaipei);
+
+  const handelRecord = async ({ api }) => {
+    const res = await get(api);
+    // check the data type
+    const data = res.data.data;
+    setDataRecord(data);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  };
+  useEffect(() => {
+    setLoading(true);
+    handelRecord({ api: `client/record/${usrToken}` });
+  }, []);
+
+  //   useEffect(() => {
+  //     console.log(dataRecord.data);
+  //   }, [dataRecord]);
+
+  //   useEffect(() => {
+
+  if (loading) return <LoadingComponent title='載入紀錄中請稍後' />;
+
   return (
     <Container>
       <Col>
@@ -41,27 +57,34 @@ export default function RecordPage() {
         <Row></Row>
         <Row>
           <Col md={6}>
-            <Form.Select aria-label='SelectVideo'>
+            {/* <Form.Select aria-label='SelectVideo'>
               <option>請選擇影片</option>
               {dataVideo.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.title}
                 </option>
               ))}
-            </Form.Select>
+            </Form.Select> */}
           </Col>
         </Row>
         <Row>
           <Col md={6}>
             <Form.Group className='mb-3' controlId='Form.StartDate'>
               <Form.Label>起始日期</Form.Label>
-              <Form.Control type='date' />
+              <Form.Control
+                type='date'
+              />
             </Form.Group>
           </Col>
           <Col md={6}>
             <Form.Group className='mb-3' controlId='Form.EndDate'>
               <Form.Label>結束日期</Form.Label>
-              <Form.Control type='date' />
+              <Form.Control
+                type='date'
+                name='endDate'
+                max={isoDateInTaipei}
+                value={isoDateInTaipei}
+              />
             </Form.Group>
           </Col>
         </Row>
@@ -77,15 +100,21 @@ export default function RecordPage() {
               </tr>
             </thead>
             <tbody>
-              {dataRecord.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.title}</td>
-                  <td>{item.chacpter}</td>
-                  <td>{item.finsh ? '是' : '否'}</td>
-                  <td>{item.date}</td>
-                </tr>
-              ))}
+              {dataRecord.map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.clientVideoCheck}</td>
+                    <td>{item.chapter}</td>
+                    <td>{item.answerState == 'true' ? '是' : '否'}</td>
+                    <td>
+                      {new Date(item.praticeDate).toLocaleDateString() +
+                        ' ' +
+                        new Date(item.praticeDate).toLocaleTimeString()}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </Row>
