@@ -10,6 +10,7 @@ import VideoList from "./client/Pages/VideoList";
 import VideoPlayer from "./client/Pages/VideoPlayer";
 import AuthProtected from "./AuthProtected";
 import VideoChapterPlayer from "./client/Pages/VideoChapterPlayer";
+import RecordPage from "./client/Pages/RecordPage";
 
 export default function App() {
   const location = useLocation();
@@ -46,6 +47,8 @@ export default function App() {
             />
             <Route path="/video" element={<VideoPlayer />} />
             <Route path="/video/chapter" element={<VideoChapterPlayer />} />
+            <Route path="/record/pratice" element={<RecordPage recordType={0} />} />
+            <Route path="/record/test" element={<RecordPage recordType={1} />} />
             <Route path="/comment" element={<UserComment />} />
           </Route>
         </Routes>
