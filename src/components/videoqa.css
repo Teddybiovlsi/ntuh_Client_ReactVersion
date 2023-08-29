@@ -60,9 +60,9 @@
 .vjs-control .vjs-button {
   cursor: pointer;
 }
-.vjs-progress-control {
-  /* pointer-events: none; */
-}
+/* .vjs-progress-control { */
+/* pointer-events: none; */
+/* } */
 
 .text-overlay {
   background-color: rgba(154, 111, 170, 0.1);
@@ -120,7 +120,7 @@
 
 .videoPlayer.fullscreen {
   min-height: 100%;
-  min-width: 100%;
+  min-width: 70%;
   margin: 0 auto;
 }
 .videoPlayer.fullscreen {
@@ -204,9 +204,9 @@
   .text-overlay {
     width: 50%;
   }
-  .videoPlayer {
+  /* .videoPlayer {
     width: 70%;
-  }
+  } */
   .video-container_Container {
     display: flex;
     flex-direction: row;

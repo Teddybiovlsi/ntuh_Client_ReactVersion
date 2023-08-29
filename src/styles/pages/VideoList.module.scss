@@ -2,16 +2,7 @@
 .videoListLink {
   text-decoration: none;
   color: #a9abd1;
-  :hover {
-   color: #f1bbca;
-   background-color:#FFF8F7;
-  }
-  .progress,
-  .progress-bar{
-    :hover{
-      background-color: none;
-    }
-  }
+  //  background-color:#FFF8F7;
 }
 // 每個div的CSS
 .videoListContainer {
@@ -21,7 +12,7 @@
   border-radius: 0.5rem;
 }
 // 每個影片總時間CSS
-.eachVideoListDuration{
+.eachVideoListDuration {
   font-size: 1.25rem;
   color: rgba($color: black, $alpha: 0.5);
 }

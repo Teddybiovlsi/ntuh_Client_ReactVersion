@@ -49,7 +49,6 @@ export default function VideoChapterPlayer() {
         options={videoJsOptions}
         info={info}
       />
-      {/* <div>測試</div> */}
     </>
   );
 }

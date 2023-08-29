@@ -239,7 +239,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                               <Col>
                                 <Row>
                                   <Col md={6}>
-                                    <h3>{`第 ${index + 1} 章`}</h3>
+                                    <h3 className={styles.titleChapter}>{`第 ${index + 1} 章`}</h3>
                                     <div>
                                       {`時間長度 ${eachVideoChapterDuration[eachQuestionIndex][index]}`}
                                     </div>

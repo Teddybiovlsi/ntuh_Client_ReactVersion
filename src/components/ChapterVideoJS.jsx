@@ -174,7 +174,8 @@ export const ChapterVideoJS = (props) => {
         if (video.videoHeight() > video.videoWidth()) {
           player.aspectRatio("16:7");
         } else {
-          player.fluid(true);
+          // player.fluid(true);
+          player.aspectRatio("16:7");
         }
       });
 
