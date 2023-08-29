@@ -37,14 +37,15 @@ export default function RecordPage({
     // check the data type
     const data = res.data.data;
     const videoName = res.data.clientVideoName;
+    // originData must match the data content with clientVideoType equal to recordType
+    const originData = data.filter(
+      (item) => item.clientVideoType === recordType
+    );
+    setOriginDataRecord(originData);
+    setFilteredDataRecord(originData);
 
-    setOriginDataRecord(data);
-    setFilteredDataRecord(data);
-
+    setLoading(false);
     setTotalVideoName(videoName);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
   };
 
   useEffect(() => {
