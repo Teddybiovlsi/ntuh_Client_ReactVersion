@@ -6,6 +6,12 @@
    color: #f1bbca;
    background-color:#FFF8F7;
   }
+  .progress,
+  .progress-bar{
+    :hover{
+      background-color: none;
+    }
+  }
 }
 // 每個div的CSS
 .videoListContainer {

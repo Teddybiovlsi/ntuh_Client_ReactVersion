@@ -83,7 +83,8 @@ export default function RecordPage({
       const isVideoMatch =
         !selectVideo || item.clientVideoCheck === selectVideo;
       const isChapterMatch =
-        !selectFinishChapter || item.answerState === selectFinishChapter;
+        !selectFinishChapter ||
+        item.answerState === JSON.parse(selectFinishChapter);
 
       return isDateInRange && isVideoMatch && isChapterMatch;
     });
@@ -191,7 +192,7 @@ export default function RecordPage({
                       <td>{index + 1}</td>
                       <td>{item.clientVideoCheck}</td>
                       <td>{item.chapter}</td>
-                      <td>{item.answerState == "true" ? "是" : "否"}</td>
+                      <td>{item.answerState == true ? "是" : "否"}</td>
                       <td>
                         {new Date(item.praticeDate).toLocaleDateString() +
                           " " +

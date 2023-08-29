@@ -16,12 +16,10 @@ export const VideoJS = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
+  const [haveWatchedTime, setHaveWatchedTime] = useState(0);
+
   const [answerState, setAnswerState] = useState([]);
 
-  const [screen, setScreen] = useState({
-    width: "",
-    height: "",
-  });
   // calculate the total length of the array
   let arrayNum = 0;
 
@@ -133,6 +131,9 @@ export const VideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
+        // calculate the total watching time
+        // setHaveWatchedTime(player.currentTime());
+        setHaveWatchedTime(player.currentTime());
         if (arrayNum < info.length) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
             player.pause();
@@ -171,6 +172,10 @@ export const VideoJS = (props) => {
       }
     };
   }, [playerRef]);
+
+  useEffect(() => {
+    console.log("haveWatchedTime", haveWatchedTime);
+  }, [haveWatchedTime]);
 
   document.addEventListener("fullscreenchange", exitHandler);
   document.addEventListener("webkitfullscreenchange", exitHandler);

@@ -28,8 +28,6 @@
   color: black;
 }
 
-
-
 .video-js {
   width: 100%;
   height: auto;
@@ -39,7 +37,6 @@
   width: 100%;
   height: 100vh;
 }
-
 
 .video-js .vjs-fullscreen-control {
   display: none;
@@ -63,9 +60,9 @@
 .vjs-control .vjs-button {
   cursor: pointer;
 }
-.vjs-progress-control{
+.vjs-progress-control {
   /* pointer-events: none; */
-} 
+}
 
 .text-overlay {
   background-color: rgba(154, 111, 170, 0.1);
@@ -116,7 +113,7 @@
   display: block;
 }
 
-.videoPlayer{
+.videoPlayer {
   max-width: 100%;
   height: auto;
 }
@@ -126,11 +123,11 @@
   min-width: 100%;
   margin: 0 auto;
 }
-.videoPlayer.fullscreen{
+.videoPlayer.fullscreen {
   object-fit: contain;
 }
 
-.videoPlayer.fullscreen{
+.videoPlayer.fullscreen {
   object-fit: contain;
   min-width: 0px !important;
   min-height: 0px !important;
@@ -139,7 +136,6 @@
   padding-top: 0 !important;
   margin: 0 auto !important;
 }
-
 
 .selectOption input[type="radio"] {
   display: none;
@@ -173,8 +169,17 @@
   padding: 20px;
 } */
 
-
-
+@media only screen and (max-width: 576px) {
+  .text-overlay {
+    position: absolute;
+    width: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: #fff;
+  }
+}
 
 @media (min-width: 576px) {
   .text-overlay {
@@ -213,7 +218,7 @@
     position: unset;
     width: 30%;
   }
-  .videoPlayer.fullscreen+.text-overlay{
+  .videoPlayer.fullscreen + .text-overlay {
     position: absolute;
     left: 25%;
     top: 50%;
@@ -223,7 +228,6 @@
     z-index: 9999;
     margin: 0 auto;
   }
-
 
   .videoPlayer.fullscreen {
     position: fixed;

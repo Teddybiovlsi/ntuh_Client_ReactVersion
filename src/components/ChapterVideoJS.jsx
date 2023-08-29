@@ -27,6 +27,7 @@ export const ChapterVideoJS = (props) => {
   const [correctAnswer, setCorrectAnswer] = useState(false);
   const [haveAnswerOrNot, setHaveAnswerOrNot] = useState(false);
   const [answerState, setAnswerState] = useState([]);
+  const [haveWatchedTime, setHaveWatchedTime] = useState(0);
 
   const [screen, setScreen] = useState({
     width: "",
@@ -178,14 +179,15 @@ export const ChapterVideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
+        setHaveWatchedTime(player.currentTime() - VideoCurrentTime);
         if (arrayNum < tempQuestionNum) {
           if (player.currentTime() >= info.video_interrupt_time) {
             player.pause();
             setSendstate(true);
             setTimeout(() => {
-              setHaveAnswerOrNot(true);
-              setSendstate(false);
-              player.play();
+              // setHaveAnswerOrNot(true);
+              // setSendstate(false);
+              // player.play();
             }, info.video_duration * 1000);
             arrayNum++;
           }
@@ -237,6 +239,7 @@ export const ChapterVideoJS = (props) => {
           videoID: VideoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [false],
+          already_watch_time: haveWatchedTime,
         },
       ]);
       playerRef.current.pause();
@@ -312,6 +315,7 @@ export const ChapterVideoJS = (props) => {
           videoID: VideoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [true],
+          already_watch_time: haveWatchedTime,
         },
       ]);
       setSendstate(false);
@@ -330,6 +334,7 @@ export const ChapterVideoJS = (props) => {
           videoID: VideoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [false],
+          already_watch_time: haveWatchedTime,
         },
       ]);
       setSendstate(false);
@@ -370,7 +375,7 @@ export const ChapterVideoJS = (props) => {
       // 關閉loading圖示
       toast.update(id, {
         render: outputMessage,
-        type: "success",
+        type: "fail",
         isLoading: false,
         autoClose: 2000,
       });

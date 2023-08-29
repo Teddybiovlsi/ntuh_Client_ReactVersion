@@ -238,16 +238,20 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                             <Row className="align-items-center">
                               <Col>
                                 <Row>
-                                  <div>{`第 ${index + 1} 章`}</div>
-                                </Row>
-                                <Row>
-                                  <div>
-                                    {`時長：${eachVideoChapterDuration[eachQuestionIndex][index]}`}
-                                  </div>
+                                  <Col md={6}>
+                                    <h3>{`第 ${index + 1} 章`}</h3>
+                                    <div>
+                                      {`時間長度 ${eachVideoChapterDuration[eachQuestionIndex][index]}`}
+                                    </div>
+                                  </Col>
                                 </Row>
                               </Col>
-                              {/* <Col>{eachQuestionIndex}</Col> */}
-                              {/* <Col>{`時長 ${question[eachQuestionIndex][index]}`}</Col> */}
+                              <Col className="text-end" md={4}>
+                                <ProgressBar
+                                  now={question.eachQuizAccuracy * 100}
+                                  label={`${question.eachQuizAccuracy * 100}%`}
+                                />
+                              </Col>
                             </Row>
                           </Container>
                         </div>

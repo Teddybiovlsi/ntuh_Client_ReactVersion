@@ -18,10 +18,8 @@ export default function App() {
 
   useEffect(() => {
     if (user) {
-      // if (new Date(user.expTime) < new Date()) {
-      //   // localStorage.removeItem("user");
-      // }
-      // console.log("user", user);
+      console.log("user", user);
+      console.log("重新整理");
     }
   }, [location]);
 
@@ -47,8 +45,14 @@ export default function App() {
             />
             <Route path="/video" element={<VideoPlayer />} />
             <Route path="/video/chapter" element={<VideoChapterPlayer />} />
-            <Route path="/record/pratice" element={<RecordPage recordType={0} />} />
-            <Route path="/record/test" element={<RecordPage recordType={1} />} />
+            <Route
+              path="/record/pratice"
+              element={<RecordPage recordType={0} />}
+            />
+            <Route
+              path="/record/test"
+              element={<RecordPage recordType={1} />}
+            />
             <Route path="/comment" element={<UserComment />} />
           </Route>
         </Routes>
