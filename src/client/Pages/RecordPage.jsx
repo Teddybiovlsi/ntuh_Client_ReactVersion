@@ -43,8 +43,9 @@ export default function RecordPage({
     );
     setOriginDataRecord(originData);
     setFilteredDataRecord(originData);
-
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
     setTotalVideoName(videoName);
   };
 
