@@ -1,44 +1,28 @@
-import axios from "axios";
+import _axios from "axios";
 
-const createAxiosInstance = (baseURL, contentType = "multipart/form-data") => {
-  // 建立自訂義的 axios 實例
-  const instance = axios.create({
-    baseURL: baseURL || "http://140.125.35.8:8079/ntuh_laravel_API/public/",
+const axios = (baseURL, passType = "multipart/form-data") => {
+  // 建立自訂義的axios
+  const instance = _axios.create({
+    baseURL: baseURL || "http://140.125.35.8:8079/ntuh_laravel_API/public/", //JSON-Server端口位置
+    headers: { "Content-Type": passType, charset: "utf-8" },
     timeout: 3000,
-    headers: {
-      "Content-Type": contentType,
-      Accept: "application/json", // 接受 JSON 格式
-    },
   });
-
-  // 添加錯誤處理攔截器
-  instance.interceptors.response.use(
-    (response) => response.data, // 返回 API 響應的數據部分
-    (error) => {
-      // 处理错误，例如显示通知或记录错误
-      console.error("API 請求錯誤:", error);
-      throw error; // 返回 Promise 錯誤
-    }
-  );
 
   return instance;
 };
 
-const api = createAxiosInstance();
+// make axios get request api from the baseURL and /api/v1/GET/ + path
+export const get = (path) => axios().get(`api/v1/GET/${path}`);
+// make axios post request api from the baseURL and /api/v1/POST/ + path
+export const post = (path, data) => axios().post(`api/v1/POST/${path}`, data);
+// make axios put request api from the baseURL and /api/v1/PUT/ + path
+export const put = (path, data) =>
+  axios(
+    "http://140.125.35.8:8079/ntuh_laravel_API/public/",
+    "application/x-www-form-urlencoded"
+  ).put(`api/v1/PUT/${path}`, data);
+// make axios delete request api from the baseURL and /api/v1/DELETE/ + path
+export const del = (path) => axios().delete(`api/v1/DELETE/${path}`);
 
-// 创建通用的请求函数
-const makeRequest = (method, path, data) => {
-  return api.request({
-    method,
-    url: `api/v1/${path}`,
-    data,
-  });
-};
-
-// 包装不同 HTTP 方法的请求
-export const get = (path) => makeRequest("GET", path);
-export const post = (path, data) => makeRequest("POST", path, data);
-export const put = (path, data) => makeRequest("PUT", path, data);
-export const del = (path) => makeRequest("DELETE", path);
-
-export { api };
+export { axios };
+export default axios();
