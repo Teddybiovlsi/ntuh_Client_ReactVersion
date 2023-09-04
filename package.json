@@ -28,7 +28,6 @@
     "chart.js": "^4.4.0",
     "formik": "^2.2.9",
     "laravel-vite-plugin": "^0.7.4",
-    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
