@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Container, Row, Form, Table, Pagination } from 'react-bootstrap';
+import { Col, Container, Row, Form, Table } from 'react-bootstrap';
 import { get } from '../axios';
 import LoadingComponent from '../../components/LoadingComponent';
 import DataSize from '../JSON/slectDataSize.json';
+import ReactPaginate from 'react-paginate';
 
 export default function RecordPage({ recordType = 0 }) {
   // 取得當前時間
@@ -15,6 +16,7 @@ export default function RecordPage({ recordType = 0 }) {
   const [originDataRecord, setOriginDataRecord] = useState([]);
   const [filteredDataRecord, setFilteredDataRecord] = useState([]);
   const [filteredDataIsNull, setFilteredDataIsNull] = useState(false);
+  const [showDataRecord, setShowDataRecord] = useState([]);
 
   const [startRecordDate, setStartRecordDate] = useState();
   const [endRecordDate, setEndRecordDate] = useState();
@@ -30,11 +32,37 @@ export default function RecordPage({ recordType = 0 }) {
   // 篩選資料筆數
   const [selectDataCount, setSelectDataCount] = useState(5);
 
-  const usrToken = JSON.parse(
-    localStorage?.getItem('user') || sessionStorage?.getItem('user')
-  )?.client_token;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [itemOffset, setItemOffset] = useState(0);
+  const [endOffset, setEndOffset] = useState(selectDataCount);
+
+  const [currentItems, setCurrentItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(0);
 
   useEffect(() => {
+    setShowDataRecord(filteredDataRecord.slice(itemOffset, endOffset));
+  }, [filteredDataRecord, itemOffset, endOffset]);
+
+  useEffect(() => {
+    const rows = filteredDataRecord.length;
+    setItemsPerPage(Math.ceil(rows / selectDataCount));
+    setShowDataRecord(filteredDataRecord.slice(0, selectDataCount));
+  }, [filteredDataRecord, selectDataCount]);
+
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+    const start = event.selected * selectDataCount;
+    const end = start + selectDataCount;
+    setItemOffset(start);
+    setEndOffset(end);
+    console.log('start-end', start, end);
+  };
+
+  useEffect(() => {
+    const usrToken = JSON.parse(
+      localStorage?.getItem('user') || sessionStorage?.getItem('user')
+    )?.client_token;
     setLoading(true);
     handelRecord({ api: `client/record/${usrToken}` });
   }, [recordType]);
@@ -51,6 +79,10 @@ export default function RecordPage({ recordType = 0 }) {
       setOriginDataRecord(originData);
       setFilteredDataRecord(originData);
       setTotalVideoName(clientVideoName);
+
+      setItemsPerPage(Math.ceil(originData.length / selectDataCount));
+      setCurrentItems(originData.slice(itemOffset, endOffset));
+      setItemOffset(itemOffset + selectDataCount);
 
       setTimeout(() => {
         setLoading(false);
@@ -96,9 +128,16 @@ export default function RecordPage({ recordType = 0 }) {
         return isDateInRange && isVideoMatch && isChapterMatch;
       });
     };
-
     setFilteredDataRecord(filterData());
-  }, [startSelectDate, selectFinishChapter, endSelectDate, selectVideo]);
+    setItemsPerPage(Math.ceil(filterData().length / selectDataCount));
+    setCurrentPage(0);
+  }, [
+    startSelectDate,
+    selectFinishChapter,
+    endSelectDate,
+    selectVideo,
+    selectDataCount,
+  ]);
 
   useEffect(() => {
     setFilteredDataIsNull(filteredDataRecord.length === 0);
@@ -118,7 +157,7 @@ export default function RecordPage({ recordType = 0 }) {
 
   const tableBody = (
     <tbody>
-      {filteredDataRecord.map((item, index) => {
+      {showDataRecord.map((item, index) => {
         const { clientVideoCheck, chapter, answerState, praticeDate } = item;
 
         const formattedDate = new Date(praticeDate).toLocaleString();
@@ -216,7 +255,7 @@ export default function RecordPage({ recordType = 0 }) {
             <Form.Select
               aria-label='SelectDataCount'
               onChange={(e) => {
-                setSelectDataCount(e.target.value);
+                setSelectDataCount(Number(e.target.value));
               }}
             >
               {DataSize.map((item, index) => (
@@ -241,18 +280,28 @@ export default function RecordPage({ recordType = 0 }) {
         )}
         <Row>
           <Col md={6} className='mx-auto'>
-            <Pagination
-              className='justify-content-center'
-              size='md'
-              aria-label='Page navigation example'
-            >
-              <Pagination.Prev />
-              <Pagination.Item active>{1}</Pagination.Item>
-            </Pagination>
+            <ReactPaginate
+              forcePage={currentPage}
+              previousLabel={'上一頁'}
+              nextLabel={'下一頁'}
+              breakLabel={'...'}
+              pageCount={itemsPerPage}
+              pageRangeDisplayed={3}
+              onPageChange={handlePageClick}
+              containerClassName='justify-content-center pagination'
+              breakClassName={'page-item'}
+              breakLinkClassName={'page-link'}
+              pageClassName={'page-item'}
+              pageLinkClassName={'page-link'}
+              previousClassName={'page-item'}
+              previousLinkClassName={'page-link'}
+              nextClassName={'page-item'}
+              nextLinkClassName={'page-link'}
+              activeClassName={'active'}
+            />
           </Col>
         </Row>
       </Col>
-      
     </Container>
   );
 }
