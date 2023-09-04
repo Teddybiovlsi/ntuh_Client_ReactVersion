@@ -57,9 +57,8 @@ export default function Header({ expand = "lg" }) {
               ) : null}
 
               {/* 衛教天地Nav */}
-              <LinkContainer to="/">
-                <Nav.Link>衛教天地</Nav.Link>
-              </LinkContainer>
+              <Nav.Link href="https://www.ylh.gov.tw/?aid=625">衛教天地</Nav.Link>
+
               {/* 練習紀錄 */}
               {user !== null ? (
                 <NavDropdown title="練習紀錄" id="collasible-nav-dropdown">
@@ -109,11 +108,11 @@ export default function Header({ expand = "lg" }) {
                 id="collasible-nav-dropdown"
                 align={{ lg: "end" }}
               >
-                {user !== null ? (
+                {/* {user !== null ? (
                   <LinkContainer to="/">
                     <NavDropdown.Item>使用者設定</NavDropdown.Item>
                   </LinkContainer>
-                ) : null}
+                ) : null} */}
 
                 {user !== null ? (
                   <NavDropdown.Item

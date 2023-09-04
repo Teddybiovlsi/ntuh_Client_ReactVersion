@@ -1,12 +1,16 @@
-import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import React from 'react';
+import { Outlet, Navigate } from 'react-router-dom';
 
-export default function AuthProtected({ user, redirectPath = "/", children }) {
+export default function AuthProtected({ user, redirectPath = '/', children }) {
   // const user = JSON.parse(localStorage?.getItem("user"));
   const nowTime = new Date();
 
+
   if (!user) {
-    return <Navigate to="/" />;
+    localStorage.getItem('user') && localStorage.clear();
+    sessionStorage.getItem('user') && sessionStorage.clear();
+
+    return <Navigate to="/" replace />;
   } else {
     // if (new Date(user.expTime) < nowTime) {
     //   // console.log("憑證過期");
