@@ -34,28 +34,40 @@ export default function RecordPage({ recordType = 0 }) {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [itemOffset, setItemOffset] = useState(0);
-  const [endOffset, setEndOffset] = useState(selectDataCount);
+  const [pagination, setPagination] = useState({
+    itemOffset: 0,
+    endOffset: selectDataCount,
+    currentItems: 0,
+    itemsPerPage: 0,
+  });
 
-  const [currentItems, setCurrentItems] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(0);
+  const updateShowDataRecord = (start, end) => {
+    setShowDataRecord(filteredDataRecord.slice(start, end));
+  };
 
   useEffect(() => {
-    setShowDataRecord(filteredDataRecord.slice(itemOffset, endOffset));
-  }, [filteredDataRecord, itemOffset, endOffset]);
+    const { itemOffset, endOffset } = pagination;
+    updateShowDataRecord(itemOffset, endOffset);
+  }, [filteredDataRecord, pagination]);
 
   useEffect(() => {
     const rows = filteredDataRecord.length;
-    setItemsPerPage(Math.ceil(rows / selectDataCount));
-    setShowDataRecord(filteredDataRecord.slice(0, selectDataCount));
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      itemsPerPage: Math.ceil(rows / selectDataCount),
+    }));
+    updateShowDataRecord(0, selectDataCount);
   }, [filteredDataRecord, selectDataCount]);
 
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
     const start = event.selected * selectDataCount;
     const end = start + selectDataCount;
-    setItemOffset(start);
-    setEndOffset(end);
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      itemOffset: start,
+      endOffset: end,
+    }));
     console.log('start-end', start, end);
   };
 
@@ -79,10 +91,7 @@ export default function RecordPage({ recordType = 0 }) {
       setOriginDataRecord(originData);
       setFilteredDataRecord(originData);
       setTotalVideoName(clientVideoName);
-
-      setItemsPerPage(Math.ceil(originData.length / selectDataCount));
-      setCurrentItems(originData.slice(itemOffset, endOffset));
-      setItemOffset(itemOffset + selectDataCount);
+      updateShowDataRecord(0, selectDataCount);
 
       setTimeout(() => {
         setLoading(false);
@@ -129,7 +138,10 @@ export default function RecordPage({ recordType = 0 }) {
       });
     };
     setFilteredDataRecord(filterData());
-    setItemsPerPage(Math.ceil(filterData().length / selectDataCount));
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      itemsPerPage: Math.ceil(filterData().length / selectDataCount),
+    }));
     setCurrentPage(0);
   }, [
     startSelectDate,
@@ -285,7 +297,7 @@ export default function RecordPage({ recordType = 0 }) {
               previousLabel={'上一頁'}
               nextLabel={'下一頁'}
               breakLabel={'...'}
-              pageCount={itemsPerPage}
+              pageCount={pagination.itemsPerPage}
               pageRangeDisplayed={3}
               onPageChange={handlePageClick}
               containerClassName='justify-content-center pagination'
