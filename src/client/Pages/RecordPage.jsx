@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Container, Row, Form, Table } from 'react-bootstrap';
+import { Col, Container, Row, Form, Table, Pagination } from 'react-bootstrap';
 import { get } from '../axios';
 import LoadingComponent from '../../components/LoadingComponent';
+import DataSize from '../JSON/slectDataSize.json';
 
-export default function RecordPage({
-  recordType = 0,
-  currentCity = 'Asia/Taipei',
-}) {
+export default function RecordPage({ recordType = 0 }) {
   // 取得當前時間
   // const isoDateInTaipei = GetCurrentDateTime();
   const recordTypeIsPraticeOrTest = recordType === 1 ? '測驗用' : '練習用';
@@ -20,11 +18,17 @@ export default function RecordPage({
 
   const [startRecordDate, setStartRecordDate] = useState();
   const [endRecordDate, setEndRecordDate] = useState();
-
+  // 以下是篩選條件
+  // 篩選影片名稱
   const [selectVideo, setSelectVideo] = useState('');
+  // 篩選完成進度
   const [selectFinishChapter, setSelectFinishChapter] = useState('');
+  // 篩選起始日期
   const [startSelectDate, setStartSelectDate] = useState('');
+  // 篩選結束日期
   const [endSelectDate, setEndSelectDate] = useState('');
+  // 篩選資料筆數
+  const [selectDataCount, setSelectDataCount] = useState(5);
 
   const usrToken = JSON.parse(
     localStorage?.getItem('user') || sessionStorage?.getItem('user')
@@ -207,6 +211,22 @@ export default function RecordPage({
             </Form.Group>
           </Col>
         </Row>
+        <Row>
+          <Col md={6} className='ms-auto'>
+            <Form.Select
+              aria-label='SelectDataCount'
+              onChange={(e) => {
+                setSelectDataCount(e.target.value);
+              }}
+            >
+              {DataSize.map((item, index) => (
+                <option key={item.id} value={item.value}>
+                  {item.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+        </Row>
         {filteredDataIsNull !== true ? (
           <Row>
             <Table striped bordered hover size='sm'>
@@ -219,7 +239,20 @@ export default function RecordPage({
             <h1>該區段查無紀錄資料</h1>
           </Row>
         )}
+        <Row>
+          <Col md={6} className='mx-auto'>
+            <Pagination
+              className='justify-content-center'
+              size='md'
+              aria-label='Page navigation example'
+            >
+              <Pagination.Prev />
+              <Pagination.Item active>{1}</Pagination.Item>
+            </Pagination>
+          </Col>
+        </Row>
       </Col>
+      
     </Container>
   );
 }
