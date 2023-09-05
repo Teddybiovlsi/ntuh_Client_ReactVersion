@@ -15,7 +15,9 @@ import { AiFillSetting } from "react-icons/ai";
 
 export default function Header({ expand = "lg" }) {
   // const [user, setUser] = useState(JSON.parse(localStorage?.getItem("client")));
-  const user = JSON.parse(localStorage?.getItem("user"));
+  const user = JSON.parse(
+    localStorage?.getItem("user") || sessionStorage?.getItem("user")
+  );
 
   const navigate = useNavigate();
 
@@ -57,7 +59,9 @@ export default function Header({ expand = "lg" }) {
               ) : null}
 
               {/* 衛教天地Nav */}
-              <Nav.Link href="https://www.ylh.gov.tw/?aid=625">衛教天地</Nav.Link>
+              <Nav.Link href="https://www.ylh.gov.tw/?aid=625">
+                衛教天地
+              </Nav.Link>
 
               {/* 練習紀錄 */}
               {user !== null ? (
@@ -108,11 +112,11 @@ export default function Header({ expand = "lg" }) {
                 id="collasible-nav-dropdown"
                 align={{ lg: "end" }}
               >
-                {/* {user !== null ? (
-                  <LinkContainer to="/">
+                {user !== null ? (
+                  <LinkContainer to="/setting">
                     <NavDropdown.Item>使用者設定</NavDropdown.Item>
                   </LinkContainer>
-                ) : null} */}
+                ) : null}
 
                 {user !== null ? (
                   <NavDropdown.Item
