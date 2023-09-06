@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Col,
   Row,
@@ -21,7 +21,12 @@ export default function UserSetting() {
   const user = JSON.parse(
     localStorage?.getItem('user') || sessionStorage?.getItem('user')
   );
+
   const { Formik } = formik;
+
+  const userNewNameSchema = yup.object().shape({
+    userNewName: yup.string().required('請輸入姓名'),
+  });
 
   const schema = yup.object().shape({
     oldPwd: yup.string().required('請輸入原始密碼'),
@@ -118,7 +123,53 @@ export default function UserSetting() {
           <Modal.Title>使用者名稱</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          
+          <Formik
+            validationSchema={userNewNameSchema}
+            onSubmit={(values) => {
+              console.log(values);
+              if (sessionStorage.getItem('user')) {
+                sessionStorage.setItem(
+                  'user',
+                  JSON.stringify({ ...user, client_name: values.userNewName })
+                );
+              } else {
+                localStorage.setItem(
+                  'user',
+                  JSON.stringify({ ...user, client_name: values.userNewName })
+                );
+              }
+              setNameModalShow(false);
+            }}
+            initialValues={{
+              userNewName: user.client_name,
+            }}
+          >
+            {({ handleSubmit, handleChange, values, errors }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                <Form.Group className='mb-3' controlId='formChangeUserName'>
+                  <Form.Label>請輸入姓名：</Form.Label>
+                  <Form.Control
+                    type='text'
+                    name='userNewName'
+                    placeholder='請於此輸入姓名'
+                    onChange={handleChange}
+                    value={values.userNewName}
+                    isInvalid={!!errors.userNewName}
+                    required
+                  />
+                  <Form.Control.Feedback type='invalid'>
+                    {errors.userNewName}
+                  </Form.Control.Feedback>
+                </Form.Group>
+                <BtnBootstrap
+                  variant='outline-primary'
+                  btnSize='md'
+                  btnType={'submit'}
+                  text={'送出'}
+                ></BtnBootstrap>
+              </Form>
+            )}
+          </Formik>
         </Modal.Body>
       </Modal>
 
@@ -135,6 +186,7 @@ export default function UserSetting() {
             validationSchema={schema}
             onSubmit={(values) => {
               console.log(values);
+              setNameModalShow(false);
             }}
             initialValues={{
               oldPwd: '',
