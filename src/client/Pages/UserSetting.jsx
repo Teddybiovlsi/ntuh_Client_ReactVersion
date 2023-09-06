@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Col,
   Row,
@@ -7,27 +7,28 @@ import {
   Modal,
   InputGroup,
   FormControl,
-} from "react-bootstrap";
-import styles from "../../styles/pages/UserSetting.module.scss";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import BtnBootstrap from "../../components/BtnBootstrap";
-import FormPwd from "../Form/shared/FormPwd";
-import useBoolean from "../Form/shared/useBoolean";
-import * as formik from "formik";
-import * as yup from "yup";
+} from 'react-bootstrap';
+import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
+import BtnBootstrap from '../../components/BtnBootstrap';
+import FormPwd from '../Form/shared/FormPwd';
+import useBoolean from '../Form/shared/useBoolean';
+import * as formik from 'formik';
+import * as yup from 'yup';
+import ConvertNameToHide from '../Form/shared/func/ConvertNameToHide';
+import styles from '../../styles/pages/UserSetting.module.scss';
 
 export default function UserSetting() {
   const user = JSON.parse(
-    localStorage?.getItem("user") || sessionStorage?.getItem("user")
+    localStorage?.getItem('user') || sessionStorage?.getItem('user')
   );
   const { Formik } = formik;
 
   const schema = yup.object().shape({
-    oldPwd: yup.string().required(),
-    newPwd: yup.string().required(),
+    oldPwd: yup.string().required('請輸入原始密碼'),
+    newPwd: yup.string().required('請輸入新密碼'),
     newPwdCheck: yup
       .string()
-      .test("密碼相符", "密碼必須相符", function (value) {
+      .test('密碼相符', '密碼必須相符', function (value) {
         return this.parent.newPwd === value;
       }),
   });
@@ -42,25 +43,25 @@ export default function UserSetting() {
     <>
       <Container>
         <Col>
-          <h1 className="text-center">使用者設定</h1>
+          <h1 className='text-center'>使用者設定</h1>
         </Col>
         <Col className={`mx-auto ${styles.UserSettingContainer}`}>
-          <div className="d-flex justify-content-center ms-2 me-2">
+          <div className='d-flex justify-content-center ms-2 me-2'>
             <div
-              type={"button"}
+              type={'button'}
               className={styles.ButtonOfEachSettingContainer}
               onMouseDown={() => {
                 setNameModalShow(true);
               }}
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
-                <Col className="text-start fs-3">
-                  <Col>使用者名稱</Col>
-                  <Col className={styles.UserCurrentName}>
-                    {user.client_name}
-                  </Col>
-                </Col>
-                <Col className="text-end">
+                <Col className='d-flex align-items-center justify-content-between fs-3'>
+                  <div className='text-start'>
+                    使用者名稱
+                    <div className={`${styles.UserCurrentName}`}>
+                      {ConvertNameToHide(user.client_name)}
+                    </div>
+                  </div>
                   <MdOutlineKeyboardArrowRight
                     className={`fs-1 ${styles.buttonIco}`}
                   />
@@ -68,17 +69,17 @@ export default function UserSetting() {
               </Row>
             </div>
           </div>
-          <div className="d-flex justify-content-center ms-2 me-2">
+          <div className='d-flex justify-content-center ms-2 me-2'>
             <div
-              type={"button"}
+              type={'button'}
               className={styles.ButtonOfEachSettingContainer}
               onMouseDown={() => {
                 setPasswordModalShow(true);
               }}
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
-                <Col className="text-start fs-3">使用者密碼</Col>
-                <Col className="text-end">
+                <Col className='d-flex align-items-center justify-content-between fs-3'>
+                  <div className='text-start'>使用者密碼</div>
                   <MdOutlineKeyboardArrowRight
                     className={`fs-1 ${styles.buttonIco}`}
                   />
@@ -86,27 +87,25 @@ export default function UserSetting() {
               </Row>
             </div>
           </div>
-          <div className="d-flex justify-content-center ms-2 me-2">
+          <div className='d-flex justify-content-center ms-2 me-2'>
             <div
-              type={"button"}
+              type={'button'}
               className={styles.ButtonOfEachSettingContainer}
               onMouseDown={() => {
                 setEmailModalShow(true);
               }}
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
-                <Col className="text-start fs-3">
-                  <Col>聯絡信箱</Col>
-                  <Col className={styles.UserCurrentMail}>
-                    {user.client_email}
-                  </Col>
-                </Col>
-                <Col className="text-end">
-                  <div className="vertical-align-middle">
-                    <MdOutlineKeyboardArrowRight
-                      className={`fs-1 ${styles.buttonIco}`}
-                    />
+                <Col className='d-flex align-items-center justify-content-between fs-3'>
+                  <div className='text-start'>
+                    聯絡信箱
+                    <div className={`text-start ${styles.UserCurrentMail}`}>
+                      {user.client_email}
+                    </div>
                   </div>
+                  <MdOutlineKeyboardArrowRight
+                    className={`fs-1 ${styles.buttonIco}`}
+                  />
                 </Col>
               </Row>
             </div>
@@ -118,8 +117,9 @@ export default function UserSetting() {
         <Modal.Header closeButton>
           <Modal.Title>使用者名稱</Modal.Title>
         </Modal.Header>
-        <Modal.Body>更改使用者名稱位置</Modal.Body>
-        <Modal.Footer>送出 重置</Modal.Footer>
+        <Modal.Body>
+          
+        </Modal.Body>
       </Modal>
 
       {/* 修改使用者密碼Modal */}
@@ -137,9 +137,9 @@ export default function UserSetting() {
               console.log(values);
             }}
             initialValues={{
-              oldPwd: "",
-              newPwd: "",
-              newPwdCheck: "",
+              oldPwd: '',
+              newPwd: '',
+              newPwdCheck: '',
             }}
           >
             {({
@@ -152,13 +152,13 @@ export default function UserSetting() {
             }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 <FormPwd
-                  ControlName="oldPwd"
+                  ControlName='oldPwd'
                   SetStrengthMeter={false}
-                  LabelForName="formOldPassword"
-                  LabelClassName="fs-6"
-                  LabelMessage="請輸入原始密碼："
-                  FormControlPlaceHolder="請於這裡輸入原始密碼"
-                  FeedBackClassName="fs-6"
+                  LabelForName='formOldPassword'
+                  LabelClassName='fs-6'
+                  LabelMessage='請輸入原始密碼：'
+                  FormControlPlaceHolder='請於這裡輸入原始密碼'
+                  FeedBackClassName='fs-6'
                   PwdValue={values.oldPwd}
                   ChangeEvent={handleChange}
                   InValidCheck={touched.oldPwd && errors.oldPwd}
@@ -167,13 +167,13 @@ export default function UserSetting() {
                   ErrorMessage={errors.oldPwd}
                 />
                 <FormPwd
-                  ControlName="newPwd"
+                  ControlName='newPwd'
                   SetStrengthMeter={false}
-                  LabelForName="formNewPassword"
-                  LabelClassName="fs-6"
-                  FeedBackClassName="fs-6"
-                  LabelMessage="請輸入新密碼："
-                  FormControlPlaceHolder="請於這裡輸入新密碼"
+                  LabelForName='formNewPassword'
+                  LabelClassName='fs-6'
+                  FeedBackClassName='fs-6'
+                  LabelMessage='請輸入新密碼：'
+                  FormControlPlaceHolder='請於這裡輸入新密碼'
                   PwdValue={values.newPwd}
                   ChangeEvent={handleChange}
                   InValidCheck={touched.newPwd && errors.newPwd}
@@ -182,13 +182,13 @@ export default function UserSetting() {
                   ErrorMessage={errors.newPwd}
                 />
                 <FormPwd
-                  ControlName="newPwdCheck"
+                  ControlName='newPwdCheck'
                   SetStrengthMeter={false}
-                  LabelForName="formNewPasswordCheck"
-                  LabelClassName="fs-6"
-                  FeedBackClassName="fs-6"
-                  LabelMessage="請再次輸入新密碼："
-                  FormControlPlaceHolder="請於這裡再次輸入新密碼"
+                  LabelForName='formNewPasswordCheck'
+                  LabelClassName='fs-6'
+                  FeedBackClassName='fs-6'
+                  LabelMessage='請再次輸入新密碼：'
+                  FormControlPlaceHolder='請於這裡再次輸入新密碼'
                   PwdValue={values.newPwdCheck}
                   ChangeEvent={handleChange}
                   InValidCheck={touched.newPwdCheck && errors.newPwdCheck}
@@ -197,18 +197,18 @@ export default function UserSetting() {
                   ErrorMessage={errors.newPwdCheck}
                 />
                 <BtnBootstrap
-                  btnPosition=""
-                  variant="outline-primary"
-                  btnSize="md"
-                  btnType={"button"}
-                  text={"重置"}
+                  btnPosition=''
+                  variant='outline-primary'
+                  btnSize='md'
+                  btnType={'button'}
+                  text={'重置'}
                   onClickEventName={() => resetForm()}
                 ></BtnBootstrap>
                 <BtnBootstrap
-                  variant="outline-danger"
-                  btnSize="md"
-                  btnType={"submit"}
-                  text={"送出"}
+                  variant='outline-danger'
+                  btnSize='md'
+                  btnType={'submit'}
+                  text={'送出'}
                 ></BtnBootstrap>
               </Form>
             )}
