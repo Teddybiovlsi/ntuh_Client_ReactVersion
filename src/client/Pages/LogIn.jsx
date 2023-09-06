@@ -52,20 +52,6 @@ export default function LogIn() {
 
       const userInfo = await response.data;
 
-      //   若中文姓名為三個字，則顯示中間字為＊，例如：王小明 => 王＊明
-      //   若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王＊＊明
-      //   若中文姓名為兩個字，則顯示第二個字為＊，例如：王明 => 王＊
-      // if (userInfo.client_name.length === 2) {
-      //   userInfo.client_name =
-      //     userInfo.client_name[0] + 'O' + userInfo.client_name[1];
-      // } else if (userInfo.client_name.length === 3) {
-      //   userInfo.client_name =
-      //     userInfo.client_name[0] + 'O' + userInfo.client_name[2];
-      // } else {
-      //   userInfo.client_name =
-      //     userInfo.client_name[0] + 'OO' + userInfo.client_name[3];
-      // }
-
       setTempUser(userInfo);
       // console.log(userInfo);
 
