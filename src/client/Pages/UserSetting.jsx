@@ -28,7 +28,7 @@ export default function UserSetting() {
     userNewName: yup.string().required('請輸入姓名'),
   });
 
-  const schema = yup.object().shape({
+  const userNewPwdSchema = yup.object().shape({
     oldPwd: yup.string().required('請輸入原始密碼'),
     newPwd: yup.string().required('請輸入新密碼'),
     newPwdCheck: yup
@@ -36,6 +36,13 @@ export default function UserSetting() {
       .test('密碼相符', '密碼必須相符', function (value) {
         return this.parent.newPwd === value;
       }),
+  });
+
+  const userNewEmailSchema = yup.object().shape({
+    userNewEmail: yup
+      .string()
+      .email('請輸入正確的電子郵件格式')
+      .required('請輸入信箱'),
   });
 
   const [showPwd, { setShowPwd }] = useBoolean(false);
@@ -127,17 +134,14 @@ export default function UserSetting() {
             validationSchema={userNewNameSchema}
             onSubmit={(values) => {
               console.log(values);
-              if (sessionStorage.getItem('user')) {
-                sessionStorage.setItem(
-                  'user',
-                  JSON.stringify({ ...user, client_name: values.userNewName })
-                );
-              } else {
-                localStorage.setItem(
-                  'user',
-                  JSON.stringify({ ...user, client_name: values.userNewName })
-                );
-              }
+              const userToUpdate = {
+                ...user,
+                client_name: values.userNewName,
+              };
+              const storage = sessionStorage.getItem('user')
+                ? sessionStorage
+                : localStorage;
+              storage.setItem('user', JSON.stringify(userToUpdate));
               setNameModalShow(false);
             }}
             initialValues={{
@@ -183,7 +187,7 @@ export default function UserSetting() {
         </Modal.Header>
         <Modal.Body>
           <Formik
-            validationSchema={schema}
+            validationSchema={userNewPwdSchema}
             onSubmit={(values) => {
               console.log(values);
               setNameModalShow(false);
@@ -272,8 +276,52 @@ export default function UserSetting() {
         <Modal.Header closeButton>
           <Modal.Title>使用者信箱</Modal.Title>
         </Modal.Header>
-        <Modal.Body>更改使用者信箱位置</Modal.Body>
-        <Modal.Footer>重置 送出</Modal.Footer>
+        <Modal.Body>
+          <Formik
+            validationSchema={userNewEmailSchema}
+            onSubmit={(values) => {
+              console.log(values);
+              const userToUpdate = {
+                ...user,
+                client_email: values.userNewEmail,
+              };
+              const storage = sessionStorage.getItem('user')
+                ? sessionStorage
+                : localStorage;
+              storage.setItem('user', JSON.stringify(userToUpdate));
+              setEmailModalShow(false);
+            }}
+            initialValues={{
+              userNewEmail: user.client_email,
+            }}
+          >
+            {({ handleSubmit, handleChange, values, errors }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                <Form.Group className='mb-3' controlId='formChangeUserName'>
+                  <Form.Label>請輸入電子郵件(email)：</Form.Label>
+                  <Form.Control
+                    type='email'
+                    name='userNewEmail'
+                    placeholder='請於此輸入電子郵件(email)'
+                    onChange={handleChange}
+                    value={values.userNewEmail}
+                    isInvalid={!!errors.userNewEmail}
+                    required
+                  />
+                  <Form.Control.Feedback type='invalid'>
+                    {errors.userNewEmail}
+                  </Form.Control.Feedback>
+                </Form.Group>
+                <BtnBootstrap
+                  variant='outline-primary'
+                  btnSize='md'
+                  btnType={'submit'}
+                  text={'送出'}
+                ></BtnBootstrap>
+              </Form>
+            )}
+          </Formik>
+        </Modal.Body>
       </Modal>
     </>
   );
