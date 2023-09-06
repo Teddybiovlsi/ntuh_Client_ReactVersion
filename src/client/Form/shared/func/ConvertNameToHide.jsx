@@ -6,7 +6,11 @@
 // 若中文姓名為四個字以上，則顯示中間兩個字為＊，例如：王小明 => 王OO明
 function ConvertNameToHide(name) {
   if (name.length > 1 && name.length <= 4) {
-    name = name[0] + 'O' + (name.length > 3 ? 'O' : '') + name.slice(-1);
+    name =
+      name[0] +
+      'O' +
+      (name.length > 3 ? 'O' : '') +
+      (name.length > 2 ? name.slice(-1) : '');
   }
   return name;
 }
