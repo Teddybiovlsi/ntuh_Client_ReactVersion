@@ -438,14 +438,7 @@ export default function UserSetting() {
             btnType={'button'}
             text={'確認'}
             onClickEventName={() => {
-              reWriteUserProfile({
-                api: `client/${user.client_token}`,
-                data: {
-                  clientPWD: userNewPwd.clientPWD,
-                  clientLatestPWD: userNewPwd.clientLatestPWD,
-                },
-                updateType: 'password',
-              });
+              setPassWordConfirmModalShow(false);
             }}
           ></BtnBootstrap>
         </Modal.Footer>
