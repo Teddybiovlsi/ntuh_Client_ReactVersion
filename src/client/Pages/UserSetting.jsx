@@ -221,12 +221,16 @@ export default function UserSetting() {
                     {errors.userNewName}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <BtnBootstrap
-                  variant='outline-primary'
-                  btnSize='md'
-                  btnType={'submit'}
-                  text={'送出'}
-                ></BtnBootstrap>
+                <div className='d-grid gap-2'>
+                  <BtnBootstrap
+                    btnPosition=''
+                    variant='outline-primary'
+                    btnSize='md'
+                    btnType={'submit'}
+                    text={'送出'}
+                    disabled={values.userNewName === user.client_name}
+                  />
+                </div>
               </Form>
             )}
           </Formik>
@@ -309,20 +313,16 @@ export default function UserSetting() {
                   ShowPwdCondition={showPwd}
                   ErrorMessage={errors.newPwdCheck}
                 />
-                <BtnBootstrap
-                  btnPosition=''
-                  variant='outline-primary'
-                  btnSize='md'
-                  btnType={'button'}
-                  text={'重置'}
-                  onClickEventName={() => resetForm()}
-                ></BtnBootstrap>
-                <BtnBootstrap
-                  variant='outline-danger'
-                  btnSize='md'
-                  btnType={'submit'}
-                  text={'送出'}
-                ></BtnBootstrap>
+                <div className='d-grid gap-2'>
+                  <BtnBootstrap
+                    btnPosition=''
+                    variant='outline-primary'
+                    btnSize='md'
+                    btnType={'submit'}
+                    text={'送出'}
+                    disabled={values.userNewEmail === user.client_email}
+                  />
+                </div>
               </Form>
             )}
           </Formik>
@@ -374,12 +374,16 @@ export default function UserSetting() {
                     {errors.userNewEmail}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <BtnBootstrap
-                  variant='outline-primary'
-                  btnSize='md'
-                  btnType={'submit'}
-                  text={'送出'}
-                ></BtnBootstrap>
+                <div className='d-grid gap-2'>
+                  <BtnBootstrap
+                    btnPosition=''
+                    variant='outline-primary'
+                    btnSize='md'
+                    btnType={'submit'}
+                    text={'送出'}
+                    disabled={values.userNewEmail === user.client_email}
+                  />
+                </div>
               </Form>
             )}
           </Formik>
@@ -405,7 +409,6 @@ export default function UserSetting() {
             text={'取消'}
             onClickEventName={() => {
               setPassWordConfirmModalShow(false);
-              setPasswordModalShow(false);
             }}
           ></BtnBootstrap>
           <BtnBootstrap
@@ -414,7 +417,7 @@ export default function UserSetting() {
             btnType={'button'}
             text={'確認'}
             onClickEventName={() => {
-              setPassWordConfirmModalShow(false);
+              // setPassWordConfirmModalShow(false);
             }}
           ></BtnBootstrap>
         </Modal.Footer>
