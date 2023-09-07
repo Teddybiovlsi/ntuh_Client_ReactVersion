@@ -19,11 +19,18 @@ import styles from '../../styles/pages/UserSetting.module.scss';
 import { post } from '../axios';
 import { toast } from 'react-toastify';
 import ToastAlert from '../../components/ToastAlert';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserSetting() {
+  const navigate = useNavigate();
+
   const user = JSON.parse(
     localStorage?.getItem('user') || sessionStorage?.getItem('user')
   );
+  const [userNewPwd, setUserNewPwd] = useState({
+    clientPWD: '',
+    clientLatestPWD: '',
+  });
 
   const { Formik } = formik;
 
@@ -68,14 +75,29 @@ export default function UserSetting() {
     let rewriteToastid = toast.loading('更新中...');
     try {
       await post(api, data);
-      toast.update(rewriteToastid, {
-        render: '更新使用者資料成功',
-        type: 'success',
-        autoClose: 2000,
-        isLoading: false,
-      });
-      const operation = operationMap[updateType];
-      if (operation) operation(false);
+      if (updateType === 'password') {
+        toast.update(rewriteToastid, {
+          render: '更新使用者資料成功，請重新登入',
+          type: 'success',
+          autoClose: 2000,
+          isLoading: false,
+        });
+        setPassWordConfirmModalShow(false);
+        setTimeout(() => {
+          if (sessionStorage.getItem('user')) sessionStorage.clear();
+          if (localStorage.getItem('user')) localStorage.clear();
+          navigate('/');
+        }, 2000);
+      } else {
+        toast.update(rewriteToastid, {
+          render: '更新使用者資料成功',
+          type: 'success',
+          autoClose: 2000,
+          isLoading: false,
+        });
+        const operation = operationMap[updateType];
+        if (operation) operation(false);
+      }
     } catch (err) {
       if (err.response) {
         const { status, data } = err.response;
@@ -83,10 +105,14 @@ export default function UserSetting() {
         if (status === 404 && data.message === '請求錯誤') {
           handleSessionTimeout();
         } else {
-          console.log(data.message);
-          setError(data.message);
-          setLoading(false);
+          toast.update(rewriteToastid, {
+            render: data.message,
+            type: 'error',
+            autoClose: 2000,
+            isLoading: false,
+          });
         }
+        if (updateType === 'password') setPassWordConfirmModalShow(false);
       } else {
         // 處理非 API 回應的錯誤
         // ...
@@ -221,12 +247,16 @@ export default function UserSetting() {
                     {errors.userNewName}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <BtnBootstrap
-                  variant='outline-primary'
-                  btnSize='md'
-                  btnType={'submit'}
-                  text={'送出'}
-                ></BtnBootstrap>
+                <div className='d-grid gap-2'>
+                  <BtnBootstrap
+                    btnPosition=''
+                    variant='outline-primary'
+                    btnSize='md'
+                    btnType={'submit'}
+                    text={'送出'}
+                    disabled={values.userNewName === user.client_name}
+                  />
+                </div>
               </Form>
             )}
           </Formik>
@@ -246,8 +276,10 @@ export default function UserSetting() {
             validationSchema={userNewPwdSchema}
             onSubmit={(values) => {
               setPassWordConfirmModalShow(true);
-              // console.log(values);
-              // setNameModalShow(false);
+              setUserNewPwd({
+                clientPWD: values.oldPwd,
+                clientLatestPWD: values.newPwd,
+              });
             }}
             initialValues={{
               oldPwd: '',
@@ -255,14 +287,7 @@ export default function UserSetting() {
               newPwdCheck: '',
             }}
           >
-            {({
-              handleSubmit,
-              handleChange,
-              values,
-              touched,
-              errors,
-              resetForm,
-            }) => (
+            {({ handleSubmit, handleChange, values, touched, errors }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 <FormPwd
                   ControlName='oldPwd'
@@ -309,20 +334,16 @@ export default function UserSetting() {
                   ShowPwdCondition={showPwd}
                   ErrorMessage={errors.newPwdCheck}
                 />
-                <BtnBootstrap
-                  btnPosition=''
-                  variant='outline-primary'
-                  btnSize='md'
-                  btnType={'button'}
-                  text={'重置'}
-                  onClickEventName={() => resetForm()}
-                ></BtnBootstrap>
-                <BtnBootstrap
-                  variant='outline-danger'
-                  btnSize='md'
-                  btnType={'submit'}
-                  text={'送出'}
-                ></BtnBootstrap>
+                <div className='d-grid gap-2'>
+                  <BtnBootstrap
+                    btnPosition=''
+                    variant='outline-primary'
+                    btnSize='md'
+                    btnType={'submit'}
+                    text={'送出'}
+                    disabled={values.userNewEmail === user.client_email}
+                  />
+                </div>
               </Form>
             )}
           </Formik>
@@ -374,12 +395,16 @@ export default function UserSetting() {
                     {errors.userNewEmail}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <BtnBootstrap
-                  variant='outline-primary'
-                  btnSize='md'
-                  btnType={'submit'}
-                  text={'送出'}
-                ></BtnBootstrap>
+                <div className='d-grid gap-2'>
+                  <BtnBootstrap
+                    btnPosition=''
+                    variant='outline-primary'
+                    btnSize='md'
+                    btnType={'submit'}
+                    text={'送出'}
+                    disabled={values.userNewEmail === user.client_email}
+                  />
+                </div>
               </Form>
             )}
           </Formik>
@@ -405,7 +430,6 @@ export default function UserSetting() {
             text={'取消'}
             onClickEventName={() => {
               setPassWordConfirmModalShow(false);
-              setPasswordModalShow(false);
             }}
           ></BtnBootstrap>
           <BtnBootstrap
@@ -414,7 +438,14 @@ export default function UserSetting() {
             btnType={'button'}
             text={'確認'}
             onClickEventName={() => {
-              setPassWordConfirmModalShow(false);
+              reWriteUserProfile({
+                api: `client/${user.client_token}`,
+                data: {
+                  clientPWD: userNewPwd.clientPWD,
+                  clientLatestPWD: userNewPwd.clientLatestPWD,
+                },
+                updateType: 'password',
+              });
             }}
           ></BtnBootstrap>
         </Modal.Footer>
