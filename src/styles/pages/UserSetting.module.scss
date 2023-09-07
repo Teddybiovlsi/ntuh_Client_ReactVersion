@@ -1,5 +1,5 @@
 .UserSettingContainer{
-    width: 65%;
+    width: 100%;
     border: 1px solid #8479B1;
     border-radius: 1rem;
     overflow: hidden;
@@ -23,4 +23,20 @@
 .buttonIco {
   width: 1em;
   height: 1.2em;
+}
+@media only screen and (max-width: 576px) {
+  .UserSettingContainer {
+    width: 90%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .UserSettingContainer {
+    width: 65%;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .UserSettingContainer {
+    width: 50%;
+  }
 }
