@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Col,
   Row,
@@ -16,6 +16,9 @@ import * as formik from 'formik';
 import * as yup from 'yup';
 import ConvertNameToHide from '../Form/shared/func/ConvertNameToHide';
 import styles from '../../styles/pages/UserSetting.module.scss';
+import { post } from '../axios';
+import { toast } from 'react-toastify';
+import ToastAlert from '../../components/ToastAlert';
 
 export default function UserSetting() {
   const user = JSON.parse(
@@ -47,9 +50,56 @@ export default function UserSetting() {
 
   const [showPwd, { setShowPwd }] = useBoolean(false);
 
-  const [nameModalShow, setNameModalShow] = React.useState(false);
-  const [passwordModalShow, setPasswordModalShow] = React.useState(false);
-  const [emailModalShow, setEmailModalShow] = React.useState(false);
+  const [nameModalShow, setNameModalShow] = useState(false);
+  const [passwordModalShow, setPasswordModalShow] = useState(false);
+  const [passWordConfirmModalShow, setPassWordConfirmModalShow] =
+    useState(false);
+  const [emailModalShow, setEmailModalShow] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const reWriteUserProfile = async ({ api, data, updateType }) => {
+    const operationMap = {
+      name: setNameModalShow,
+      password: setPasswordModalShow,
+      email: setEmailModalShow,
+    };
+    let rewriteToastid = toast.loading('更新中...');
+    try {
+      await post(api, data);
+      toast.update(rewriteToastid, {
+        render: '更新使用者資料成功',
+        type: 'success',
+        autoClose: 2000,
+        isLoading: false,
+      });
+      const operation = operationMap[updateType];
+      if (operation) operation(false);
+    } catch (err) {
+      if (err.response) {
+        const { status, data } = err.response;
+
+        if (status === 404 && data.message === '請求錯誤') {
+          handleSessionTimeout();
+        } else {
+          console.log(data.message);
+          setError(data.message);
+          setLoading(false);
+        }
+      } else {
+        // 處理非 API 回應的錯誤
+        // ...
+      }
+    }
+  };
+
+  const handleSessionTimeout = () => {
+    alert('登入逾時，請重新登入');
+    if (sessionStorage.getItem('user')) sessionStorage.clear();
+    if (localStorage.getItem('user')) localStorage.clear();
+    navigate('/');
+  };
 
   return (
     <>
@@ -133,7 +183,6 @@ export default function UserSetting() {
           <Formik
             validationSchema={userNewNameSchema}
             onSubmit={(values) => {
-              console.log(values);
               const userToUpdate = {
                 ...user,
                 client_name: values.userNewName,
@@ -142,7 +191,14 @@ export default function UserSetting() {
                 ? sessionStorage
                 : localStorage;
               storage.setItem('user', JSON.stringify(userToUpdate));
-              setNameModalShow(false);
+
+              reWriteUserProfile({
+                api: `client/${user.client_token}`,
+                data: {
+                  clientName: values.userNewName,
+                },
+                updateType: 'name',
+              });
             }}
             initialValues={{
               userNewName: user.client_name,
@@ -189,8 +245,9 @@ export default function UserSetting() {
           <Formik
             validationSchema={userNewPwdSchema}
             onSubmit={(values) => {
-              console.log(values);
-              setNameModalShow(false);
+              setPassWordConfirmModalShow(true);
+              // console.log(values);
+              // setNameModalShow(false);
             }}
             initialValues={{
               oldPwd: '',
@@ -280,7 +337,6 @@ export default function UserSetting() {
           <Formik
             validationSchema={userNewEmailSchema}
             onSubmit={(values) => {
-              console.log(values);
               const userToUpdate = {
                 ...user,
                 client_email: values.userNewEmail,
@@ -289,7 +345,13 @@ export default function UserSetting() {
                 ? sessionStorage
                 : localStorage;
               storage.setItem('user', JSON.stringify(userToUpdate));
-              setEmailModalShow(false);
+              reWriteUserProfile({
+                api: `client/${user.client_token}`,
+                data: {
+                  clientEmail: values.userNewEmail,
+                },
+                updateType: 'email',
+              });
             }}
             initialValues={{
               userNewEmail: user.client_email,
@@ -323,6 +385,42 @@ export default function UserSetting() {
           </Formik>
         </Modal.Body>
       </Modal>
+      {/* 變更密碼警告訊息 */}
+      <Modal
+        show={passWordConfirmModalShow}
+        onHide={() => setPassWordConfirmModalShow(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>變更密碼確認</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className='fs-5'>變更密碼後，會將您登出，請重新登入</p>
+          <p className='fs-5'>請確認是否要變更密碼</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <BtnBootstrap
+            variant='outline-primary'
+            btnSize='md'
+            btnType={'button'}
+            text={'取消'}
+            onClickEventName={() => {
+              setPassWordConfirmModalShow(false);
+              setPasswordModalShow(false);
+            }}
+          ></BtnBootstrap>
+          <BtnBootstrap
+            variant='outline-danger'
+            btnSize='md'
+            btnType={'button'}
+            text={'確認'}
+            onClickEventName={() => {
+              setPassWordConfirmModalShow(false);
+            }}
+          ></BtnBootstrap>
+        </Modal.Footer>
+      </Modal>
+
+      <ToastAlert />
     </>
   );
 }

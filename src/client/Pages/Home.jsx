@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { MdOutlineVideoLibrary } from 'react-icons/md';
 import {
@@ -45,19 +45,27 @@ export default function Home() {
         setLoading(false);
       }, 2000);
     } catch (err) {
-      if (
-        err.response.status === 404 &&
-        err.response.data.message === '請求錯誤'
-      ) {
-        alert('登入逾時，請重新登入');
-        localStorage.clear();
-        navigate('/');
-        return;
+      if (err.response) {
+        const { status, data } = err.response;
+
+        if (status === 404 && data.message === '請求錯誤') {
+          handleSessionTimeout();
+        } else {
+          setError(data.message);
+          setLoading(false);
+        }
       } else {
-        setError(err.response.data.message);
-        setLoading(false);
+        // 處理非 API 回應的錯誤
+        // ...
       }
     }
+  };
+
+  const handleSessionTimeout = () => {
+    alert('登入逾時，請重新登入');
+    if (sessionStorage.getItem('user')) sessionStorage.clear();
+    if (localStorage.getItem('user')) localStorage.clear();
+    navigate('/');
   };
 
   useEffect(() => {
@@ -164,7 +172,7 @@ export default function Home() {
             </Link>
           </Col>
           <Col sm={2} xs={4}>
-            <Link to='/' className={styles.suggestionContainer}>
+            <Link to='/comment' className={styles.suggestionContainer}>
               <Row>
                 <BsFillQuestionCircleFill className='fs-1' />
                 <p className='text-center fs-5'>問題建議</p>
@@ -172,7 +180,7 @@ export default function Home() {
             </Link>
           </Col>
           <Col sm={2} xs={4}>
-            <Link to='/' className={styles.settingContainer}>
+            <Link to='/setting' className={styles.settingContainer}>
               <Row>
                 <AiFillSetting className='fs-1' />
                 <p className='text-center fs-5'>使用者設定</p>
