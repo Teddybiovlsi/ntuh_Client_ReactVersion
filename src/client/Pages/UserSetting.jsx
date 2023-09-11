@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Col,
   Row,
@@ -7,43 +7,48 @@ import {
   Modal,
   InputGroup,
   FormControl,
-} from 'react-bootstrap';
-import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import FormPwd from '../Form/shared/FormPwd';
-import useBoolean from '../Form/shared/useBoolean';
-import * as formik from 'formik';
-import * as yup from 'yup';
-import ConvertNameToHide from '../Form/shared/func/ConvertNameToHide';
-import styles from '../../styles/pages/UserSetting.module.scss';
-import { post } from '../axios';
-import { toast } from 'react-toastify';
-import ToastAlert from '../../components/ToastAlert';
-import { useNavigate } from 'react-router-dom';
+} from "react-bootstrap";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import FormPwd from "../Form/shared/FormPwd";
+import useBoolean from "../Form/shared/useBoolean";
+import * as formik from "formik";
+import * as yup from "yup";
+import ConvertNameToHide from "../Form/shared/func/ConvertNameToHide";
+import styles from "../../styles/pages/UserSetting.module.scss";
+import { post } from "../axios";
+import { toast } from "react-toastify";
+import ToastAlert from "../../components/ToastAlert";
+import { useNavigate } from "react-router-dom";
 
 export default function UserSetting() {
   const navigate = useNavigate();
 
   const user = JSON.parse(
-    localStorage?.getItem('user') || sessionStorage?.getItem('user')
+    localStorage?.getItem("user") || sessionStorage?.getItem("user")
   );
   const [userNewPwd, setUserNewPwd] = useState({
-    clientPWD: '',
-    clientLatestPWD: '',
+    clientPWD: "",
+    clientLatestPWD: "",
   });
 
   const { Formik } = formik;
 
   const userNewNameSchema = yup.object().shape({
-    userNewName: yup.string().required('請輸入姓名'),
+    userNewName: yup.string().required("請輸入姓名"),
   });
 
   const userNewPwdSchema = yup.object().shape({
-    oldPwd: yup.string().required('請輸入原始密碼'),
-    newPwd: yup.string().required('請輸入新密碼'),
+    oldPwd: yup.string().required("請輸入原始密碼"),
+    newPwd: yup
+      .string()
+      .required("請輸入新密碼")
+      .test("", "新密碼不得與舊密碼相符", function (value) {
+        return this.parent.oldPwd !== value;
+      }),
     newPwdCheck: yup
       .string()
-      .test('密碼相符', '密碼必須相符', function (value) {
+      .test("密碼相符", "密碼必須相符", function (value) {
         return this.parent.newPwd === value;
       }),
   });
@@ -51,8 +56,8 @@ export default function UserSetting() {
   const userNewEmailSchema = yup.object().shape({
     userNewEmail: yup
       .string()
-      .email('請輸入正確的電子郵件格式')
-      .required('請輸入信箱'),
+      .email("請輸入正確的電子郵件格式")
+      .required("請輸入信箱"),
   });
 
   const [showPwd, { setShowPwd }] = useBoolean(false);
@@ -72,26 +77,26 @@ export default function UserSetting() {
       password: setPasswordModalShow,
       email: setEmailModalShow,
     };
-    let rewriteToastid = toast.loading('更新中...');
+    let rewriteToastid = toast.loading("更新中...");
     try {
       await post(api, data);
-      if (updateType === 'password') {
+      if (updateType === "password") {
         toast.update(rewriteToastid, {
-          render: '更新使用者資料成功，請重新登入',
-          type: 'success',
+          render: "更新使用者資料成功，請重新登入",
+          type: "success",
           autoClose: 2000,
           isLoading: false,
         });
         setPassWordConfirmModalShow(false);
         setTimeout(() => {
-          if (sessionStorage.getItem('user')) sessionStorage.clear();
-          if (localStorage.getItem('user')) localStorage.clear();
-          navigate('/');
+          if (sessionStorage.getItem("user")) sessionStorage.clear();
+          if (localStorage.getItem("user")) localStorage.clear();
+          navigate("/");
         }, 2000);
       } else {
         toast.update(rewriteToastid, {
-          render: '更新使用者資料成功',
-          type: 'success',
+          render: "更新使用者資料成功",
+          type: "success",
           autoClose: 2000,
           isLoading: false,
         });
@@ -102,17 +107,17 @@ export default function UserSetting() {
       if (err.response) {
         const { status, data } = err.response;
 
-        if (status === 404 && data.message === '請求錯誤') {
+        if (status === 404 && data.message === "請求錯誤") {
           handleSessionTimeout();
         } else {
           toast.update(rewriteToastid, {
             render: data.message,
-            type: 'error',
+            type: "error",
             autoClose: 2000,
             isLoading: false,
           });
         }
-        if (updateType === 'password') setPassWordConfirmModalShow(false);
+        if (updateType === "password") setPassWordConfirmModalShow(false);
       } else {
         // 處理非 API 回應的錯誤
         // ...
@@ -121,30 +126,30 @@ export default function UserSetting() {
   };
 
   const handleSessionTimeout = () => {
-    alert('登入逾時，請重新登入');
-    if (sessionStorage.getItem('user')) sessionStorage.clear();
-    if (localStorage.getItem('user')) localStorage.clear();
-    navigate('/');
+    alert("登入逾時，請重新登入");
+    if (sessionStorage.getItem("user")) sessionStorage.clear();
+    if (localStorage.getItem("user")) localStorage.clear();
+    navigate("/");
   };
 
   return (
     <>
       <Container>
         <Col>
-          <h1 className='text-center'>使用者設定</h1>
+          <h1 className="text-center">使用者設定</h1>
         </Col>
         <Col className={`mx-auto ${styles.UserSettingContainer}`}>
-          <div className='d-flex justify-content-center ms-2 me-2'>
+          <div className="d-flex justify-content-center ms-2 me-2">
             <div
-              type={'button'}
+              type={"button"}
               className={styles.ButtonOfEachSettingContainer}
               onMouseDown={() => {
                 setNameModalShow(true);
               }}
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
-                <Col className='d-flex align-items-center justify-content-between fs-3'>
-                  <div className='text-start'>
+                <Col className="d-flex align-items-center justify-content-between fs-3">
+                  <div className="text-start">
                     使用者名稱
                     <div className={`${styles.UserCurrentName}`}>
                       {ConvertNameToHide(user.client_name)}
@@ -157,17 +162,17 @@ export default function UserSetting() {
               </Row>
             </div>
           </div>
-          <div className='d-flex justify-content-center ms-2 me-2'>
+          <div className="d-flex justify-content-center ms-2 me-2">
             <div
-              type={'button'}
+              type={"button"}
               className={styles.ButtonOfEachSettingContainer}
               onMouseDown={() => {
                 setPasswordModalShow(true);
               }}
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
-                <Col className='d-flex align-items-center justify-content-between fs-3'>
-                  <div className='text-start'>使用者密碼</div>
+                <Col className="d-flex align-items-center justify-content-between fs-3">
+                  <div className="text-start">使用者密碼</div>
                   <MdOutlineKeyboardArrowRight
                     className={`fs-1 ${styles.buttonIco}`}
                   />
@@ -175,17 +180,17 @@ export default function UserSetting() {
               </Row>
             </div>
           </div>
-          <div className='d-flex justify-content-center ms-2 me-2'>
+          <div className="d-flex justify-content-center ms-2 me-2">
             <div
-              type={'button'}
+              type={"button"}
               className={styles.ButtonOfEachSettingContainer}
               onMouseDown={() => {
                 setEmailModalShow(true);
               }}
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
-                <Col className='d-flex align-items-center justify-content-between fs-3'>
-                  <div className='text-start'>
+                <Col className="d-flex align-items-center justify-content-between fs-3">
+                  <div className="text-start">
                     聯絡信箱
                     <div className={`text-start ${styles.UserCurrentMail}`}>
                       {user.client_email}
@@ -213,17 +218,17 @@ export default function UserSetting() {
                 ...user,
                 client_name: values.userNewName,
               };
-              const storage = sessionStorage.getItem('user')
+              const storage = sessionStorage.getItem("user")
                 ? sessionStorage
                 : localStorage;
-              storage.setItem('user', JSON.stringify(userToUpdate));
+              storage.setItem("user", JSON.stringify(userToUpdate));
 
               reWriteUserProfile({
                 api: `client/${user.client_token}`,
                 data: {
                   clientName: values.userNewName,
                 },
-                updateType: 'name',
+                updateType: "name",
               });
             }}
             initialValues={{
@@ -232,28 +237,28 @@ export default function UserSetting() {
           >
             {({ handleSubmit, handleChange, values, errors }) => (
               <Form noValidate onSubmit={handleSubmit}>
-                <Form.Group className='mb-3' controlId='formChangeUserName'>
+                <Form.Group className="mb-3" controlId="formChangeUserName">
                   <Form.Label>請輸入姓名：</Form.Label>
                   <Form.Control
-                    type='text'
-                    name='userNewName'
-                    placeholder='請於此輸入姓名'
+                    type="text"
+                    name="userNewName"
+                    placeholder="請於此輸入姓名"
                     onChange={handleChange}
                     value={values.userNewName}
                     isInvalid={!!errors.userNewName}
                     required
                   />
-                  <Form.Control.Feedback type='invalid'>
+                  <Form.Control.Feedback type="invalid">
                     {errors.userNewName}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <div className='d-grid gap-2'>
+                <div className="d-grid gap-2">
                   <BtnBootstrap
-                    btnPosition=''
-                    variant='outline-primary'
-                    btnSize='md'
-                    btnType={'submit'}
-                    text={'送出'}
+                    btnPosition=""
+                    variant="outline-primary"
+                    btnSize="md"
+                    btnType={"submit"}
+                    text={"送出"}
                     disabled={values.userNewName === user.client_name}
                   />
                 </div>
@@ -282,21 +287,21 @@ export default function UserSetting() {
               });
             }}
             initialValues={{
-              oldPwd: '',
-              newPwd: '',
-              newPwdCheck: '',
+              oldPwd: "",
+              newPwd: "",
+              newPwdCheck: "",
             }}
           >
             {({ handleSubmit, handleChange, values, touched, errors }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 <FormPwd
-                  ControlName='oldPwd'
+                  ControlName="oldPwd"
                   SetStrengthMeter={false}
-                  LabelForName='formOldPassword'
-                  LabelClassName='fs-6'
-                  LabelMessage='請輸入原始密碼：'
-                  FormControlPlaceHolder='請於這裡輸入原始密碼'
-                  FeedBackClassName='fs-6'
+                  LabelForName="formOldPassword"
+                  LabelClassName="fs-6"
+                  LabelMessage="請輸入原始密碼："
+                  FormControlPlaceHolder="請於這裡輸入原始密碼"
+                  FeedBackClassName="fs-6"
                   PwdValue={values.oldPwd}
                   ChangeEvent={handleChange}
                   InValidCheck={touched.oldPwd && errors.oldPwd}
@@ -305,13 +310,13 @@ export default function UserSetting() {
                   ErrorMessage={errors.oldPwd}
                 />
                 <FormPwd
-                  ControlName='newPwd'
+                  ControlName="newPwd"
                   SetStrengthMeter={false}
-                  LabelForName='formNewPassword'
-                  LabelClassName='fs-6'
-                  FeedBackClassName='fs-6'
-                  LabelMessage='請輸入新密碼：'
-                  FormControlPlaceHolder='請於這裡輸入新密碼'
+                  LabelForName="formNewPassword"
+                  LabelClassName="fs-6"
+                  FeedBackClassName="fs-6"
+                  LabelMessage="請輸入新密碼："
+                  FormControlPlaceHolder="請於這裡輸入新密碼"
                   PwdValue={values.newPwd}
                   ChangeEvent={handleChange}
                   InValidCheck={touched.newPwd && errors.newPwd}
@@ -320,13 +325,13 @@ export default function UserSetting() {
                   ErrorMessage={errors.newPwd}
                 />
                 <FormPwd
-                  ControlName='newPwdCheck'
+                  ControlName="newPwdCheck"
                   SetStrengthMeter={false}
-                  LabelForName='formNewPasswordCheck'
-                  LabelClassName='fs-6'
-                  FeedBackClassName='fs-6'
-                  LabelMessage='請再次輸入新密碼：'
-                  FormControlPlaceHolder='請於這裡再次輸入新密碼'
+                  LabelForName="formNewPasswordCheck"
+                  LabelClassName="fs-6"
+                  FeedBackClassName="fs-6"
+                  LabelMessage="請再次輸入新密碼："
+                  FormControlPlaceHolder="請於這裡再次輸入新密碼"
                   PwdValue={values.newPwdCheck}
                   ChangeEvent={handleChange}
                   InValidCheck={touched.newPwdCheck && errors.newPwdCheck}
@@ -334,13 +339,13 @@ export default function UserSetting() {
                   ShowPwdCondition={showPwd}
                   ErrorMessage={errors.newPwdCheck}
                 />
-                <div className='d-grid gap-2'>
+                <div className="d-grid gap-2">
                   <BtnBootstrap
-                    btnPosition=''
-                    variant='outline-primary'
-                    btnSize='md'
-                    btnType={'submit'}
-                    text={'送出'}
+                    btnPosition=""
+                    variant="outline-primary"
+                    btnSize="md"
+                    btnType={"submit"}
+                    text={"送出"}
                     disabled={values.userNewEmail === user.client_email}
                   />
                 </div>
@@ -362,16 +367,16 @@ export default function UserSetting() {
                 ...user,
                 client_email: values.userNewEmail,
               };
-              const storage = sessionStorage.getItem('user')
+              const storage = sessionStorage.getItem("user")
                 ? sessionStorage
                 : localStorage;
-              storage.setItem('user', JSON.stringify(userToUpdate));
+              storage.setItem("user", JSON.stringify(userToUpdate));
               reWriteUserProfile({
                 api: `client/${user.client_token}`,
                 data: {
                   clientEmail: values.userNewEmail,
                 },
-                updateType: 'email',
+                updateType: "email",
               });
             }}
             initialValues={{
@@ -380,28 +385,28 @@ export default function UserSetting() {
           >
             {({ handleSubmit, handleChange, values, errors }) => (
               <Form noValidate onSubmit={handleSubmit}>
-                <Form.Group className='mb-3' controlId='formChangeUserName'>
+                <Form.Group className="mb-3" controlId="formChangeUserName">
                   <Form.Label>請輸入電子郵件(email)：</Form.Label>
                   <Form.Control
-                    type='email'
-                    name='userNewEmail'
-                    placeholder='請於此輸入電子郵件(email)'
+                    type="email"
+                    name="userNewEmail"
+                    placeholder="請於此輸入電子郵件(email)"
                     onChange={handleChange}
                     value={values.userNewEmail}
                     isInvalid={!!errors.userNewEmail}
                     required
                   />
-                  <Form.Control.Feedback type='invalid'>
+                  <Form.Control.Feedback type="invalid">
                     {errors.userNewEmail}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <div className='d-grid gap-2'>
+                <div className="d-grid gap-2">
                   <BtnBootstrap
-                    btnPosition=''
-                    variant='outline-primary'
-                    btnSize='md'
-                    btnType={'submit'}
-                    text={'送出'}
+                    btnPosition=""
+                    variant="outline-primary"
+                    btnSize="md"
+                    btnType={"submit"}
+                    text={"送出"}
                     disabled={values.userNewEmail === user.client_email}
                   />
                 </div>
@@ -419,24 +424,24 @@ export default function UserSetting() {
           <Modal.Title>變更密碼確認</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className='fs-5'>變更密碼後，會將您登出，請重新登入</p>
-          <p className='fs-5'>請確認是否要變更密碼</p>
+          <p className="fs-5">變更密碼後，會將您登出，請重新登入</p>
+          <p className="fs-5">請確認是否要變更密碼</p>
         </Modal.Body>
         <Modal.Footer>
           <BtnBootstrap
-            variant='outline-primary'
-            btnSize='md'
-            btnType={'button'}
-            text={'取消'}
+            variant="outline-primary"
+            btnSize="md"
+            btnType={"button"}
+            text={"取消"}
             onClickEventName={() => {
               setPassWordConfirmModalShow(false);
             }}
           ></BtnBootstrap>
           <BtnBootstrap
-            variant='outline-danger'
-            btnSize='md'
-            btnType={'button'}
-            text={'確認'}
+            variant="outline-danger"
+            btnSize="md"
+            btnType={"button"}
+            text={"確認"}
             onClickEventName={() => {
               reWriteUserProfile({
                 api: `client/${user.client_token}`,
@@ -444,7 +449,7 @@ export default function UserSetting() {
                   clientPWD: userNewPwd.clientPWD,
                   clientLatestPWD: userNewPwd.clientLatestPWD,
                 },
-                updateType: 'password',
+                updateType: "password",
               });
             }}
           ></BtnBootstrap>
