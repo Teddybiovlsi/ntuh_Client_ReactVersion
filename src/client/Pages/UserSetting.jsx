@@ -19,7 +19,7 @@ import styles from "../../styles/pages/UserSetting.module.scss";
 import { post } from "../axios";
 import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function UserSetting() {
   const navigate = useNavigate();
@@ -339,15 +339,23 @@ export default function UserSetting() {
                   ShowPwdCondition={showPwd}
                   ErrorMessage={errors.newPwdCheck}
                 />
+                <div className="float-end"></div>
                 <div className="d-grid gap-2">
-                  <BtnBootstrap
-                    btnPosition=""
-                    variant="outline-primary"
-                    btnSize="md"
-                    btnType={"submit"}
-                    text={"送出"}
-                    disabled={values.userNewEmail === user.client_email}
-                  />
+                  <Col>
+                    <Link to="/forgetPassword" className="float-end">
+                      忘記密碼
+                    </Link>
+                  </Col>
+                  <Col className="d-grid gap-2">
+                    <BtnBootstrap
+                      btnPosition=""
+                      variant="outline-primary"
+                      btnSize="md"
+                      btnType={"submit"}
+                      text={"送出"}
+                      disabled={values.userNewEmail === user.client_email}
+                    />
+                  </Col>
                 </div>
               </Form>
             )}
