@@ -11,6 +11,8 @@ export default function ForgotPasswordSendVerifyCodeForm({
   setVerifyCode,
   counter,
   postOTPMail,
+  setcounter,
+  setForgotPasswordState,
 }) {
   return (
     <Card className={styles.cardContainer}>
@@ -38,12 +40,13 @@ export default function ForgotPasswordSendVerifyCodeForm({
             <BtnBootstrap
               btnPosition="float-end"
               variant="outline-primary"
-              btnSize="sm"
+              btnSize="md"
               btnType={"button"}
               text={counter ? counter : "重新發送"}
               onClickEventName={() => {
                 postOTPMail({ mail: email });
-                setCounter(60);
+                // setCounter(60);
+                setcounter;
               }}
               disabled={counter !== 0}
             />
@@ -52,7 +55,7 @@ export default function ForgotPasswordSendVerifyCodeForm({
             <BtnBootstrap
               btnPosition=""
               variant="outline-danger"
-              btnSize="sm"
+              btnSize="md"
               btnType={"button"}
               text={"送出"}
               onClickEventName={onSubmit}
