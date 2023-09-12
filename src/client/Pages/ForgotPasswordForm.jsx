@@ -47,8 +47,8 @@ export default function ForgotPasswordForm() {
 
   //   設定初始信箱值
   const [initUserValues, setInitUserValues] = useState({
-    userSendOTPAccount: usrInfo?.userSendOTPAccount || "",
-    userSendOTPMail: user.client_email,
+    userSendOTPAccount: "",
+    userSendOTPMail: user?.client_email ? user.client_email : "",
   });
   // 向後端請求發送驗證發送信件
   const postOTPMail = async (userToRewrite) => {
