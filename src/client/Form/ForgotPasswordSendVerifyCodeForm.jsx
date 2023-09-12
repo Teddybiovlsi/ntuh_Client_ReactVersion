@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import OTPInput from "react-otp-input";
 import BtnBootstrap from "../../components/BtnBootstrap";
@@ -11,9 +11,16 @@ export default function ForgotPasswordSendVerifyCodeForm({
   setVerifyCode,
   counter,
   postOTPMail,
-  setcounter,
   setForgotPasswordState,
 }) {
+  const [formCounter, setFormCounter] = React.useState(0);
+
+  useEffect(() => {
+    if (formCounter > 0) {
+      setTimeout(() => setFormCounter(formCounter - 1), 1000);
+    }
+  }, [formCounter]);
+
   return (
     <Card className={styles.cardContainer}>
       <Card.Title>
@@ -42,13 +49,12 @@ export default function ForgotPasswordSendVerifyCodeForm({
               variant="outline-primary"
               btnSize="md"
               btnType={"button"}
-              text={counter ? counter : "重新發送"}
+              text={counter ? counter : formCounter ? formCounter : "重新發送"}
               onClickEventName={() => {
                 postOTPMail({ mail: email });
-                // setCounter(60);
-                setcounter;
+                setFormCounter(60);
               }}
-              disabled={counter !== 0}
+              disabled={counter !== 0 || formCounter !== 0}
             />
           </Col>
           <Col>
