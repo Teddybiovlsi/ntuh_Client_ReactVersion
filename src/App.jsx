@@ -33,6 +33,20 @@ export default function App() {
       <main className="app_main">
         <Routes>
           <Route index path="/" element={<LogIn />} />
+          <Route path="/forgetPassword" element={<ForgotPasswordForm />} />
+          <Route
+            element={
+              <RewritePasswordProtected
+                verifyCode={location?.state?.verifyCode}
+              />
+            }
+          >
+            <Route
+              path="/rewritePasswordPage"
+              element={<RewritePasswordPage />}
+            />
+          </Route>
+
           <Route element={<AuthProtected user={user} />}>
             <Route path="/Home" element={<Home />} />
             <Route
@@ -55,19 +69,6 @@ export default function App() {
             />
             <Route path="/comment" element={<UserComment />} />
             <Route path="/setting" element={<UserSetting />} />
-            <Route path="/forgetPassword" element={<ForgotPasswordForm />} />
-            <Route
-              element={
-                <RewritePasswordProtected
-                  verifyCode={location?.state?.verifyCode}
-                />
-              }
-            >
-              <Route
-                path="/rewritePasswordPage"
-                element={<RewritePasswordPage />}
-              />
-            </Route>
           </Route>
         </Routes>
       </main>
