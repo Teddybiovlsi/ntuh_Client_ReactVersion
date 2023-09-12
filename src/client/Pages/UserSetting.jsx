@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Col,
-  Row,
-  Container,
-  Form,
-  Modal,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
+import { Col, Row, Container, Form, Modal } from "react-bootstrap";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import FormPwd from "../Form/shared/FormPwd";
@@ -21,6 +13,32 @@ import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
 import { Link, useNavigate } from "react-router-dom";
 
+const { Formik } = formik;
+
+const userNewNameSchema = yup.object().shape({
+  userNewName: yup.string().required("請輸入姓名"),
+});
+
+const userNewPwdSchema = yup.object().shape({
+  oldPwd: yup.string().required("請輸入原始密碼"),
+  newPwd: yup
+    .string()
+    .required("請輸入新密碼")
+    .test("", "新密碼不得與舊密碼相符", function (value) {
+      return this.parent.oldPwd !== value;
+    }),
+  newPwdCheck: yup.string().test("密碼相符", "密碼必須相符", function (value) {
+    return this.parent.newPwd === value;
+  }),
+});
+
+const userNewEmailSchema = yup.object().shape({
+  userNewEmail: yup
+    .string()
+    .email("請輸入正確的電子郵件格式")
+    .required("請輸入信箱"),
+});
+
 export default function UserSetting() {
   const navigate = useNavigate();
 
@@ -30,34 +48,6 @@ export default function UserSetting() {
   const [userNewPwd, setUserNewPwd] = useState({
     clientPWD: "",
     clientLatestPWD: "",
-  });
-
-  const { Formik } = formik;
-
-  const userNewNameSchema = yup.object().shape({
-    userNewName: yup.string().required("請輸入姓名"),
-  });
-
-  const userNewPwdSchema = yup.object().shape({
-    oldPwd: yup.string().required("請輸入原始密碼"),
-    newPwd: yup
-      .string()
-      .required("請輸入新密碼")
-      .test("", "新密碼不得與舊密碼相符", function (value) {
-        return this.parent.oldPwd !== value;
-      }),
-    newPwdCheck: yup
-      .string()
-      .test("密碼相符", "密碼必須相符", function (value) {
-        return this.parent.newPwd === value;
-      }),
-  });
-
-  const userNewEmailSchema = yup.object().shape({
-    userNewEmail: yup
-      .string()
-      .email("請輸入正確的電子郵件格式")
-      .required("請輸入信箱"),
   });
 
   const [showPwd, { setShowPwd }] = useBoolean(false);
