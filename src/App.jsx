@@ -12,7 +12,7 @@ import AuthProtected from "./AuthProtected";
 import VideoChapterPlayer from "./client/Pages/VideoChapterPlayer";
 import RecordPage from "./client/Pages/RecordPage";
 import UserSetting from "./client/Pages/UserSetting";
-import ForgotPasswordPage from "./client/Pages/forgotPasswordPage";
+import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
 
 export default function App() {
   const location = useLocation();
@@ -53,7 +53,7 @@ export default function App() {
             />
             <Route path="/comment" element={<UserComment />} />
             <Route path="/setting" element={<UserSetting />} />
-            <Route path="/forgetPassword" element={<ForgotPasswordPage />} />
+            <Route path="/forgetPassword" element={<ForgotPasswordForm />} />
           </Route>
         </Routes>
       </main>
