@@ -78,7 +78,7 @@ export default function ForgotPasswordForm() {
 
       navigate("/rewritePasswordPage", {
         replace: true,
-        state: { user: response.data.data },
+        state: { verifyCode: verifyCode },
       });
     } catch (error) {
       const errorMessage = error.response.data.error;
@@ -131,10 +131,9 @@ export default function ForgotPasswordForm() {
             verifyCode={verifyCode}
             setVerifyCode={setVerifyCode}
             counter={counter}
-            setCounter={setCounter}
             onSubmit={handleVerifyCodeSubmit}
             setForgotPasswordState={setForgotPasswordState}
-            setcounter={setCounter}
+            postOTPMail={postOTPMail}
           />
         );
       default:
