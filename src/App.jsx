@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./client/Header";
 import { Route, Routes } from "react-router-dom";
 import UserComment from "./client/Pages/UserComment";
@@ -14,6 +14,7 @@ import RecordPage from "./client/Pages/RecordPage";
 import UserSetting from "./client/Pages/UserSetting";
 import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
 import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
+import RewritePasswordProtected from "./RewritePasswordProtected";
 
 export default function App() {
   const location = useLocation();
@@ -56,9 +57,17 @@ export default function App() {
             <Route path="/setting" element={<UserSetting />} />
             <Route path="/forgetPassword" element={<ForgotPasswordForm />} />
             <Route
-              path="/rewritePasswordPage"
-              element={<RewritePasswordPage />}
-            />
+              element={
+                <RewritePasswordProtected
+                  verifyCode={location?.state?.verifyCode}
+                />
+              }
+            >
+              <Route
+                path="/rewritePasswordPage"
+                element={<RewritePasswordPage />}
+              />
+            </Route>
           </Route>
         </Routes>
       </main>
