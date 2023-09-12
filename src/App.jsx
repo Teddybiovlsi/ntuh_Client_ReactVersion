@@ -13,6 +13,7 @@ import VideoChapterPlayer from "./client/Pages/VideoChapterPlayer";
 import RecordPage from "./client/Pages/RecordPage";
 import UserSetting from "./client/Pages/UserSetting";
 import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
+import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
 
 export default function App() {
   const location = useLocation();
@@ -54,6 +55,10 @@ export default function App() {
             <Route path="/comment" element={<UserComment />} />
             <Route path="/setting" element={<UserSetting />} />
             <Route path="/forgetPassword" element={<ForgotPasswordForm />} />
+            <Route
+              path="/rewritePasswordPage"
+              element={<RewritePasswordPage />}
+            />
           </Route>
         </Routes>
       </main>
