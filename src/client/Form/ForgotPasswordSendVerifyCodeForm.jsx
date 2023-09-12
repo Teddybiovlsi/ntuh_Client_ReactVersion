@@ -9,11 +9,14 @@ export default function ForgotPasswordSendVerifyCodeForm({
   email,
   verifyCode,
   setVerifyCode,
-  counter,
-  postOTPMail,
+  resendOTPMail,
   setForgotPasswordState,
 }) {
   const [formCounter, setFormCounter] = React.useState(0);
+  // do once when component mounted
+  useEffect(() => {
+    setFormCounter(60);
+  }, []);
 
   useEffect(() => {
     if (formCounter > 0) {
@@ -27,16 +30,23 @@ export default function ForgotPasswordSendVerifyCodeForm({
         <p className={styles.cardTitle}>請輸入驗證碼</p>
       </Card.Title>
       <Card.Body>
-        <OTPInput
-          value={verifyCode}
-          onChange={setVerifyCode}
-          numInputs={6}
-          separator={<span></span>}
-          isInputNum={true}
-          shouldAutoFocus={true}
-          renderInput={(props) => <input {...props} />}
-          inputStyle={styles.otpInputField}
-        />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <OTPInput
+            value={verifyCode}
+            onChange={setVerifyCode}
+            numInputs={6}
+            separator={<span></span>}
+            isInputNum={true}
+            renderInput={(props) => <input {...props} />}
+            inputStyle={styles.otpInputField}
+          />
+        </div>
         <Row className="mt-2">
           <p className={styles.alertMessage}>
             認證碼已發送至<b>{email}</b>中
@@ -49,12 +59,12 @@ export default function ForgotPasswordSendVerifyCodeForm({
               variant="outline-primary"
               btnSize="md"
               btnType={"button"}
-              text={counter ? counter : formCounter ? formCounter : "重新發送"}
+              text={formCounter ? `${formCounter}秒` : "重新發送"}
               onClickEventName={() => {
-                postOTPMail({ mail: email });
+                resendOTPMail({ mail: email });
                 setFormCounter(60);
               }}
-              disabled={counter !== 0 || formCounter !== 0}
+              disabled={formCounter !== 0}
             />
           </Col>
           <Col>

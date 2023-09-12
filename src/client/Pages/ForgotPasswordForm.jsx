@@ -23,7 +23,10 @@ export default function ForgotPasswordForm() {
     localStorage?.getItem("user") || sessionStorage?.getItem("user")
   );
 
-  const [email, setEmail] = useState("");
+  const [usrInfo, setUsrInfo] = useState({
+    userSendOTPAccount: "",
+    userSendOTPMail: "",
+  });
   const [verifyCode, setVerifyCode] = useState("");
   // 設定忘記密碼頁面狀態
   const [forgotPasswordState, setForgotPasswordState] = useState(0);
@@ -36,26 +39,25 @@ export default function ForgotPasswordForm() {
     }
   }, [counter]);
 
-  useEffect(() => {
-    if (forgotPasswordState === 1) {
-      setCounter(60);
-    }
-  }, [forgotPasswordState]);
+  // useEffect(() => {
+  //   if (forgotPasswordState === 1) {
+  //     setCounter(0);
+  //   }
+  // }, [forgotPasswordState]);
 
   //   設定初始信箱值
-  const initEmailValues = {
+  const [initUserValues, setInitUserValues] = useState({
+    userSendOTPAccount: usrInfo?.userSendOTPAccount || "",
     userSendOTPMail: user.client_email,
-  };
-
+  });
+  // 向後端請求發送驗證發送信件
   const postOTPMail = async (userToRewrite) => {
     try {
-      const response = await post(
-        `client/find/${user.client_token}`,
-        userToRewrite
-      );
+      const response = await post(`visitor/findAccount`, userToRewrite);
     } catch (error) {
       const errorMessage = error.response.data.error;
       let alertMessage = ERROR_MESSAGES.GENERAL_ERROR;
+      console.log(error);
 
       switch (errorMessage) {
         case "信件發送失敗":
@@ -71,19 +73,17 @@ export default function ForgotPasswordForm() {
 
   const postVerifyCode = async (userToRewrite) => {
     try {
-      const response = await post(
-        `client/rewritePassword/${user.client_token}`,
-        userToRewrite
-      );
+      const response = await post(`visitor/rewritePassword`, userToRewrite);
 
       navigate("/rewritePasswordPage", {
         replace: true,
-        state: { verifyCode: verifyCode },
+        state: { verifyCode: verifyCode, user: initUserValues },
       });
     } catch (error) {
       const errorMessage = error.response.data.error;
       let alertMessage = ERROR_MESSAGES.GENERAL_ERROR;
 
+      console.log(error);
       switch (errorMessage) {
         case "驗證碼錯誤":
         case "驗證碼錯誤次數過多，請重新發送驗證碼":
@@ -101,15 +101,19 @@ export default function ForgotPasswordForm() {
 
   const handleEmailSubmit = (values) => {
     const userToRewrite = {
+      userIdentity: values.userSendOTPAccount,
       mail: values.userSendOTPMail,
     };
-    setEmail(values.userSendOTPMail);
+    // setInitUserValues to update email and account
+    setInitUserValues(values);
+
     postOTPMail(userToRewrite);
     setForgotPasswordState(1);
   };
 
   const handleVerifyCodeSubmit = () => {
     const userToRewrite = {
+      userIdentity: initUserValues.userSendOTPAccount,
       clientVerificationCode: verifyCode,
     };
     postVerifyCode(userToRewrite);
@@ -120,20 +124,19 @@ export default function ForgotPasswordForm() {
       case 0:
         return (
           <ForgotPasswordSendEmailForm
-            initialValues={initEmailValues}
+            initialValues={initUserValues}
             onSubmit={handleEmailSubmit}
           />
         );
       case 1:
         return (
           <ForgotPasswordSendVerifyCodeForm
-            email={email}
+            email={initUserValues.userSendOTPMail}
             verifyCode={verifyCode}
             setVerifyCode={setVerifyCode}
-            counter={counter}
+            resendOTPMail={postOTPMail}
             onSubmit={handleVerifyCodeSubmit}
             setForgotPasswordState={setForgotPasswordState}
-            postOTPMail={postOTPMail}
           />
         );
       default:

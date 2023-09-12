@@ -5,6 +5,8 @@ import * as yup from "yup";
 import BtnBootstrap from "../../components/BtnBootstrap";
 
 const userSendOTPMailSchema = yup.object().shape({
+  userSendOTPAccount: yup.string().required("請輸入帳號"),
+
   userSendOTPMail: yup
     .string()
     .email("請輸入正確的電子郵件格式")
@@ -24,7 +26,23 @@ export default function ForgotPasswordSendEmailForm({
       >
         {({ handleSubmit, handleChange, values, errors }) => (
           <Form noValidate onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="formChangeUserName">
+            <Form.Group className="mb-3" controlId="formChangeUserAccount">
+              <Form.Label>請輸入帳號：</Form.Label>
+              <Form.Control
+                type="text"
+                name="userSendOTPAccount"
+                placeholder="請於此輸入帳號"
+                onChange={handleChange}
+                value={values.userSendOTPAccount}
+                isInvalid={!!errors.userSendOTPAccount}
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.userSendOTPAccount}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formChangeUserMail">
               <Form.Label>請輸入電子郵件(email)：</Form.Label>
               <Form.Control
                 type="email"

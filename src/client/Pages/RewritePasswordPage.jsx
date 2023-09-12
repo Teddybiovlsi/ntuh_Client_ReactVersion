@@ -45,10 +45,7 @@ export default function RewritePasswordPage() {
     let clientSubmit = toast.loading("上傳資料中...");
     try {
       console.log(userToRewrite);
-      const res = await post(
-        `client/renewPassword/${user.client_token}`,
-        userToRewrite
-      );
+      const res = await post(`visitor/renewPassword`, userToRewrite);
       toast.update(clientSubmit, {
         render: "密碼重設成功，3秒後將回到登入頁面",
         type: "success",
@@ -95,6 +92,7 @@ export default function RewritePasswordPage() {
               validationSchema={userNewPwdSchema}
               onSubmit={(values) => {
                 const userToUpdate = {
+                  userIdentity: location.state?.user?.userSendOTPAccount,
                   usrCode: location.state?.verifyCode,
                   clientPassword: values.newPwd,
                 };
