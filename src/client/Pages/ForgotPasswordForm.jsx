@@ -3,6 +3,8 @@ import { Col, Container } from "react-bootstrap";
 import { post } from "../axios";
 import ForgotPasswordSendEmailForm from "../Form/ForgotPasswordSendEmailForm";
 import ForgotPasswordSendVerifyCodeForm from "../Form/ForgotPasswordSendVerifyCodeForm";
+import PageTitleHeading from "../../components/PageTitleHeading";
+import { useNavigate } from "react-router-dom";
 
 const SUCCESS_MESSAGES = {
   SEND_OTP_MAIL: "信件發送成功",
@@ -16,6 +18,7 @@ const ERROR_MESSAGES = {
 };
 
 export default function ForgotPasswordForm() {
+  const navigate = useNavigate();
   const user = JSON.parse(
     localStorage?.getItem("user") || sessionStorage?.getItem("user")
   );
@@ -72,7 +75,11 @@ export default function ForgotPasswordForm() {
         `client/rewritePassword/${user.client_token}`,
         userToRewrite
       );
-      console.log(response);
+
+      navigate("/rewritePasswordPage", {
+        replace: true,
+        state: { user: response.data.data },
+      });
     } catch (error) {
       const errorMessage = error.response.data.error;
       let alertMessage = ERROR_MESSAGES.GENERAL_ERROR;
@@ -126,6 +133,8 @@ export default function ForgotPasswordForm() {
             counter={counter}
             setCounter={setCounter}
             onSubmit={handleVerifyCodeSubmit}
+            setForgotPasswordState={setForgotPasswordState}
+            setcounter={setCounter}
           />
         );
       default:
@@ -136,7 +145,7 @@ export default function ForgotPasswordForm() {
   return (
     <Container>
       <Col>
-        <h1 className="text-center">忘記密碼</h1>
+        <PageTitleHeading text="忘記密碼" styleOptions={6} />
       </Col>
       {stateChangePage()}
     </Container>
