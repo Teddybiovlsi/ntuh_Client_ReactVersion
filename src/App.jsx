@@ -15,6 +15,7 @@ import UserSetting from "./client/Pages/UserSetting";
 import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
 import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
 import RewritePasswordProtected from "./RewritePasswordProtected";
+import UsingTip from "./client/Pages/UsingTip";
 
 export default function App() {
   const location = useLocation();
@@ -67,6 +68,7 @@ export default function App() {
               path="/record/test"
               element={<RecordPage recordType={1} />}
             />
+            <Route path="/usingTip" element={<UsingTip />} />
             <Route path="/comment" element={<UserComment />} />
             <Route path="/setting" element={<UserSetting />} />
           </Route>

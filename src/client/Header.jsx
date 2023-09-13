@@ -75,7 +75,7 @@ export default function Header({ expand = "lg" }) {
               ) : null}
               {/* 使用教學Nav */}
               {user !== null ? (
-                <LinkContainer to="/tutorial">
+                <LinkContainer to="/usingTip">
                   <Nav.Link>使用教學</Nav.Link>
                 </LinkContainer>
               ) : null}
