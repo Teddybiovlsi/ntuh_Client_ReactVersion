@@ -38,18 +38,26 @@ export default function UsingTip() {
             <Accordion.Item eventKey="練習章節進度">
               <Accordion.Header>如何得知影片的練習章節進度?</Accordion.Header>
               <Accordion.Body>
-                <p>
-                  可點選自己想要知道的
-                  <b className="text-primary">練習/測驗用衛教資訊</b>並
-                  <b className="text-danger">點選下圖資訊紅框處</b>
-                  即可得知當前衛教資訊所有的練習進度/測驗進度
-                  <br />
-                  <b className="text-primary">下圖藍框處為單一章節內測驗進度</b>
-                </p>
-                <Image src="src/assets/衛教資訊練習進度查詢.jpg" fluid />
+                <Container>
+                  <Row>
+                    <p>
+                      可點選自己想要知道的
+                      <b className="text-primary">練習/測驗用衛教資訊</b>並
+                      <b className="text-danger">點選下圖資訊紅框處</b>
+                      即可得知當前衛教資訊所有的練習進度/測驗進度
+                      <br />
+                      <b className="text-primary">
+                        下圖藍框處為單一章節內測驗進度
+                      </b>
+                    </p>
+                  </Row>
+                  <Row>
+                    <Image src="src/assets/衛教資訊練習進度查詢.jpg" fluid />
+                  </Row>
+                </Container>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="1">
+            <Accordion.Item eventKey="如何觀看影片">
               <Accordion.Header>如何觀看影片?</Accordion.Header>
               <Accordion.Body>
                 <Container>
@@ -90,18 +98,39 @@ export default function UsingTip() {
                 </Container>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="2">
-              <Accordion.Header>
-                如何知道自己的章節練習是否回答正確or完成?
-              </Accordion.Header>
+            <Accordion.Item eventKey="如何得知練習情形">
+              <Accordion.Header>如何得知自己的章節練習情形?</Accordion.Header>
               <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <Container>
+                  <Row>
+                    <p>
+                      在影片出現對影選項選擇後會出現以下
+                      <b className="text-primary">三種圖示</b>之情形：
+                    </p>
+                  </Row>
+                  <Row>
+                    <Col md={4} xs={4}>
+                      <Image src="src/assets/章節正確訊息.jpg" fluid />
+                      <p className="text-center text-success">
+                        第一種為回答正確
+                      </p>
+                    </Col>
+                    <Col md={4} xs={4}>
+                      <Image src="src/assets/章節錯誤訊息.jpg" fluid />
+                      <p className="text-center text-danger">
+                        第二種為回答錯誤
+                      </p>
+                    </Col>
+                    <Col md={4} xs={4}>
+                      <Image src="src/assets/章節上傳失敗訊息.jpg" fluid />
+                      <p className="text-center text-danger">
+                        第三種為伺服器發生錯誤
+                        <br />
+                        請過一段時間後再試
+                      </p>
+                    </Col>
+                  </Row>
+                </Container>
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
