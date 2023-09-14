@@ -45,7 +45,7 @@ export default function LogIn() {
   };
 
   const fetchaLoginData = async (data) => {
-    const clientSubmit = toast.loading("登入中...");
+    let clientSubmit = toast.loading("登入中...");
     try {
       console.log(data);
       const response = await post("client/login", data);
