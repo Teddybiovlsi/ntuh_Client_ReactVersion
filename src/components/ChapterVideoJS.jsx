@@ -240,7 +240,7 @@ export const ChapterVideoJS = (props) => {
       setAnswerState([
         ...answerState,
         {
-          token: JSON.parse(localStorage.getItem("user")).client_token,
+          token: user.client_token,
           videoID: VideoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [false],
@@ -316,7 +316,7 @@ export const ChapterVideoJS = (props) => {
       setAnswerState([
         ...answerState,
         {
-          token: JSON.parse(localStorage.getItem("user")).client_token,
+          token: user.client_token,
           videoID: VideoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [true],
@@ -352,7 +352,7 @@ export const ChapterVideoJS = (props) => {
   useEffect(() => {
     if (answerState.length > 0) {
       console.log("answerState", answerState[0]);
-      handleSubmitAnswerToAPI({ api: "client/record" });
+      handleSubmitAnswerToAPI({ api: `client/record/${user.client_token}` });
     }
   }, [answerState]);
 
@@ -377,22 +377,33 @@ export const ChapterVideoJS = (props) => {
             "答錯了，請重新練習\n2秒後將回到影片清單頁\n請稍後...";
         }
       }
-      // 關閉loading圖示
-      toast.update(id, {
-        render: outputMessage,
-        type: "fail",
-        isLoading: false,
-        autoClose: 2000,
-      });
+      if (outputMessage === "答對了，2秒後將回到影片清單頁\n請稍後...") {
+        // 關閉loading圖示
+        toast.update(id, {
+          render: outputMessage,
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      } else {
+        toast.update(id, {
+          render: outputMessage,
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+
       setTimeout(() => {
         // navigate to pervious page
         navigate(-1, { replace: true });
       }, 2000);
     } catch (err) {
+      console.log("err", err);
       console.log("err", err.response.data);
       toast.update(id, {
         render: "上傳失敗，請稍後再試",
-        type: "fail",
+        type: "error",
         isLoading: false,
         autoClose: 2000,
       });
