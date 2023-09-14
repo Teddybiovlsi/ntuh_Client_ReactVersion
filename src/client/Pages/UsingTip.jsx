@@ -34,17 +34,17 @@ export default function UsingTip() {
             以下有衛教資訊的詳細介紹，可依照需求點選對應的衛教資訊使用教學進行觀看
           </p>
 
-          <Accordion defaultActiveKey="0">
-            <Accordion.Item eventKey="0">
+          <Accordion defaultActiveKey="練習章節進度">
+            <Accordion.Item eventKey="練習章節進度">
               <Accordion.Header>如何得知影片的練習章節進度?</Accordion.Header>
               <Accordion.Body>
                 <p>
                   可點選自己想要知道的
                   <b className="text-primary">練習/測驗用衛教資訊</b>並
                   <b className="text-danger">點選下圖資訊紅框處</b>
-                  即可得知當前衛教資訊所有的練習進度/
+                  即可得知當前衛教資訊所有的練習進度/測驗進度
                   <br />
-                  <b className="text-primary">下圖藍框處為單一章節練習進度</b>
+                  <b className="text-primary">下圖藍框處為單一章節內測驗進度</b>
                 </p>
                 <Image src="src/assets/衛教資訊練習進度查詢.jpg" fluid />
               </Accordion.Body>
@@ -52,13 +52,42 @@ export default function UsingTip() {
             <Accordion.Item eventKey="1">
               <Accordion.Header>如何觀看影片?</Accordion.Header>
               <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <Container>
+                  <Row>
+                    <p className="fs-3 text-center text-danger">
+                      &#9734;手機版用戶建議以全螢幕下觀看可有較好的觀看體驗&#9734;
+                    </p>
+                    <p>
+                      可直接點選如<b className="text-primary">左下圖藍框處</b>
+                      選擇自己想要觀看的章節進行點選觀看
+                    </p>
+                    <p className="fs-3">PC端/Android用戶：</p>
+                    <p>
+                      點選後會出現如<b className="text-danger">右下圖</b>
+                      所示之視窗點選&#9654;後即可觀看影片，
+                      <b className="text-danger">
+                        若需要全螢幕觀看可點選右下角全螢幕按鈕
+                      </b>
+                    </p>
+
+                    <p className="fs-3">iOS用戶：</p>
+                    <p>
+                      點選後會出現如<b className="text-danger">右下圖</b>
+                      所示之視窗，不過iOS用戶因撥放器需讀取相關暫存檔案，因此出現轉圈圈的情況屬正常現象，請耐心等待轉圈結束後即可觀看影片，
+                      <b className="text-danger">
+                        若需要全螢幕觀看可點選右下角全螢幕按鈕
+                      </b>
+                    </p>
+                  </Row>
+                  <Row>
+                    <Col md={6} xs={6}>
+                      <Image src="src/assets/如何觀看影片Step1.jpg" fluid />
+                    </Col>
+                    <Col md={6} xs={6}>
+                      <Image src="src/assets/如何觀看影片Step2.jpg" fluid />
+                    </Col>
+                  </Row>
+                </Container>
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="2">
