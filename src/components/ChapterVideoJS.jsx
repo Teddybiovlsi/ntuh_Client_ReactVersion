@@ -11,6 +11,10 @@ import { toast } from "react-toastify";
 import { post } from "../client/axios";
 
 export const ChapterVideoJS = (props) => {
+  const user = JSON.parse(
+    localStorage?.getItem("user") || sessionStorage?.getItem("user")
+  );
+
   const navigate = useNavigate();
 
   const videoRef = useRef(null);
@@ -331,7 +335,7 @@ export const ChapterVideoJS = (props) => {
       setAnswerState([
         ...answerState,
         {
-          token: JSON.parse(localStorage.getItem("user")).client_token,
+          token: user.client_token,
           videoID: VideoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [false],

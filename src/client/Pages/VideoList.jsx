@@ -1,14 +1,18 @@
-import React from 'react';
-import { useState } from 'react';
-import { Container, Collapse, Row, Col, ProgressBar } from 'react-bootstrap';
-import { useEffect } from 'react';
-import LoadingComponent from '../../components/LoadingComponent';
-import { get } from '../axios';
-import { Link, useNavigate } from 'react-router-dom';
-import styles from '../../styles/pages/VideoList.module.scss';
+import React from "react";
+import { useState } from "react";
+import { Container, Collapse, Row, Col, ProgressBar } from "react-bootstrap";
+import { useEffect } from "react";
+import LoadingComponent from "../../components/LoadingComponent";
+import { get } from "../axios";
+import { Link, useNavigate } from "react-router-dom";
+import styles from "../../styles/pages/VideoList.module.scss";
 
-export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
-  const pageTitle = PageTitle ? '測驗用' : '練習用';
+export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
+  const user = JSON.parse(
+    localStorage.getItem("user") || sessionStorage.getItem("user")
+  );
+
+  const pageTitle = PageTitle ? "測驗用" : "練習用";
   const title = `${pageTitle}衛教資訊`;
 
   const [loading, setLoading] = useState(false);
@@ -17,14 +21,14 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
   const [originVideoData, setOriginVideoData] = useState([]);
   const [QuestionData, setQuestionData] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
   const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
 
   const userData =
     JSON.parse(
-      localStorage?.getItem('user') || sessionStorage.getItem('user')
+      localStorage?.getItem("user") || sessionStorage.getItem("user")
     ) || {};
   const usrToken = userData.client_token;
   const usrVideo = userData.video;
@@ -68,13 +72,15 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
     } catch (error) {
       const errorMessage = error.response.data.message;
 
-      if (errorMessage === '發生錯誤，請重新登入') {
-        localStorage.removeItem('user');
+      if (errorMessage === "發生錯誤，請重新登入") {
+        if (sessionStorage.getItem("user")) sessionStorage.clear();
+        if (localStorage.getItem("user")) localStorage.clear();
+
         alert(errorMessage);
-        navigate('/');
+        navigate("/");
       } else {
-        alert('發生不明錯誤，請重新嘗試');
-        navigate('/Home', { replace: true });
+        alert("發生不明錯誤，請重新嘗試");
+        navigate("/Home", { replace: true });
       }
     }
   };
@@ -121,20 +127,20 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
   if (arrayIsEmpty) {
     return (
       <Container>
-        <h1 className='text-center'>{title}</h1>
-        <h2 className='m-3 p-3 text-center'>{`沒有對應的${title}`}</h2>
+        <h1 className="text-center">{title}</h1>
+        <h2 className="m-3 p-3 text-center">{`沒有對應的${title}`}</h2>
       </Container>
     );
   }
 
   return (
     <Container>
-      <h1 className='fw-bold text-center'>{title}</h1>
+      <h1 className="fw-bold text-center">{title}</h1>
       {originVideoData.map((video, eachQuestionIndex) => {
         return (
           <div key={video.videoCertainID}>
             <div
-              type={'button'}
+              type={"button"}
               className={styles.videoListContainer}
               onClick={() => {
                 setOpen((prev) => {
@@ -145,11 +151,11 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
               }}
             >
               <Container>
-                <Row className='align-items-center'>
+                <Row className="align-items-center">
                   <Col>
                     <Row>
-                      <div className='fs-3 m-0'>
-                        {eachQuestionIndex + 1 + '. '}
+                      <div className="fs-3 m-0">
+                        {eachQuestionIndex + 1 + ". "}
                         {video.Title}
                       </div>
                     </Row>
@@ -161,7 +167,7 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                       ) : null}
                     </Row>
                   </Col>
-                  <Col className='align-items-center' md={4}>
+                  <Col className="align-items-center" md={4}>
                     <ProgressBar
                       now={video.accuracy}
                       label={`${video.accuracy}%`}
@@ -182,7 +188,7 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                   return (
                     <Link
                       key={index * 1011}
-                      to={'/video/chapter'}
+                      to={"/video/chapter"}
                       state={{
                         videoID: video.videoCertainID,
                         videoPath: video.video_url,
@@ -197,9 +203,9 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                       className={styles.videoListLink}
                     >
                       <div className={styles.videoListContainer}>
-                        <div className='fs-5 m-0'>
+                        <div className="fs-5 m-0">
                           <Container>
-                            <Row className='align-items-center'>
+                            <Row className="align-items-center">
                               <Col>
                                 <Row>
                                   <Col md={6}>
@@ -212,7 +218,7 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                                   </Col>
                                 </Row>
                               </Col>
-                              <Col className='text-end' md={4}>
+                              <Col className="text-end" md={4}>
                                 <ProgressBar
                                   now={question.eachQuizAccuracy * 100}
                                   label={`${question.eachQuizAccuracy * 100}%`}
