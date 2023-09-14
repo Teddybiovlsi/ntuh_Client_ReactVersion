@@ -12,9 +12,10 @@ import PageTitleHeading from "../../components/PageTitleHeading";
 export default function UsingTip() {
   const [tutorial, setTutorial] = useState("衛教資訊");
 
+  // 衛教資訊使用說明
   const healthEducationInfo = () => {
     return (
-      <Row>
+      <Container>
         <Row>
           <h3>衛教資訊</h3>
         </Row>
@@ -135,43 +136,92 @@ export default function UsingTip() {
             </Accordion.Item>
           </Accordion>
         </Row>
-      </Row>
+      </Container>
     );
   };
-
+  // 個人紀錄使用說明
   const personalRecord = () => {
     return (
-      <Row>
+      <Container>
         <Row>
           <h3>個人紀錄</h3>
         </Row>
         <Row>
-          <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            tempore quos, vero facere est corporis dolor neque earum hic fugiat
-            ipsam, veritatis, asperiores libero modi. Tempora veritatis hic
-            officia provident!
-          </p>
+          <p>個人紀錄共分成兩種類型，可依照自行需求查看對應類別</p>
+          <ListGroup as="ol" numbered>
+            <ListGroup.Item as="li">練習用</ListGroup.Item>
+            <ListGroup.Item as="li">測驗用</ListGroup.Item>
+          </ListGroup>
+
+          <Accordion defaultActiveKey="區段該如何進行篩選" className="mt-2">
+            <Accordion.Item eventKey="區段該如何進行篩選">
+              <Accordion.Header>區段篩選要如何進行使用?</Accordion.Header>
+              <Accordion.Body>
+                <Container>
+                  <Row>
+                    <p className="text-primary fs-4 m-0">影片篩選</p>
+                    <p className="ms-3">
+                      可點選<b className="text-danger">選擇影片</b>
+                      選項進行對應影片的篩選 <br />
+                    </p>
+                    <p className="text-danger text-center">
+                      &#9733;需注意！每一個人的選擇影片的篩選器皆為客製化內容
+                      所以選擇器內容會有所變動 &#9733;
+                    </p>
+                    <p className="text-primary fs-4 m-0">完成進度篩選</p>
+                    <p className="ms-3">
+                      可點選<b className="text-danger">完成進度</b>
+                      選項進行對應完成進度的篩選，選項共分為以下兩種：
+                      <ol>
+                        <li>已完成</li>
+                        <li>未完成</li>
+                      </ol>
+                    </p>
+                    <p className="text-primary fs-4 m-0">日期篩選</p>
+                    <p className="ms-3">
+                      可點選
+                      <b className="text-danger">
+                        起始/結束日期進行對應日期的選擇
+                      </b>
+                      ，選擇後即可進行對應日期的篩選
+                    </p>
+                    <p className="text-danger text-center">
+                      &#9733;需注意！起始日期不得大於結束日期 &#9733;
+                    </p>
+                  </Row>
+                  <Row>
+                    <Image src="src/assets/區段篩選器.jpg" fluid />
+                  </Row>
+                </Container>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="該區段無資料">
+              <Accordion.Header>若該區段無任何資料?</Accordion.Header>
+              <Accordion.Body>
+                <Container>
+                  <Row>
+                    <p>若該區段無任何資料則會顯示如下圖之訊息</p>
+                  </Row>
+                  <Row>
+                    <Image src="src/assets/該區段無資料.jpg" fluid />
+                  </Row>
+                </Container>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Row>
-      </Row>
+      </Container>
     );
   };
 
   const personalSetting = () => {
     return (
-      <Row>
+      <Container>
         <Row>
           <h3>個人設定</h3>
         </Row>
-        <Row>
-          <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            tempore quos, vero facere est corporis dolor neque earum hic fugiat
-            ipsam, veritatis, asperiores libero modi. Tempora veritatis hic
-            officia provident!
-          </p>
-        </Row>
-      </Row>
+        <Row></Row>
+      </Container>
     );
   };
 
