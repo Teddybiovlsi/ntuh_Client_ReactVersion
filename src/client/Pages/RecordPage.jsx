@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Col, Container, Row, Form, Table } from 'react-bootstrap';
-import { get } from '../axios';
-import LoadingComponent from '../../components/LoadingComponent';
-import DataSize from '../JSON/slectDataSize.json';
-import ReactPaginate from 'react-paginate';
+import React, { useEffect, useState } from "react";
+import { Col, Container, Row, Form, Table } from "react-bootstrap";
+import { get } from "../axios";
+import LoadingComponent from "../../components/LoadingComponent";
+import DataSize from "../JSON/slectDataSize.json";
+import ReactPaginate from "react-paginate";
 
 export default function RecordPage({ recordType = 0 }) {
   // 取得當前時間
   // const isoDateInTaipei = GetCurrentDateTime();
-  const recordTypeIsPraticeOrTest = recordType === 1 ? '測驗用' : '練習用';
-  const recordTypeString = recordTypeIsPraticeOrTest + '紀錄';
+  const recordTypeIsPraticeOrTest = recordType === 1 ? "測驗用" : "練習用";
+  const recordTypeString = recordTypeIsPraticeOrTest + "紀錄";
 
   const [loading, setLoading] = useState(false);
   const [totalVideoName, setTotalVideoName] = useState([]);
@@ -22,13 +22,13 @@ export default function RecordPage({ recordType = 0 }) {
   const [endRecordDate, setEndRecordDate] = useState();
   // 以下是篩選條件
   // 篩選影片名稱
-  const [selectVideo, setSelectVideo] = useState('');
+  const [selectVideo, setSelectVideo] = useState("");
   // 篩選完成進度
-  const [selectFinishChapter, setSelectFinishChapter] = useState('');
+  const [selectFinishChapter, setSelectFinishChapter] = useState("");
   // 篩選起始日期
-  const [startSelectDate, setStartSelectDate] = useState('');
+  const [startSelectDate, setStartSelectDate] = useState("");
   // 篩選結束日期
-  const [endSelectDate, setEndSelectDate] = useState('');
+  const [endSelectDate, setEndSelectDate] = useState("");
   // 篩選資料筆數
   const [selectDataCount, setSelectDataCount] = useState(5);
 
@@ -52,9 +52,13 @@ export default function RecordPage({ recordType = 0 }) {
 
   useEffect(() => {
     const rows = filteredDataRecord.length;
+    const start = currentPage * selectDataCount;
+    const end = start + selectDataCount;
     setPagination((prevPagination) => ({
       ...prevPagination,
       itemsPerPage: Math.ceil(rows / selectDataCount),
+      itemOffset: start,
+      endOffset: end,
     }));
     updateShowDataRecord(0, selectDataCount);
   }, [filteredDataRecord, selectDataCount]);
@@ -68,12 +72,12 @@ export default function RecordPage({ recordType = 0 }) {
       itemOffset: start,
       endOffset: end,
     }));
-    console.log('start-end', start, end);
+    console.log("start-end", start, end);
   };
 
   useEffect(() => {
     const usrToken = JSON.parse(
-      localStorage?.getItem('user') || sessionStorage?.getItem('user')
+      localStorage?.getItem("user") || sessionStorage?.getItem("user")
     )?.client_token;
     setLoading(true);
     handelRecord({ api: `client/record/${usrToken}` });
@@ -98,7 +102,7 @@ export default function RecordPage({ recordType = 0 }) {
       }, 1000);
     } catch (error) {
       // Handle error if needed
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
@@ -111,7 +115,7 @@ export default function RecordPage({ recordType = 0 }) {
     const firstDate = new Date(Math.min(...dates));
     const lastDate = new Date(Math.max(...dates));
 
-    const formatDate = (date) => date.toISOString().split('T')[0];
+    const formatDate = (date) => date.toISOString().split("T")[0];
 
     setStartRecordDate(formatDate(firstDate));
     setEndRecordDate(formatDate(lastDate));
@@ -179,7 +183,7 @@ export default function RecordPage({ recordType = 0 }) {
             <td>{index + 1}</td>
             <td>{clientVideoCheck}</td>
             <td>{chapter}</td>
-            <td>{answerState ? '是' : '否'}</td>
+            <td>{answerState ? "是" : "否"}</td>
             <td>{formattedDate}</td>
           </tr>
         );
@@ -192,20 +196,20 @@ export default function RecordPage({ recordType = 0 }) {
   return (
     <Container>
       <Col>
-        <Row className='text-center'>
+        <Row className="text-center">
           <h1>{recordTypeString}</h1>
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group className='mb-3' controlId='Form.SelectVideoName'>
+            <Form.Group className="mb-3" controlId="Form.SelectVideoName">
               <Form.Label>選擇影片</Form.Label>
               <Form.Select
-                aria-label='SelectVideo'
+                aria-label="SelectVideo"
                 onChange={(e) => {
                   setSelectVideo(e.target.value);
                 }}
               >
-                <option value=''>請選擇影片</option>
+                <option value="">請選擇影片</option>
                 {totalVideoName.map((item, index) => (
                   <option key={index} value={item}>
                     {item}
@@ -215,28 +219,28 @@ export default function RecordPage({ recordType = 0 }) {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className='mb-3' controlId='Form.SelectFinishChapter'>
+            <Form.Group className="mb-3" controlId="Form.SelectFinishChapter">
               <Form.Label>完成進度</Form.Label>
               <Form.Select
-                aria-label='SelectFinishChapter'
+                aria-label="SelectFinishChapter"
                 onChange={(e) => {
                   setSelectFinishChapter(e.target.value);
                 }}
               >
-                <option value=''>請選擇完成進度</option>
-                <option value='true'>已完成</option>
-                <option value='false'>未完成</option>
+                <option value="">請選擇完成進度</option>
+                <option value="true">已完成</option>
+                <option value="false">未完成</option>
               </Form.Select>
             </Form.Group>
           </Col>
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group className='mb-3' controlId='Form.StartDate'>
+            <Form.Group className="mb-3" controlId="Form.StartDate">
               <Form.Label>起始日期</Form.Label>
               <Form.Control
-                type='date'
-                name='startDate'
+                type="date"
+                name="startDate"
                 onChange={(e) => {
                   setStartSelectDate(e.target.value);
                 }}
@@ -247,11 +251,11 @@ export default function RecordPage({ recordType = 0 }) {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className='mb-3' controlId='Form.EndDate'>
+            <Form.Group className="mb-3" controlId="Form.EndDate">
               <Form.Label>結束日期</Form.Label>
               <Form.Control
-                type='date'
-                name='endDate'
+                type="date"
+                name="endDate"
                 onChange={(e) => {
                   setEndSelectDate(e.target.value);
                 }}
@@ -263,9 +267,9 @@ export default function RecordPage({ recordType = 0 }) {
           </Col>
         </Row>
         <Row>
-          <Col md={6} className='ms-auto'>
+          <Col md={6} className="ms-auto">
             <Form.Select
-              aria-label='SelectDataCount'
+              aria-label="SelectDataCount"
               onChange={(e) => {
                 setSelectDataCount(Number(e.target.value));
               }}
@@ -280,36 +284,36 @@ export default function RecordPage({ recordType = 0 }) {
         </Row>
         {filteredDataIsNull !== true ? (
           <Row>
-            <Table striped bordered hover size='sm'>
+            <Table striped bordered hover size="sm">
               {tableHeader}
               {tableBody}
             </Table>
           </Row>
         ) : (
-          <Row className='text-center'>
+          <Row className="text-center">
             <h1>該區段查無紀錄資料</h1>
           </Row>
         )}
         <Row>
-          <Col md={6} className='mx-auto'>
+          <Col md={6} className="mx-auto">
             <ReactPaginate
               forcePage={currentPage}
-              previousLabel={'上一頁'}
-              nextLabel={'下一頁'}
-              breakLabel={'...'}
+              previousLabel={"上一頁"}
+              nextLabel={"下一頁"}
+              breakLabel={"..."}
               pageCount={pagination.itemsPerPage}
               pageRangeDisplayed={3}
               onPageChange={handlePageClick}
-              containerClassName='justify-content-center pagination'
-              breakClassName={'page-item'}
-              breakLinkClassName={'page-link'}
-              pageClassName={'page-item'}
-              pageLinkClassName={'page-link'}
-              previousClassName={'page-item'}
-              previousLinkClassName={'page-link'}
-              nextClassName={'page-item'}
-              nextLinkClassName={'page-link'}
-              activeClassName={'active'}
+              containerClassName="justify-content-center pagination"
+              breakClassName={"page-item"}
+              breakLinkClassName={"page-link"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              previousLinkClassName={"page-link"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"page-link"}
+              activeClassName={"active"}
             />
           </Col>
         </Row>
