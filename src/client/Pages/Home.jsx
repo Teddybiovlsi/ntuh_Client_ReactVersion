@@ -140,7 +140,7 @@ export default function Home() {
           </Col>
           <Col sm={2} xs={4}>
             <Link
-              to={"https://www.ylh.gov.tw/?aid=625"}
+              to={"https://www.ylh.gov.tw/?aid=612"}
               className={styles.infoContainer}
             >
               <Row>

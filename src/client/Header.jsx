@@ -58,7 +58,7 @@ export default function Header({ expand = "lg" }) {
               ) : null}
 
               {/* 衛教天地Nav */}
-              <Nav.Link href="https://www.ylh.gov.tw/?aid=625">
+              <Nav.Link href="https://www.ylh.gov.tw/?aid=612">
                 衛教天地
               </Nav.Link>
 
