@@ -72,7 +72,7 @@ export default function UserSetting() {
       await post(api, data);
       if (updateType === "password") {
         toast.update(rewriteToastid, {
-          render: "更新使用者資料成功，請重新登入",
+          render: "更新個人資料成功，請重新登入",
           type: "success",
           autoClose: 2000,
           isLoading: false,
@@ -85,7 +85,7 @@ export default function UserSetting() {
         }, 2000);
       } else {
         toast.update(rewriteToastid, {
-          render: "更新使用者資料成功",
+          render: "更新個人資料成功",
           type: "success",
           autoClose: 2000,
           isLoading: false,
@@ -126,7 +126,7 @@ export default function UserSetting() {
     <>
       <Container>
         <Col>
-          <h1 className="text-center">使用者設定</h1>
+          <h1 className="text-center">個人設定</h1>
         </Col>
         <Col className={`mx-auto ${styles.UserSettingContainer}`}>
           <div className="d-flex justify-content-center ms-2 me-2">
@@ -140,7 +140,7 @@ export default function UserSetting() {
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
                 <Col className="d-flex align-items-center justify-content-between fs-3">
                   <div className="text-start">
-                    使用者名稱
+                    個人名稱
                     <div className={`${styles.UserCurrentName}`}>
                       {ConvertNameToHide(user.client_name)}
                     </div>
@@ -162,7 +162,7 @@ export default function UserSetting() {
             >
               <Row className={`${styles.ButtonOfEachSettingContainer_Row}`}>
                 <Col className="d-flex align-items-center justify-content-between fs-3">
-                  <div className="text-start">使用者密碼</div>
+                  <div className="text-start">個人密碼</div>
                   <MdOutlineKeyboardArrowRight
                     className={`fs-1 ${styles.buttonIco}`}
                   />
@@ -195,10 +195,10 @@ export default function UserSetting() {
           </div>
         </Col>
       </Container>
-      {/* 修改使用者名稱Modal */}
+      {/* 修改個人名稱Modal */}
       <Modal show={nameModalShow} onHide={() => setNameModalShow(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>使用者名稱</Modal.Title>
+          <Modal.Title>個人名稱</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
@@ -258,13 +258,13 @@ export default function UserSetting() {
         </Modal.Body>
       </Modal>
 
-      {/* 修改使用者密碼Modal */}
+      {/* 修改個人密碼Modal */}
       <Modal
         show={passwordModalShow}
         onHide={() => setPasswordModalShow(false)}
       >
         <Modal.Header closeButton>
-          <Modal.Title>使用者密碼</Modal.Title>
+          <Modal.Title>個人密碼</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
@@ -352,10 +352,10 @@ export default function UserSetting() {
           </Formik>
         </Modal.Body>
       </Modal>
-      {/* 修改使用者信箱Modal */}
+      {/* 修改個人信箱Modal */}
       <Modal show={emailModalShow} onHide={() => setEmailModalShow(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>使用者信箱</Modal.Title>
+          <Modal.Title>個人信箱</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Formik
