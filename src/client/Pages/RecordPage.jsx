@@ -72,7 +72,6 @@ export default function RecordPage({ recordType = 0 }) {
       itemOffset: start,
       endOffset: end,
     }));
-    console.log("start-end", start, end);
   };
 
   useEffect(() => {
