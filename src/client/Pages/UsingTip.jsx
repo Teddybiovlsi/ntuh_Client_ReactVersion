@@ -248,6 +248,17 @@ export default function UsingTip() {
     );
   };
 
+  const forgotPassword = () => {
+    return (
+      <Container>
+        <Row>
+          <h3>忘記密碼</h3>
+        </Row>
+        <Row></Row>
+      </Container>
+    );
+  };
+
   const tutorialSwitch = (tutorial) => {
     switch (tutorial) {
       case "衛教資訊":
@@ -256,6 +267,8 @@ export default function UsingTip() {
         return personalRecord();
       case "個人設定":
         return personalSetting();
+      case "忘記密碼":
+        return forgotPassword();
       default:
         return healthEducationInfo();
     }
@@ -296,6 +309,15 @@ export default function UsingTip() {
               }}
             >
               使用者設定
+            </ListGroup.Item>
+            <ListGroup.Item
+              action
+              className="text-success"
+              onClick={() => {
+                setTutorial("忘記密碼");
+              }}
+            >
+              忘記密碼
             </ListGroup.Item>
           </ListGroup>
         </Col>
