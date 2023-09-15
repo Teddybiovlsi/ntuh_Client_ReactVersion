@@ -53,7 +53,7 @@ export default function UsingTip() {
                     </p>
                   </Row>
                   <Row>
-                    <Image src="src/assets/衛教資訊練習進度查詢.jpg" fluid />
+                    <Image src="assets/衛教資訊練習進度查詢.jpg" fluid />
                   </Row>
                 </Container>
               </Accordion.Body>
@@ -90,10 +90,10 @@ export default function UsingTip() {
                   </Row>
                   <Row>
                     <Col md={6} xs={6}>
-                      <Image src="src/assets/如何觀看影片Step1.jpg" fluid />
+                      <Image src="assets/如何觀看影片Step1.jpg" fluid />
                     </Col>
                     <Col md={6} xs={6}>
-                      <Image src="src/assets/如何觀看影片Step2.jpg" fluid />
+                      <Image src="assets/如何觀看影片Step2.jpg" fluid />
                     </Col>
                   </Row>
                 </Container>
@@ -111,19 +111,19 @@ export default function UsingTip() {
                   </Row>
                   <Row>
                     <Col md={4} xs={4}>
-                      <Image src="src/assets/章節正確訊息.jpg" fluid />
+                      <Image src="assets/章節正確訊息.jpg" fluid />
                       <p className="text-center text-success">
                         第一種為回答正確
                       </p>
                     </Col>
                     <Col md={4} xs={4}>
-                      <Image src="src/assets/章節錯誤訊息.jpg" fluid />
+                      <Image src="assets/章節錯誤訊息.jpg" fluid />
                       <p className="text-center text-danger">
                         第二種為回答錯誤
                       </p>
                     </Col>
                     <Col md={4} xs={4}>
-                      <Image src="src/assets/章節上傳失敗訊息.jpg" fluid />
+                      <Image src="assets/章節上傳失敗訊息.jpg" fluid />
                       <p className="text-center text-danger">
                         第三種為伺服器發生錯誤
                         <br />
@@ -190,7 +190,7 @@ export default function UsingTip() {
                     </p>
                   </Row>
                   <Row>
-                    <Image src="src/assets/區段篩選器.jpg" fluid />
+                    <Image src="assets/區段篩選器.jpg" fluid />
                   </Row>
                 </Container>
               </Accordion.Body>
@@ -203,7 +203,7 @@ export default function UsingTip() {
                     <p>若該區段無任何資料則會顯示如下圖之訊息</p>
                   </Row>
                   <Row>
-                    <Image src="src/assets/該區段無資料.jpg" fluid />
+                    <Image src="assets/該區段無資料.jpg" fluid />
                   </Row>
                 </Container>
               </Accordion.Body>
