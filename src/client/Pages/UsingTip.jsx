@@ -16,6 +16,10 @@ import HealthEducationInfo_Image_ChapterInCorrect from "../../assets/章節錯�
 import HealthEducationInfo_Image_ChapterUploadFailed from "../../assets/章節上傳失敗訊息.jpg";
 import PersonalRecord_Image_RangeFilter from "../../assets/區段篩選器.jpg";
 import PersonalRecord_Image_RangeFilterNoData from "../../assets/該區段無資料.jpg";
+import PersonalSetting_Image_Page from "../../assets/個人設定.jpg";
+import PersonalSetting_Image_ChangeName from "../../assets/個人設定_名稱.jpg";
+import PersonalSetting_Image_ChangePassword from "../../assets/個人設定_密碼.jpg";
+import PersonalSetting_Image_ChangeEmail from "../../assets/個人設定_信箱.jpg";
 
 export default function UsingTip() {
   const [tutorial, setTutorial] = useState("衛教資訊");
@@ -162,6 +166,7 @@ export default function UsingTip() {
       </Container>
     );
   };
+
   // 個人紀錄使用說明
   const personalRecord = () => {
     return (
@@ -237,13 +242,77 @@ export default function UsingTip() {
     );
   };
 
+  // 個人設定使用說明
   const personalSetting = () => {
     return (
       <Container>
         <Row>
           <h3>個人設定</h3>
         </Row>
-        <Row></Row>
+        <Row>
+          <Col md={6} xs={6}>
+            <p className="m-0">
+              個人設定頁面如 <b className="text-danger">左圖所示</b> <br />
+              共分成三種類型：
+              <b className="text-danger">個人名稱、個人密碼、個人信箱</b>
+              <br />
+              可依照自行需求進行對應的設定
+            </p>
+          </Col>
+          <Col md={6} xs={6}>
+            <Image src={PersonalSetting_Image_Page} fluid />
+          </Col>
+          <Accordion defaultActiveKey="變更使用者名稱" className="mt-2">
+            <Accordion.Item eventKey="變更個人名稱">
+              <Accordion.Header>如何變更個人名稱?</Accordion.Header>
+              <Accordion.Body>
+                <Container>
+                  <p>
+                    點選個人名稱，會出現<b className="text-primary">如下圖</b>
+                    所示之圖示，在姓名輸入欄位輸入後
+                    <b className="text-primary">送出</b>即可變更個人名稱
+                  </p>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <Image src={PersonalSetting_Image_ChangeName} fluid />
+                  </div>
+                </Container>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="變更個人密碼">
+              <Accordion.Header>如何變更個人密碼?</Accordion.Header>
+              <Accordion.Body>
+                <Container>
+                  <p>
+                    點選個人密碼，會出現<b className="text-primary">如下圖</b>
+                    所示之圖示，在原始密碼、新密碼、確認新密碼輸入欄位輸入後
+                    <b className="text-primary">送出</b>即可變更個人密碼
+                  </p>
+                  <p className="text-center fs-3">
+                    &#9734;需注意！新密碼不得與原始密碼相同&#9734;
+                  </p>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <Image src={PersonalSetting_Image_ChangePassword} fluid />
+                  </div>
+                </Container>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="變更個人信箱">
+              <Accordion.Header>如何變更個人信箱?</Accordion.Header>
+              <Accordion.Body>
+                <Container>
+                  <p>
+                    點選個人信箱，會出現<b className="text-primary">如下圖</b>
+                    所示之圖示，在電子郵件的輸入欄位輸入後
+                    <b className="text-primary">送出</b>即可變更個人信箱
+                  </p>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <Image src={PersonalSetting_Image_ChangeEmail} fluid />
+                  </div>
+                </Container>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        </Row>
       </Container>
     );
   };
