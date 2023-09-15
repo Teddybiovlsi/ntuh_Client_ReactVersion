@@ -308,7 +308,7 @@ export default function UsingTip() {
                 setTutorial("個人設定");
               }}
             >
-              使用者設定
+              個人設定
             </ListGroup.Item>
             <ListGroup.Item
               action
