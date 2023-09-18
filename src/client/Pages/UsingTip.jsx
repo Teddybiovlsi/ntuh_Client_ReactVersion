@@ -20,6 +20,8 @@ import PersonalSetting_Image_Page from "../../assets/個人設定.jpg";
 import PersonalSetting_Image_ChangeName from "../../assets/個人設定_名稱.jpg";
 import PersonalSetting_Image_ChangePassword from "../../assets/個人設定_密碼.jpg";
 import PersonalSetting_Image_ChangeEmail from "../../assets/個人設定_信箱.jpg";
+import PersonalSetting_Image_ForgotPassword from "../../assets/個人設定_忘記密碼.jpg";
+import PersonalSetting_Image_ForgotPassword_OTP from "../../assets/個人設定_忘記密碼_OTP.jpg";
 
 export default function UsingTip() {
   const [tutorial, setTutorial] = useState("衛教資訊");
@@ -323,7 +325,39 @@ export default function UsingTip() {
         <Row>
           <h3>忘記密碼</h3>
         </Row>
-        <Row></Row>
+        <Row>
+          <p>
+            當在登入or更改密碼介面忘記原始密碼時，可點選
+            <b className="text-primary">忘記密碼</b>進行密碼重設
+            <br />
+            以下是忘記密碼重設的流程：
+          </p>
+          <ListGroup as="ol" numbered>
+            <ListGroup.Item as="li">
+              點選忘記密碼後會出現如<b className="text-primary">下圖</b>
+              所示之圖示，輸入
+              <b className="text-danger">帳號、電子信箱(可按照預設值不更動)</b>
+              後點選<b className="text-primary">下一步</b>
+              <Image src={PersonalSetting_Image_ForgotPassword} fluid />
+            </ListGroup.Item>
+            <ListGroup.Item as="li">
+              系統會寄送<b className="text-danger">6位數驗證碼</b>至
+              <b className="text-danger">你所指定之電子信箱</b>
+              ，請至信箱收取驗證碼，並依序輸入驗證碼後點選送出
+              <br />
+              <p className="text-center fs-5">
+                請注意！信箱可能會被歸類為垃圾信件
+                <br />
+                若未收到驗證碼請60秒後再次點選
+                <b className="text-primary">重寄驗證碼</b>
+              </p>
+              <Image src={PersonalSetting_Image_ForgotPassword_OTP} fluid />
+            </ListGroup.Item>
+            <ListGroup.Item as="li">
+              輸入驗證碼正確後，即可進行密碼重設
+            </ListGroup.Item>
+          </ListGroup>
+        </Row>
       </Container>
     );
   };
