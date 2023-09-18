@@ -200,11 +200,11 @@ export default function UsingTip() {
                     <p className="ms-3">
                       可點選<b className="text-danger">完成進度</b>
                       選項進行對應完成進度的篩選，選項共分為以下兩種：
-                      <ol>
-                        <li>已完成</li>
-                        <li>未完成</li>
-                      </ol>
                     </p>
+                    <ol className="ms-3">
+                      <li>已完成</li>
+                      <li>未完成</li>
+                    </ol>
                     <p className="text-primary fs-4 m-0">日期篩選</p>
                     <p className="ms-3">
                       可點選
@@ -362,20 +362,20 @@ export default function UsingTip() {
             </ListGroup.Item>
             <ListGroup.Item
               action
-              className="text-secondary"
               onClick={() => {
                 setTutorial("個人紀錄");
               }}
+              className="text-secondary"
             >
               個人紀錄
             </ListGroup.Item>
 
             <ListGroup.Item
               action
-              className="text-danger"
               onClick={() => {
                 setTutorial("個人設定");
               }}
+              className="text-danger"
             >
               個人設定
             </ListGroup.Item>
