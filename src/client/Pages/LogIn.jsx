@@ -136,7 +136,10 @@ export default function LogIn() {
             <Row>
               {/* <Link to="/Register">註冊</Link> */}
               <Col>
-                <Link to="/forgetPassword" className="float-end">
+                <Link
+                  to="/forgetPassword"
+                  className="float-end text-decoration-none"
+                >
                   忘記密碼
                 </Link>
               </Col>
