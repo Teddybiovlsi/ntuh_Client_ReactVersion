@@ -47,7 +47,7 @@ export default function UsingTip() {
             以下有衛教資訊的詳細介紹，可依照需求點選對應的衛教資訊使用教學進行觀看
           </p>
 
-          <Accordion defaultActiveKey="練習章節進度">
+          <Accordion>
             <Accordion.Item eventKey="練習章節進度">
               <Accordion.Header>如何得知影片的練習章節進度?</Accordion.Header>
               <Accordion.Body>
@@ -181,7 +181,7 @@ export default function UsingTip() {
             <ListGroup.Item as="li">測驗用</ListGroup.Item>
           </ListGroup>
 
-          <Accordion defaultActiveKey="區段該如何進行篩選" className="mt-2">
+          <Accordion className="mt-2">
             <Accordion.Item eventKey="區段該如何進行篩選">
               <Accordion.Header>區段篩選要如何進行使用?</Accordion.Header>
               <Accordion.Body>
@@ -262,7 +262,7 @@ export default function UsingTip() {
           <Col md={6} xs={6}>
             <Image src={PersonalSetting_Image_Page} fluid />
           </Col>
-          <Accordion defaultActiveKey="變更使用者名稱" className="mt-2">
+          <Accordion className="mt-2">
             <Accordion.Item eventKey="變更個人名稱">
               <Accordion.Header>如何變更個人名稱?</Accordion.Header>
               <Accordion.Body>
