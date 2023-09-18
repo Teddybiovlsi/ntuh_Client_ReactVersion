@@ -332,7 +332,10 @@ export default function UserSetting() {
                 <div className="float-end"></div>
                 <div className="d-grid gap-2">
                   <Col>
-                    <Link to="/forgetPassword" className="float-end">
+                    <Link
+                      to="/forgetPassword"
+                      className="float-end text-decoration-none"
+                    >
                       忘記密碼
                     </Link>
                   </Col>
