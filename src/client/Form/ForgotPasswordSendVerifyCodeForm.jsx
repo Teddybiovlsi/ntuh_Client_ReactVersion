@@ -25,7 +25,7 @@ export default function ForgotPasswordSendVerifyCodeForm({
   }, [formCounter]);
 
   return (
-    <Card className={styles.cardContainer}>
+    <Card className={`mx-auto ${styles.cardContainer}`}>
       <Card.Title>
         <p className={styles.cardTitle}>請輸入驗證碼</p>
       </Card.Title>
