@@ -56,7 +56,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
 
       // Filter videoData with videoType equal to PageTitle
       const filterVideoData = data.filter(
-        (video) => video.videoType === PageTitle
+        (video) => video.videoType === Number(PageTitle)
       );
 
       // Set setOpenArray to an array of false values with the same length as filterVideoData
@@ -65,6 +65,8 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
 
       // Check if filterVideoData is empty
       setArrayIsEmpty(filterVideoData.length === 0);
+
+      setOriginVideoData(filterVideoData);
 
       setTimeout(() => {
         setLoading(false);
