@@ -101,7 +101,7 @@ export default function LogIn() {
   if (!localStorage.getItem("user") || !sessionStorage.getItem("user")) {
     return (
       <Container>
-        <h1 className="text-center">歡迎光臨台大衛教系統</h1>
+        <h1 className="text-center">歡迎光臨台大醫院雲林分院衛教系統</h1>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Col>
             <Form.Group as={Row} md="4" controlId="validationCustom01">
