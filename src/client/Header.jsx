@@ -48,11 +48,14 @@ export default function Header({ expand = "lg" }) {
             <Nav className="me-auto">
               {user !== null ? (
                 <NavDropdown title="衛教資訊" id="collasible-nav-dropdown">
+                  <LinkContainer to="/basic">
+                    <NavDropdown.Item>基礎練習</NavDropdown.Item>
+                  </LinkContainer>
                   <LinkContainer to="/Pratice">
-                    <NavDropdown.Item>練習用</NavDropdown.Item>
+                    <NavDropdown.Item>練習</NavDropdown.Item>
                   </LinkContainer>{" "}
                   <LinkContainer to="/test">
-                    <NavDropdown.Item>測驗用</NavDropdown.Item>
+                    <NavDropdown.Item>測驗</NavDropdown.Item>
                   </LinkContainer>{" "}
                 </NavDropdown>
               ) : null}
