@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import Loading from '../../components/Loading';
-import '../../components/videoqa.css';
-import { ChapterVideoJS } from '../../components/ChapterVideoJS';
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import Loading from "../../components/Loading";
+import "../../components/videoqa.css";
+import { ChapterVideoJS } from "../../components/ChapterVideoJS";
 
 export default function VideoChapterPlayer() {
   const location = useLocation();
@@ -22,7 +22,7 @@ export default function VideoChapterPlayer() {
     sources: [
       {
         src: VideoPath,
-        type: 'video/mp4',
+        type: "video/mp4",
       },
     ],
   };

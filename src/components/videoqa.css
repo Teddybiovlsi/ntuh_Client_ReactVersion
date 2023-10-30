@@ -171,6 +171,9 @@
 
 @media only screen and (max-width: 576px) {
   .text-overlay {
+    -webkit-transform: translate3d(0,0,0);
+    overflow: visible !important;
+    -webkit-overflow-scrolling: auto !important;
     position: absolute;
     width: 100%;
     left: 50%;
@@ -183,10 +186,12 @@
 
 @media (min-width: 576px) {
   .text-overlay {
-    position: absolute;
-    left: 30%;
-    top: 30%;
-    z-index: 9999;
+    overflow: visible !important;
+    -webkit-overflow-scrolling: auto !important;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9;
     background-color: #fff;
   }
   .videoPlayer {
@@ -195,10 +200,12 @@
 }
 @media (min-width: 768px) {
   .text-overlay {
-    position: absolute;
+    overflow: visible !important;
+    -webkit-overflow-scrolling: auto !important;
+    position: fixed;
     left: 25%;
     top: 0;
-    z-index: 9999;
+    z-index: 5;
     background-color: #fff;
   }
   .text-overlay {
