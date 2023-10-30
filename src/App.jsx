@@ -16,6 +16,7 @@ import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
 import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
 import RewritePasswordProtected from "./RewritePasswordProtected";
 import UsingTip from "./client/Pages/UsingTip";
+import BasicVideoList from "./client/Pages/BasicVideoList";
 
 export default function App() {
   const location = useLocation();
@@ -50,6 +51,7 @@ export default function App() {
 
           <Route element={<AuthProtected user={user} />}>
             <Route path="/Home" element={<Home />} />
+            <Route path="/basic" element={<BasicVideoList />} />
             <Route
               path="/pratice"
               element={<VideoList PageTitle={0} loadingText="載入中請稍後" />}
