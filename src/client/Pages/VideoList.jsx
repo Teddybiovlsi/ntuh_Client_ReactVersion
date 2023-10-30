@@ -1,11 +1,20 @@
 import React from "react";
 import { useState } from "react";
-import { Container, Collapse, Row, Col, ProgressBar } from "react-bootstrap";
+import {
+  Container,
+  Collapse,
+  Row,
+  Col,
+  ProgressBar,
+  Stack,
+  Modal,
+} from "react-bootstrap";
 import { useEffect } from "react";
 import LoadingComponent from "../../components/LoadingComponent";
 import { get } from "../axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/pages/VideoList.module.scss";
+import BtnBootstrap from "../../components/BtnBootstrap";
 
 export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const user = JSON.parse(
@@ -16,7 +25,8 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const title = `${pageTitle}衛教資訊`;
 
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState([]);
+  const [open, setOpen] = useState(null);
+  const [openChapter, setOpenChapter] = useState(null);
 
   const [originVideoData, setOriginVideoData] = useState([]);
   const [QuestionData, setQuestionData] = useState([]);
@@ -60,8 +70,8 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       );
 
       // Set setOpenArray to an array of false values with the same length as filterVideoData
-      const setOpenArray = new Array(filterVideoData.length).fill(false);
-      setOpen(setOpenArray);
+      // const setOpenArray = new Array(filterVideoData.length).fill(false);
+      // setOpen(setOpenArray);
 
       // Check if filterVideoData is empty
       setArrayIsEmpty(filterVideoData.length === 0);
@@ -116,9 +126,14 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
 
   useEffect(() => {
     if (originVideoData.length !== 0) {
-      const eachVideoChapterDurationArray = originVideoData.map((video) => {
-        return calculateChapterDurations(video.QuestionData);
-      });
+      const eachVideoChapterDurationArray = originVideoData.reduce(
+        (acc, video) => {
+          const videoCertainID = video.videoCertainID;
+          acc[videoCertainID] = calculateChapterDurations(video.QuestionData);
+          return acc;
+        },
+        {}
+      );
       setEachVideoChapterDuration(eachVideoChapterDurationArray);
     }
   }, [originVideoData]);
@@ -134,6 +149,15 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
       </Container>
     );
   }
+  if (
+    !localStorage.getItem("iphoneAlertShown") &&
+    navigator.userAgent.match(/iPhone/i)
+  ) {
+    alert(
+      "目前使用iPhone，請留意在影片撥放全螢幕下無法正確顯示問題，請關閉全螢幕即可正確作答"
+    );
+    localStorage.setItem("iphoneAlertShown", true);
+  }
 
   return (
     <Container>
@@ -142,15 +166,14 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
         return (
           <div key={video.videoCertainID}>
             <div
-              type={"button"}
               className={styles.videoListContainer}
-              onClick={() => {
-                setOpen((prev) => {
-                  const copy = [...prev];
-                  copy[eachQuestionIndex] = !copy[eachQuestionIndex];
-                  return copy;
-                });
-              }}
+              // onClick={() => {
+              //   setOpen((prev) => {
+              //     const copy = [...prev];
+              //     copy[eachQuestionIndex] = !copy[eachQuestionIndex];
+              //     return copy;
+              //   });
+              // }}
             >
               <Container>
                 <Row className="align-items-center">
@@ -169,11 +192,22 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                       ) : null}
                     </Row>
                   </Col>
+
                   <Col className="align-items-center" md={4}>
-                    <ProgressBar
+                    <Stack gap={1}>
+                      <BtnBootstrap
+                        text={`開始`}
+                        variant={"outline-primary"}
+                        onClickEventName={() => {
+                          // set current video into setOpen
+                          setOpen(video);
+                        }}
+                      />
+                    </Stack>
+                    {/* <ProgressBar
                       now={video.accuracy}
                       label={`${video.accuracy}%`}
-                    />
+                    /> */}
                   </Col>
 
                   {/* <Col className="align-items-center">
@@ -184,7 +218,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                 </Row>
               </Container>
             </div>
-            <Collapse in={open[eachQuestionIndex]}>
+            {/* <Collapse in={open[eachQuestionIndex]}>
               <div id={`collapse-text-${eachQuestionIndex}`}>
                 {video.QuestionData.map((question, index) => {
                   return (
@@ -234,10 +268,103 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                   );
                 })}
               </div>
-            </Collapse>
+            </Collapse> */}
           </div>
         );
       })}
+      <Modal
+        show={open}
+        onHide={() => {
+          setOpen(null);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇欲觀看的類型</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Stack gap={3}>
+            <BtnBootstrap text={`瀏覽`} variant={"outline-primary"} />
+            <BtnBootstrap
+              text={`開始${PageTitle ? "測驗" : "練習"}`}
+              variant={"outline-primary"}
+            />
+            <BtnBootstrap
+              text={`章節${PageTitle ? "測驗" : "練習"}`}
+              variant={"outline-primary"}
+              onClickEventName={() => {
+                setOpenChapter(open);
+              }}
+            />
+          </Stack>
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={openChapter}
+        onHide={() => {
+          setOpenChapter(null);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇欲觀看的章節</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {openChapter !== null && (
+            <Stack gap={1}>
+              {openChapter.QuestionData.map((question, index) => {
+                return (
+                  <Link
+                    key={index}
+                    to={"/video/chapter"}
+                    state={{
+                      videoID: open.videoCertainID,
+                      videoPath: open.video_url,
+                      videoCurrentTime:
+                        index === 0
+                          ? 0
+                          : openChapter.QuestionData[index - 1]
+                              .video_interrupt_time,
+                      videoInterruptTime: question.video_interrupt_time,
+                      info: question,
+                    }}
+                    className={styles.videoListLink}
+                  >
+                    <div className={styles.videoListContainer}>
+                      <div className="m-0">
+                        <Container>
+                          <Row className="align-items-center">
+                            <Col>
+                              <Row>
+                                <Col md={6}>
+                                  <h3 className={styles.titleChapter}>{`第 ${
+                                    index + 1
+                                  } 章`}</h3>
+                                </Col>
+                                <Col md={6} className="my-auto">
+                                  <div className="float-end ">
+                                    {`時間長度 ${
+                                      eachVideoChapterDuration[
+                                        open.videoCertainID
+                                      ][index]
+                                    }`}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col>{question.video_question}</Col>
+                              </Row>
+                            </Col>
+                          </Row>
+                        </Container>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </Stack>
+          )}
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 }
