@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Modal } from "react-bootstrap";
+import { Container, Row, Col, Card, Modal, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import {
@@ -95,18 +95,30 @@ export default function Home() {
                 ) : (
                   <>
                     <Card.Text>
+                      總瀏覽影片次數：{usrInfo.TotalWatchCount}次
+                    </Card.Text>
+                    <Card.Text>
                       影片總觀看時間：
                       {handleConvertTime(usrInfo.TotalWatchTime)}
                     </Card.Text>
-                    <Card.Text>
-                      完成觀看影片數量(練習用)：
+                    <Card.Text>完成觀看影片數量：</Card.Text>
+                    <Card.Text className="ms-3">
+                      基礎練習用：
+                      {usrInfo.TotalFinishBasicVideo}部
+                      <Link to={"/basic"} className="text-decoration-none">
+                        [點擊繼續觀看基礎練習用影片]
+                      </Link>
+                    </Card.Text>
+                    <Card.Text className="ms-3">
+                      練習用：
                       {usrInfo.TotalFinishPraticeVideo}部
                       <Link to={"/pratice"} className="text-decoration-none">
                         [點擊繼續觀看練習用影片]
                       </Link>
                     </Card.Text>
-                    <Card.Text>
-                      完成觀看影片數量(測驗用)：{usrInfo.TotalFinishTestVideo}部
+                    <Card.Text className="ms-3">
+                      測驗用：
+                      {usrInfo.TotalFinishTestVideo}部
                       <Link to={"/test"} className="text-decoration-none">
                         [點擊繼續觀看測驗用影片]
                       </Link>
@@ -195,25 +207,35 @@ export default function Home() {
           <Modal.Title>請選擇欲觀看類型</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className={`d-flex flex-column justify-content-center`}>
+          <Stack gap={1}>
+            {/* 基礎練習用 */}
+            <Link
+              to={{
+                pathname: "/basic",
+              }}
+              className={styles.linkContainer_link}
+            >
+              <h3 className="mt-1 mb-1">基本練習</h3>
+            </Link>
+            {/* 練習用 */}
             <Link
               to={{
                 pathname: "/pratice",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className="mt-1 mb-1">練習用衛教資訊</h3>
+              <h3 className="mt-1 mb-1">練習</h3>
             </Link>
-
+            {/* 測驗用 */}
             <Link
               to={{
                 pathname: "/test",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className="mt-1 mb-1">測驗用衛教資訊</h3>
+              <h3 className="mt-1 mb-1">測驗</h3>
             </Link>
-          </div>
+          </Stack>
         </Modal.Body>
       </Modal>
       {/* 練習紀錄Modal */}
