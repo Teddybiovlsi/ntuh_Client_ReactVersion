@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Collapse,
@@ -9,12 +9,12 @@ import {
   Stack,
   Modal,
 } from "react-bootstrap";
-import { useEffect } from "react";
-import LoadingComponent from "../../components/LoadingComponent";
-import { get } from "../axios";
 import { Link, useNavigate } from "react-router-dom";
-import styles from "../../styles/pages/VideoList.module.scss";
+import { get } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
+import LoadingComponent from "../../components/LoadingComponent";
+import { AiFillLock } from "react-icons/ai";
+import styles from "../../styles/pages/VideoList.module.scss";
 
 export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const user = JSON.parse(
@@ -273,7 +273,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
         );
       })}
       <Modal
-        show={open}
+        show={open !== null}
         onHide={() => {
           setOpen(null);
         }}
@@ -282,20 +282,53 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
           <Modal.Title>請選擇欲觀看的類型</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Stack gap={3}>
-            <BtnBootstrap text={`瀏覽`} variant={"outline-primary"} />
-            <BtnBootstrap
-              text={`開始${PageTitle ? "測驗" : "練習"}`}
-              variant={"outline-primary"}
-            />
-            <BtnBootstrap
-              text={`章節${PageTitle ? "測驗" : "練習"}`}
-              variant={"outline-primary"}
-              onClickEventName={() => {
-                setOpenChapter(open);
-              }}
-            />
-          </Stack>
+          <Container>
+            <Row>
+              <Col>
+                {open !== null && (
+                  <p>
+                    目前分數為：{open.accuracy}分，
+                    <b className="text-danger">
+                      {open.accuracy === 1
+                        ? "可使用章節個別練習"
+                        : "請繼續努力"}
+                    </b>
+                  </p>
+                )}
+              </Col>
+            </Row>
+            <Stack gap={3}>
+              <BtnBootstrap text={`瀏覽`} variant={"outline-primary"} />
+              <BtnBootstrap
+                text={`開始${PageTitle ? "測驗" : "練習"}`}
+                variant={"outline-primary"}
+              />
+              <BtnBootstrap
+                text={
+                  open !== null &&
+                  (open.accuracy === 100 ? (
+                    `章節練習`
+                  ) : (
+                    <p className="text-danger m-0 p-0">
+                      <AiFillLock />
+                      鎖定中
+                    </p>
+                  ))
+                }
+                variant={
+                  open !== null && open.accuracy === 100
+                    ? "outline-primary"
+                    : "outline-danger"
+                }
+                onClickEventName={() => {
+                  open !== null &&
+                    open.accuracy === 100 &&
+                    setOpenChapter(open);
+                }}
+                disabled={open !== null && open.accuracy !== 100}
+              />
+            </Stack>
+          </Container>
         </Modal.Body>
       </Modal>
 
