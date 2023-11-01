@@ -17,6 +17,9 @@ import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
 import RewritePasswordProtected from "./RewritePasswordProtected";
 import UsingTip from "./client/Pages/UsingTip";
 import BasicVideoList from "./client/Pages/BasicVideoList";
+import BasicVideoPlayer from "./client/Pages/BasicVideoPlayer";
+import BasicVideoQuestionPage from "./client/Pages/BasicVideoQuestionPage";
+import { post } from "./client/axios";
 
 export default function App() {
   const location = useLocation();
@@ -25,7 +28,10 @@ export default function App() {
   );
 
   useEffect(() => {
-    if (user) {
+    var allCookies = document.cookie.split(";");
+    for (var i = 0; i < allCookies.length; i++) {
+      document.cookie =
+        allCookies[i] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   }, [location]);
 
@@ -60,6 +66,12 @@ export default function App() {
               path="/test"
               element={<VideoList PageTitle={1} loadingText="載入中請稍後" />}
             />
+            <Route path="/Basicvideo" element={<BasicVideoPlayer />} />
+            <Route
+              path="/basic/videoQuestion"
+              element={<BasicVideoQuestionPage />}
+            />
+
             <Route path="/video" element={<VideoPlayer />} />
             <Route path="/video/chapter" element={<VideoChapterPlayer />} />
             <Route
