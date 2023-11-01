@@ -1,14 +1,13 @@
-import React from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import React from "react";
+import { Outlet, Navigate } from "react-router-dom";
 
-export default function AuthProtected({ user, redirectPath = '/', children }) {
+export default function AuthProtected({ user, redirectPath = "/", children }) {
   // const user = JSON.parse(localStorage?.getItem("user"));
   const nowTime = new Date();
 
-
   if (!user) {
-    localStorage.getItem('user') && localStorage.clear();
-    sessionStorage.getItem('user') && sessionStorage.clear();
+    localStorage.getItem("user") && localStorage.removeItem("user");
+    sessionStorage.getItem("user") && sessionStorage.removeItem("user");
 
     return <Navigate to="/" replace />;
   } else {
