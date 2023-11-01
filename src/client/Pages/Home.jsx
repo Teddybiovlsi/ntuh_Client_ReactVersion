@@ -106,21 +106,21 @@ export default function Home() {
                       基礎練習用：
                       {usrInfo.TotalFinishBasicVideo}部
                       <Link to={"/basic"} className="text-decoration-none">
-                        [點擊繼續觀看基礎練習用影片]
+                        [點擊繼續觀看]
                       </Link>
                     </Card.Text>
                     <Card.Text className="ms-3">
                       練習用：
                       {usrInfo.TotalFinishPraticeVideo}部
                       <Link to={"/pratice"} className="text-decoration-none">
-                        [點擊繼續觀看練習用影片]
+                        [點擊繼續觀看]
                       </Link>
                     </Card.Text>
                     <Card.Text className="ms-3">
                       測驗用：
                       {usrInfo.TotalFinishTestVideo}部
                       <Link to={"/test"} className="text-decoration-none">
-                        [點擊繼續觀看測驗用影片]
+                        [點擊繼續觀看]
                       </Link>
                     </Card.Text>
                   </>
