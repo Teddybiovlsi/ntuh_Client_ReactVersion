@@ -8,11 +8,30 @@ import LoadingComponent from "../../components/LoadingComponent";
 import { AiFillLock } from "react-icons/ai";
 import styles from "../../styles/pages/VideoList.module.scss";
 import useModal from "../../js/useModal";
+import { ProgressBar } from "react-bootstrap";
 
 export default function BasicVideoList({ loadingText = "資訊載入中" }) {
-  const user = JSON.parse(
-    localStorage.getItem("user") || sessionStorage.getItem("user")
-  );
+  const convertTheWatchTimePercentage = ({
+    videoDuration,
+    videoLastWatchTime,
+  }) => {
+    try {
+      const duration = Number(videoDuration);
+      const lastWatchTime = Number(videoLastWatchTime);
+      const percentage = Math.round((lastWatchTime / duration) * 1000) / 10;
+      return percentage;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const user =
+    JSON.parse(
+      localStorage.getItem("user") || sessionStorage.getItem("user")
+    ) || {};
+
+  const usrToken = user.client_token;
+  const usrVideo = user.video;
 
   const title = `基本練習衛教資訊`;
 
@@ -31,13 +50,6 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
   const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
-
-  const userData =
-    JSON.parse(
-      localStorage?.getItem("user") || sessionStorage.getItem("user")
-    ) || {};
-  const usrToken = userData.client_token;
-  const usrVideo = userData.video;
 
   const navigate = useNavigate();
 
@@ -79,8 +91,8 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
       const errorMessage = error.response.data.message;
 
       if (errorMessage === "發生錯誤，請重新登入") {
-        if (sessionStorage.getItem("user")) sessionStorage.clear();
-        if (localStorage.getItem("user")) localStorage.clear();
+        if (sessionStorage.getItem("user")) sessionStorage.removeItem("user");
+        if (localStorage.getItem("user")) localStorage.removeItem("user");
 
         alert(errorMessage);
         navigate("/");
@@ -183,20 +195,34 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
         </Modal.Header>
         <Modal.Body>
           <Container>
-            <Row>
-              <Col>
-                {open !== null && (
-                  <p>
-                    目前影片完成觀看進度為：
-                    {open.accuracy === 100 ? "完成" : "未完成"}，
-                    <b className="text-danger">
-                      {open.accuracy === 100 ? "可進行題目測驗" : "請繼續努力"}
-                    </b>
-                  </p>
-                )}
-              </Col>
-            </Row>
             <Stack gap={3}>
+              {open !== null && (
+                <p>
+                  {console.log(
+                    convertTheWatchTimePercentage({
+                      videoDuration: open.videoDuration,
+                      videoLastWatchTime: open.videoLastestTime,
+                    })
+                  )}
+                  目前影片觀看進度：
+                  {open !== null && open.videoLastestTime == 0 ? (
+                    <b className="text-danger">尚未有任何觀看紀錄</b>
+                  ) : (
+                    <ProgressBar
+                      now={convertTheWatchTimePercentage({
+                        videoDuration: open.videoDuration,
+                        videoLastWatchTime: open.videoLastestTime,
+                      })}
+                      label={`${convertTheWatchTimePercentage({
+                        videoDuration: open.videoDuration,
+                        videoLastWatchTime: open.videoLastestTime,
+                      })
+                        .toString()
+                        .slice(0, 4)}%`}
+                    />
+                  )}
+                </p>
+              )}
               <BtnBootstrap
                 onClickEventName={() => {
                   // 若有保留觀看進度，則跳出確認視窗
@@ -236,6 +262,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
                   }
                   onClickEventName={() => {
                     open !== null &&
+                      open.accuracy !== 100 &&
                       navigate(
                         "/basic/videoQuestion",
 
@@ -249,7 +276,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
                     // open !== null &&
                     //   open.accuracy === 100 &&
                   }}
-                  // disabled={open !== null && open.accuracy !== 100}
+                  disabled={open !== null && open.accuracy !== 100}
                 />
               )}
             </Stack>
