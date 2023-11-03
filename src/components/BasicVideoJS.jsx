@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import React from "react";
 import videojs from "video.js";
+import { post } from "../client/axios";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
-import { post } from "../client/axios";
 
 export const BasicVideoJS = (props) => {
   const user = JSON.parse(
@@ -52,8 +52,8 @@ export const BasicVideoJS = (props) => {
         api: `client/updateTime/video/${user.client_token}`,
         data: {
           videoID: videoID,
-          watchTime: currentTime,
-          durationTime: currentTime - pastCurrentTime,
+          watchTime: Number(currentTime),
+          durationTime: Number(currentTime) - Number(pastCurrentTime),
         },
       });
       // console.log(currentTime);
@@ -208,7 +208,31 @@ export const BasicVideoJS = (props) => {
 
       player.on("ended", () => {
         console.log("player is ended");
+
+        let result = window.confirm(
+          "影片播放完畢！\n請點擊確認回到影片列表頁面"
+        );
+
+        if (result) {
+          console.log("用戶點擊了確認");
+        } else {
+          console.log("用戶點擊了取消或者按下了Esc鍵");
+        }
       });
+      //   alert("影片播放完畢！", "請點擊確認回到影片列表頁面", [
+      //     {
+      //       text: "確認",
+      //       onPress: () => {
+      //         window.location.href = "/video";
+      //       },
+      //     },
+      //     {
+      //       text: "取消",
+      //       onPress: () => console.log("cancel"),
+      //       style: "cancel",
+      //     },
+      //   ]);
+      // });
 
       // You could update an existing player in the `else` block here
       // on prop change, for example:
