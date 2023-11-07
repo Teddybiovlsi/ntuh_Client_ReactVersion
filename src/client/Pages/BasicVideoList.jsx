@@ -197,13 +197,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
           <Container>
             <Stack gap={3}>
               {open !== null && (
-                <p>
-                  {console.log(
-                    convertTheWatchTimePercentage({
-                      videoDuration: open.videoDuration,
-                      videoLastWatchTime: open.videoLastestTime,
-                    })
-                  )}
+                <>
                   目前影片觀看進度：
                   {open !== null && open.videoLastestTime == 0 ? (
                     <b className="text-danger">尚未有任何觀看紀錄</b>
@@ -221,7 +215,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
                         .slice(0, 4)}%`}
                     />
                   )}
-                </p>
+                </>
               )}
               <BtnBootstrap
                 onClickEventName={() => {
@@ -262,12 +256,13 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
                   }
                   onClickEventName={() => {
                     open !== null &&
-                      open.accuracy !== 100 &&
+                      open.accuracy === 100 &&
                       navigate(
                         "/basic/videoQuestion",
 
                         {
                           state: {
+                            videoID: open.videoCertainID,
                             info: open.QuestionData,
                           },
                         }
