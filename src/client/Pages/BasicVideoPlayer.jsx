@@ -20,7 +20,7 @@ export default function BasicVideoPlayer() {
     return <Navigate to="/" replace />;
   }
 
-  const { videoPath, videoID, latestWatchTime } = location?.state;
+  const { info, videoPath, videoID, latestWatchTime } = location?.state;
 
   const videoJsOptions = {
     controls: true,
@@ -77,6 +77,7 @@ export default function BasicVideoPlayer() {
         options={videoJsOptions}
         videoID={videoID}
         latestWatchTime={latestWatchTime}
+        questionData={info}
       />
     </>
   );
