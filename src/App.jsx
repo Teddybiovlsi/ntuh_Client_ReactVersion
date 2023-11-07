@@ -20,6 +20,7 @@ import BasicVideoList from "./client/Pages/BasicVideoList";
 import BasicVideoPlayer from "./client/Pages/BasicVideoPlayer";
 import BasicVideoQuestionPage from "./client/Pages/BasicVideoQuestionPage";
 import { post } from "./client/axios";
+import VideoOnlyPlayer from "./client/Pages/VideoOnlyPlayer";
 
 export default function App() {
   const location = useLocation();
@@ -71,6 +72,7 @@ export default function App() {
               path="/basic/videoQuestion"
               element={<BasicVideoQuestionPage />}
             />
+            <Route path="/video/only" element={<VideoOnlyPlayer />} />
 
             <Route path="/video" element={<VideoPlayer />} />
             <Route path="/video/chapter" element={<VideoChapterPlayer />} />
