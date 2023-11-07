@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import BasicVideoJS from "../../components/BasicVideoJS";
+import LoadingComponent from "../../components/LoadingComponent";
+import { post } from "../axios";
 import "video.js/dist/video-js.css";
 import "../../components/videoqa.css";
-import { post } from "../axios";
-import LoadingComponent from "../../components/LoadingComponent";
 
 export default function BasicVideoPlayer() {
   const user = JSON.parse(
