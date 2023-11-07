@@ -4,33 +4,27 @@ import videojs from "video.js";
 import { post } from "../client/axios";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
+import { useNavigate } from "react-router-dom";
 
 export const BasicVideoJS = (props) => {
   const user = JSON.parse(
     localStorage.getItem("user") || sessionStorage.getItem("user")
   );
 
-  const { videoID, latestWatchTime } = props;
+  const navigate = useNavigate();
+
+  const { videoID, latestWatchTime, options, questionData } = props;
 
   document.cookie = `videoID=${videoID}`;
 
   const videoRef = useRef(null);
-  const [currentTime, setCurrentTime] = useState(null);
   const playerRef = useRef(null);
-  const { options } = props;
 
-  const [sendstate, setSendstate] = useState(false);
-  const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  const [haveWatchedTime, setHaveWatchedTime] = useState(0);
 
   const [pastCurrentTime, setPastCurrentTime] = useState(latestWatchTime);
 
   const isIphoneCheck = navigator.userAgent.match(/iPhone/i);
-
-  // calculate the total length of the array
-  let arrayNum = 0;
 
   const fetchVideoWatchTime = async ({ api, data }) => {
     try {
@@ -133,22 +127,18 @@ export const BasicVideoJS = (props) => {
         .getElementById("video-container_Container_player")
         .classList.add("fullscreen");
 
-      // if the device is iPhone, then block the fullscreen mode
-      if (navigator.userAgent.match(/iPhone/i)) {
+      setIsFullscreen(true);
+      // 依據不同的瀏覽器，進入全螢幕的方法不同
+      if (videoElement.requestFullscreen) {
+        videoElement.requestFullscreen();
+      } else if (videoElement.mozRequestFullScreen) {
+        videoElement.mozRequestFullScreen();
+      } else if (videoElement.webkitRequestFullscreen) {
+        videoElement.webkitRequestFullscreen();
+      } else if (videoElement.msRequestFullscreen) {
+        videoElement.msRequestFullscreen();
       } else {
-        setIsFullscreen(true);
-        // 依據不同的瀏覽器，進入全螢幕的方法不同
-        if (videoElement.requestFullscreen) {
-          videoElement.requestFullscreen();
-        } else if (videoElement.mozRequestFullScreen) {
-          videoElement.mozRequestFullScreen();
-        } else if (videoElement.webkitRequestFullscreen) {
-          videoElement.webkitRequestFullscreen();
-        } else if (videoElement.msRequestFullscreen) {
-          videoElement.msRequestFullscreen();
-        } else {
-          console.log("fullscreen error");
-        }
+        console.log("fullscreen error");
       }
     }
   };
@@ -156,8 +146,6 @@ export const BasicVideoJS = (props) => {
   useEffect(() => {
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
-      let isPaused = false;
-
       let intervalUpload = null;
 
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
@@ -217,34 +205,37 @@ export const BasicVideoJS = (props) => {
 
       player.on("ended", () => {
         uploadTheFinishTime(player.currentTime());
+        if (questionData?.length > 0) {
+          // if device is iphone, then navigate to the question page
+          if (isIphoneCheck) {
+            navigate("/basic/videoQuestion", {
+              replace: true,
+              state: {
+                videoID: videoID,
+                info: questionData,
+              },
+            });
+          } else {
+            let result = window.confirm(
+              "影片播放完畢！\n請點擊是否接續進行測驗"
+            );
 
-        let result = window.confirm(
-          "影片播放完畢！\n請點擊確認回到影片列表頁面"
-        );
-
-        if (result) {
-          console.log("用戶點擊了確認");
+            if (result) {
+              navigate("/basic/videoQuestion", {
+                replace: true,
+                state: {
+                  videoID: videoID,
+                  info: questionData,
+                },
+              });
+            } else {
+              navigate("/basic", { replace: true });
+            }
+          }
         } else {
-          console.log("用戶點擊了取消或者按下了Esc鍵");
+          navigate("/basic", { replace: true });
         }
       });
-      //   alert("影片播放完畢！", "請點擊確認回到影片列表頁面", [
-      //     {
-      //       text: "確認",
-      //       onPress: () => {
-      //         window.location.href = "/video";
-      //       },
-      //     },
-      //     {
-      //       text: "取消",
-      //       onPress: () => console.log("cancel"),
-      //       style: "cancel",
-      //     },
-      //   ]);
-      // });
-
-      // You could update an existing player in the `else` block here
-      // on prop change, for example:
     } else {
       const player = playerRef.current;
 
