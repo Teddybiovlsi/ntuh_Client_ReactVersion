@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import BasicVideoJS from "../../components/BasicVideoJS";
+import VideoOnlyJS from "../../components/VideoOnlyJS";
 import LoadingComponent from "../../components/LoadingComponent";
 import { post } from "../axios";
 import "video.js/dist/video-js.css";
 import "../../components/videoqa.css";
 
-export default function BasicVideoPlayer() {
+export default function VideoOnlyPlayer() {
   const user = JSON.parse(
     localStorage.getItem("user") || sessionStorage.getItem("user")
   );
@@ -25,7 +25,6 @@ export default function BasicVideoPlayer() {
   const videoJsOptions = {
     controls: true,
     // autoplay: true,
-    // playbackRates: [0.5, 1, 1.5, 2],
     responsive: true,
     fluid: true,
     muted: true,
@@ -59,7 +58,6 @@ export default function BasicVideoPlayer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         await fetchUploadWatchTime();
       } catch (error) {
         console.log(error);
@@ -74,7 +72,7 @@ export default function BasicVideoPlayer() {
 
   return (
     <>
-      <BasicVideoJS
+      <VideoOnlyJS
         options={videoJsOptions}
         videoID={videoID}
         latestWatchTime={latestWatchTime}

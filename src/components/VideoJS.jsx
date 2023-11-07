@@ -16,12 +16,43 @@ export const VideoJS = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
+  const [wrongAnswer, setWrongAnswer] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState(false);
+  const [haveAnswerOrNot, setHaveAnswerOrNot] = useState(false);
+  const [answerState, setAnswerState] = useState([]);
   const [haveWatchedTime, setHaveWatchedTime] = useState(0);
 
-  const [answerState, setAnswerState] = useState([]);
+  const shuffleArray = (array) => {
+    const shuffledArray = [...array];
+    console.log("shuffledArray", shuffledArray.length);
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [
+        shuffledArray[j],
+        shuffledArray[i],
+      ];
+    }
+
+    return shuffledArray;
+  };
+
+  const [shuffledInfo, setShuffledInfo] = useState();
+
+  const handleShuffle = (info) => {
+    const values = Object.values(info.choice);
+    const shuffledValues = shuffleArray(values);
+
+    const newChoice = Object.keys(info.choice).reduce((result, key, index) => {
+      result[key] = shuffledValues[index];
+      return result;
+    }, {});
+
+    return { ...info, choice: newChoice };
+  };
 
   // calculate the total length of the array
   let arrayNum = 0;
+  let timeoutId = null;
 
   const handleCheckedAnswer = (e) => {
     setOptionChecked(e.target.value);
@@ -131,13 +162,12 @@ export const VideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
-        // calculate the total watching time
-        // setHaveWatchedTime(player.currentTime());
-        setHaveWatchedTime(player.currentTime());
         if (arrayNum < info.length) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
             player.pause();
+            handleShuffle(info.choice);
             setSendstate(true);
+
             setTimeout(() => {
               setSendstate(false);
               player.play();
@@ -174,8 +204,25 @@ export const VideoJS = (props) => {
   }, [playerRef]);
 
   useEffect(() => {
-    console.log("haveWatchedTime", haveWatchedTime);
-  }, [haveWatchedTime]);
+    if (
+      haveAnswerOrNot === true &&
+      sendstate === false &&
+      correctAnswer === false &&
+      wrongAnswer === false
+    ) {
+      setAnswerState([
+        ...answerState,
+        {
+          token: user.client_token,
+          videoID: VideoID,
+          quizID: [shuffledInfo.quiz_id],
+          answerStatus: [false],
+          already_watch_time: haveWatchedTime,
+        },
+      ]);
+      playerRef.current.pause();
+    }
+  }, [sendstate]);
 
   document.addEventListener("fullscreenchange", exitHandler);
   document.addEventListener("webkitfullscreenchange", exitHandler);

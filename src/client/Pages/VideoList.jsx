@@ -15,6 +15,7 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import LoadingComponent from "../../components/LoadingComponent";
 import { AiFillLock } from "react-icons/ai";
 import styles from "../../styles/pages/VideoList.module.scss";
+import useModal from "../../js/useModal";
 
 export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const user = JSON.parse(
@@ -35,6 +36,12 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
   const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
+
+  const [
+    ConfirmingToLatestTimeModal,
+    handleCloseConfirmingToLatestTime,
+    handleShowConfirmToLatestTimeModal,
+  ] = useModal();
 
   const userData =
     JSON.parse(
@@ -272,6 +279,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
           </div>
         );
       })}
+      {/* 練習／測驗打開開始後顯示Modal視窗 */}
       <Modal
         show={open !== null}
         onHide={() => {
@@ -298,10 +306,35 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
               </Col>
             </Row>
             <Stack gap={3}>
-              <BtnBootstrap text={`瀏覽`} variant={"outline-primary"} />
+              <BtnBootstrap
+                text={`瀏覽`}
+                variant={"outline-primary"}
+                onClickEventName={() => {
+                  if (open.videoLastestTime === 0) {
+                    navigate("/video/only", {
+                      state: {
+                        info: open.QuestionData,
+                        videoPath: open.video_url,
+                        videoID: open.videoCertainID,
+                        latestWatchTime: 0,
+                      },
+                    });
+                  } else {
+                    handleShowConfirmToLatestTimeModal();
+                  }
+                }}
+              />
               <BtnBootstrap
                 text={`開始${PageTitle ? "測驗" : "練習"}`}
                 variant={"outline-primary"}
+                onClickEventName={() => {
+                  navigate("/video", {
+                    state: {
+                      videoPath: open.video_url,
+                      videoID: open.videoCertainID,
+                    },
+                  });
+                }}
               />
               <BtnBootstrap
                 text={
@@ -330,6 +363,58 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
             </Stack>
           </Container>
         </Modal.Body>
+      </Modal>
+      {/* 若有保留觀看紀錄，Modal */}
+      <Modal
+        show={ConfirmingToLatestTimeModal}
+        onHide={handleCloseConfirmingToLatestTime}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>請確認</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>
+            您上次觀看影片的進度為
+            <b className="text-primary">
+              {open !== null && Math.round(open.videoLastestTime * 10) / 10}
+            </b>
+            秒，是否繼續觀看？
+          </p>
+          <p className="text-danger">若選擇取消，則觀看進度將會重置為0秒</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <BtnBootstrap
+            text={`取消`}
+            variant={"outline-secondary"}
+            onClickEventName={() => {
+              navigate("/video/only", {
+                state: {
+                  info: open.QuestionData,
+                  videoPath: open.video_url,
+                  videoID: open.videoCertainID,
+                  latestWatchTime: 0,
+                },
+              });
+            }}
+          />
+          <BtnBootstrap
+            text={`確認`}
+            variant={"outline-primary"}
+            onClickEventName={() => {
+              handleCloseConfirmingToLatestTime();
+              navigate("/video/only", {
+                state: {
+                  info: open.QuestionData,
+                  videoPath: open.video_url,
+                  videoID: open.videoCertainID,
+                  latestWatchTime: open.videoLastestTime,
+                },
+              });
+            }}
+          />
+        </Modal.Footer>
       </Modal>
 
       <Modal

@@ -33,11 +33,6 @@ export const ChapterVideoJS = (props) => {
   const [answerState, setAnswerState] = useState([]);
   const [haveWatchedTime, setHaveWatchedTime] = useState(0);
 
-  const [screen, setScreen] = useState({
-    width: "",
-    height: "",
-  });
-
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
     console.log("shuffledArray", shuffledArray.length);
@@ -72,6 +67,7 @@ export const ChapterVideoJS = (props) => {
 
   console.log("currentTime", VideoCurrentTime);
 
+  //當radio被觸發有點擊時，將該選項的value存入state
   const handleCheckedAnswer = (e) => {
     setOptionChecked(e.target.value);
   };
@@ -248,7 +244,6 @@ export const ChapterVideoJS = (props) => {
         },
       ]);
       playerRef.current.pause();
-      alert("測試未回答");
     }
   }, [sendstate]);
 
@@ -495,10 +490,7 @@ export const ChapterVideoJS = (props) => {
                           ? true
                           : false
                       }
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                        setOptionChecked(e.target.value);
-                      }}
+                      onChange={handleCheckedAnswer}
                     />
                   </Col>
                 )}

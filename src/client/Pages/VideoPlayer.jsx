@@ -8,7 +8,7 @@ import "../../components/videoqa.css";
 
 export default function VideoPlayer() {
   const location = useLocation();
-  const VideoUUID = location.state?.videoUUID;
+  const VideoUUID = location.state?.videoID;
   const VideoPath = location.state?.videoPath;
 
   const [info, setInfo] = useState({});

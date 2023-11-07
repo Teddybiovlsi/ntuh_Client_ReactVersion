@@ -67,14 +67,18 @@ export default function App() {
               path="/test"
               element={<VideoList PageTitle={1} loadingText="載入中請稍後" />}
             />
+            {/* 僅觀看影片（基礎練習用） */}
             <Route path="/Basicvideo" element={<BasicVideoPlayer />} />
+            {/* 基礎練習測驗視窗 */}
             <Route
               path="/basic/videoQuestion"
               element={<BasicVideoQuestionPage />}
             />
+            {/* 僅觀看影片(練習／測驗用) */}
             <Route path="/video/only" element={<VideoOnlyPlayer />} />
-
+            {/* 有包含問題在內(練習／測驗用) */}
             <Route path="/video" element={<VideoPlayer />} />
+            {/* 有包含問題影片章節選擇（練習／測驗用） */}
             <Route path="/video/chapter" element={<VideoChapterPlayer />} />
             <Route
               path="/record/pratice"
