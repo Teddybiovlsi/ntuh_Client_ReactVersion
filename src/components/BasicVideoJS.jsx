@@ -31,12 +31,21 @@ export const BasicVideoJS = (props) => {
 
   // calculate the total length of the array
   let arrayNum = 0;
+
+  const fetchVideoWatchTime = async ({ api, data }) => {
+    try {
+      // Get data from the API
+      const response = await post(api, data);
+
+      console.log(response.data.message);
+    } catch (error) {
+      const errorMessage = error.response.data.message;
+      console.log(errorMessage);
+    }
+  };
+
   // create an async function to post the data to the backend
   const uploadTheCurrentTime = (currentTime) => {
-    console.log("pastCurrentTime", pastCurrentTime);
-    console.log("currentTime", currentTime);
-    console.log("durationTime", currentTime - pastCurrentTime);
-
     setPastCurrentTime(currentTime);
 
     // document.cookie = `video${videoID}=${currentTime}${
@@ -77,16 +86,16 @@ export const BasicVideoJS = (props) => {
     }
   };
 
-  const fetchVideoWatchTime = async ({ api, data }) => {
-    try {
-      // Get data from the API
-      const response = await post(api, data);
-
-      console.log(response.data.message);
-    } catch (error) {
-      const errorMessage = error.response.data.message;
-      console.log(errorMessage);
-    }
+  const uploadTheFinishTime = (currentTime) => {
+    fetchVideoWatchTime({
+      api: `client/updateTime/video/${user.client_token}`,
+      data: {
+        videoID: videoID,
+        watchTime: Number(currentTime),
+        durationTime: Number(currentTime) - Number(pastCurrentTime),
+        haveWatchAll: 100,
+      },
+    });
   };
 
   const toggleFullScreen = () => {
@@ -207,7 +216,7 @@ export const BasicVideoJS = (props) => {
       });
 
       player.on("ended", () => {
-        console.log("player is ended");
+        uploadTheFinishTime(player.currentTime());
 
         let result = window.confirm(
           "影片播放完畢！\n請點擊確認回到影片列表頁面"
