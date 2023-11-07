@@ -227,8 +227,10 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
                   else {
                     navigate("/Basicvideo", {
                       state: {
+                        info: open.QuestionData,
                         videoPath: open.video_url,
                         videoID: open.videoCertainID,
+                        latestWatchTime: 0,
                       },
                     });
                   }
@@ -305,6 +307,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
             onClickEventName={() => {
               navigate("/Basicvideo", {
                 state: {
+                  info: open.QuestionData,
                   videoPath: open.video_url,
                   videoID: open.videoCertainID,
                   latestWatchTime: 0,
