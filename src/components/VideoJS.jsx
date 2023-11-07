@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import React from "react";
-import { Col, Form, Row } from "react-bootstrap";
-import BtnBootstrap from "./BtnBootstrap";
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
-import "./videoqa.css";
+import { useState, useEffect, useRef } from 'react';
+import React from 'react';
+import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import BtnBootstrap from './BtnBootstrap';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
+import './videoqa.css';
 
 export const VideoJS = (props) => {
   const videoRef = useRef(null);
@@ -12,19 +12,24 @@ export const VideoJS = (props) => {
   const playerRef = useRef(null);
   const { options, info } = props;
   const [sendstate, setSendstate] = useState(false);
-  const [optionChecked, setOptionChecked] = useState("");
+  const [optionChecked, setOptionChecked] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
   const [wrongAnswer, setWrongAnswer] = useState(false);
+  const [wrongAnswerCount, setWrongAnswerCount] = useState(0);
+
   const [correctAnswer, setCorrectAnswer] = useState(false);
   const [haveAnswerOrNot, setHaveAnswerOrNot] = useState(false);
   const [answerState, setAnswerState] = useState([]);
   const [haveWatchedTime, setHaveWatchedTime] = useState(0);
 
+  const [wrongModal, setWrongModal] = useState(false);
+  const [wrongAnswerReachLimit, setWrongAnswerReachLimit] = useState(false);
+
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
-    console.log("shuffledArray", shuffledArray.length);
+    console.log('shuffledArray', shuffledArray.length);
     for (let i = shuffledArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledArray[i], shuffledArray[j]] = [
@@ -59,21 +64,21 @@ export const VideoJS = (props) => {
   };
 
   const toggleFullScreen = () => {
-    const videoElement = document.getElementById("video-container");
+    const videoElement = document.getElementById('video-container');
     if (document.fullscreenElement) {
       // if fullscreen mode is active, exit by calling fullscreen API
       // 第一步驟，將icon轉換成進入全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
       document
-        .getElementById("fullscreenBtn")
+        .getElementById('fullscreenBtn')
         .classList.replace(
-          "vjs-icon-fullscreen-exit",
-          "vjs-icon-fullscreen-enter"
+          'vjs-icon-fullscreen-exit',
+          'vjs-icon-fullscreen-enter'
         );
 
       document
-        .getElementById("video-container_Container_player")
-        .classList.remove("fullscreen");
+        .getElementById('video-container_Container_player')
+        .classList.remove('fullscreen');
       // // if yes, exit fullscreen mode
       document.exitFullscreen();
 
@@ -83,15 +88,15 @@ export const VideoJS = (props) => {
       // 第一步驟，將icon轉換成離開全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
       document
-        .getElementById("fullscreenBtn")
+        .getElementById('fullscreenBtn')
         .classList.replace(
-          "vjs-icon-fullscreen-enter",
-          "vjs-icon-fullscreen-exit"
+          'vjs-icon-fullscreen-enter',
+          'vjs-icon-fullscreen-exit'
         );
       // add fullscreen className to the videoPlayer className
       document
-        .getElementById("video-container_Container_player")
-        .classList.add("fullscreen");
+        .getElementById('video-container_Container_player')
+        .classList.add('fullscreen');
 
       setIsFullscreen(true);
       // 依據不同的瀏覽器，進入全螢幕的方法不同
@@ -104,7 +109,7 @@ export const VideoJS = (props) => {
       } else if (videoElement.msRequestFullscreen) {
         videoElement.msRequestFullscreen();
       } else {
-        console.log("fullscreen error");
+        console.log('fullscreen error');
       }
     }
   };
@@ -113,20 +118,20 @@ export const VideoJS = (props) => {
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
-      const videoElement = document.createElement("video-js");
+      const videoElement = document.createElement('video-js');
 
       // if screen size is smaller than 768px, then add fullscreen button
-      videoElement.classList.add("vjs-big-play-centered");
+      videoElement.classList.add('vjs-big-play-centered');
       videoRef.current.appendChild(videoElement);
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
-        videojs.log("player is ready");
+        videojs.log('player is ready');
       }));
 
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
       var fullScreenBtn = player.controlBar.addChild(
-        "button",
+        'button',
         {
           clickHandler: function (event) {
             toggleFullScreen();
@@ -136,49 +141,49 @@ export const VideoJS = (props) => {
       );
       var fullScreenBtnDom = fullScreenBtn.el();
       fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
-      fullScreenBtnDom.title = "fullscreen";
+      fullScreenBtnDom.title = 'fullscreen';
 
-      player.on("waiting", () => {
-        console.log("player is waiting");
+      player.on('waiting', () => {
+        console.log('player is waiting');
       });
-      player.on("play", () => {
-        console.log("sendState", sendstate);
+      player.on('play', () => {
+        console.log('sendState', sendstate);
         // console.log("player is play");
       });
-      player.on("pause", () => {
+      player.on('pause', () => {
         // console.log("ArrayNum", arrayNum);
         // console.log("tempQuestionNum", tempQuestionNum);
         setTempQuestionNum(arrayNum);
       });
 
       // Add event listener for loadedmetadata
-      player.on("loadedmetadata", () => {
+      player.on('loadedmetadata', () => {
         const video = player;
         if (video.videoHeight() > video.videoWidth()) {
-          player.aspectRatio("16:7");
+          player.aspectRatio('16:7');
         } else {
           player.fluid(true);
         }
       });
 
-      player.on("timeupdate", () => {
+      player.on('timeupdate', () => {
         if (arrayNum < info.length) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
             player.pause();
-            handleShuffle(info.choice);
+            // handleShuffle(info.choice);
             setSendstate(true);
 
-            setTimeout(() => {
-              setSendstate(false);
-              player.play();
-            }, info[arrayNum].video_duration * 1000);
+            // timeoutId = setTimeout(() => {
+            //   setSendstate(false);
+            //   player.play();
+            // }, info[arrayNum].video_duration * 1000);
             arrayNum++;
           }
         }
       });
 
-      player.on("ended", () => {
-        console.log("player is ended");
+      player.on('ended', () => {
+        console.log('player is ended');
       });
 
       // You could update an existing player in the `else` block here
@@ -224,10 +229,10 @@ export const VideoJS = (props) => {
     }
   }, [sendstate]);
 
-  document.addEventListener("fullscreenchange", exitHandler);
-  document.addEventListener("webkitfullscreenchange", exitHandler);
-  document.addEventListener("mozfullscreenchange", exitHandler);
-  document.addEventListener("MSFullscreenChange", exitHandler);
+  document.addEventListener('fullscreenchange', exitHandler);
+  document.addEventListener('webkitfullscreenchange', exitHandler);
+  document.addEventListener('mozfullscreenchange', exitHandler);
+  document.addEventListener('MSFullscreenChange', exitHandler);
   // 離開全螢幕時，將icon轉換成進入全螢幕的icon，透過classList的replace方法
   function exitHandler() {
     if (
@@ -237,195 +242,216 @@ export const VideoJS = (props) => {
       !document.msFullscreenElement
     ) {
       document
-        .getElementById("fullscreenBtn")
+        .getElementById('fullscreenBtn')
         .classList.replace(
-          "vjs-icon-fullscreen-exit",
-          "vjs-icon-fullscreen-enter"
+          'vjs-icon-fullscreen-exit',
+          'vjs-icon-fullscreen-enter'
         );
       document
-        .getElementById("video-container_Container_player")
-        .classList.remove("fullscreen");
+        .getElementById('video-container_Container_player')
+        .classList.remove('fullscreen');
     }
   }
 
   function handleSubmitAnswer() {
-    let answer = "";
-    if (
-      info[tempQuestionNum - 1].option_3 !== undefined &&
-      info[tempQuestionNum - 1].option_4 !== undefined
-    ) {
-      // find the answer which option[1] is 1
-      if (info[tempQuestionNum - 1].option_1[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_1[0];
-      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_2[0];
-      } else if (info[tempQuestionNum - 1].option_3[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_3[0];
-      } else if (info[tempQuestionNum - 1].option_4[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_4[0];
-      }
-    } else if (
-      info[tempQuestionNum - 1].option_3 !== undefined &&
-      info[tempQuestionNum - 1].option_4 === undefined
-    ) {
-      // find the answer which option[1] is 1
-      if (info[tempQuestionNum - 1].option_1[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_1[0];
-      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_2[0];
-      } else if (info[tempQuestionNum - 1].option_3[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_3[0];
-      }
-    } else {
-      // find the answer which option[1] is 1
-      if (info[tempQuestionNum - 1].option_1[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_1[0];
-      } else if (info[tempQuestionNum - 1].option_2[1] === 1) {
-        answer = info[tempQuestionNum - 1].option_2[0];
+    let answer;
+    for (let i = 1; i <= 4; i++) {
+      let option = info[tempQuestionNum - 1][`option_${i}`];
+      if (option !== undefined && option[1] === 1) {
+        answer = option[0];
+        break;
       }
     }
+
     if (optionChecked === answer) {
       setAnswerState([
         ...answerState,
         {
           tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
           correctAnswer: true,
-          wrongAnswer: "",
+          wrongAnswer: '',
           timeOutNoAnswer: false,
         },
       ]);
+      console.log('觸發回答正確');
       setSendstate(false);
       playerRef.current.play();
     } else {
-      setAnswerState([
-        ...answerState,
-        {
-          tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
-          correctAnswer: false,
-          wrongAnswer: optionChecked,
-          timeOutNoAnswer: false,
-        },
-      ]);
-      setSendstate(false);
-      playerRef.current.play();
+      if (wrongAnswerCount > 2) {
+        setWrongAnswerReachLimit(true);
+        console.log('嚴重回答錯誤，正確答案為', answer);
+        // alert("嚴重回答錯誤，正確答案為" + answer);
+      } else {
+        setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
+        console.log('wrongAnswerCount', wrongAnswerCount);
+
+        console.log('回答錯誤');
+        console.log(
+          'info[tempQuestionNum - 1].video_duration',
+          info[tempQuestionNum - 1].video_duration
+        );
+        setWrongModal(true);
+
+        clearTimeout(timeoutId);
+
+        timeoutId = setTimeout(() => {
+          console.log('timeoutId', timeoutId);
+          // setSendstate(false);
+          // playerRef.current.play();
+        }, info[tempQuestionNum - 1].video_duration * 1000);
+      }
+
+      // setAnswerState([
+      //   ...answerState,
+      //   {
+      //     tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
+      //     correctAnswer: false,
+      //     wrongAnswer: optionChecked,
+      //     timeOutNoAnswer: false,
+      //   },
+      // ]);
+      // setSendstate(false);
+      // playerRef.current.play();
     }
   }
 
   return (
-    <div id="video-container">
-      <div className="video-container_Container">
+    <div id='video-container'>
+      <div className='video-container_Container'>
         <div
           data-vjs-player
-          id="video-container_Container_player"
-          className="videoPlayer"
+          id='video-container_Container_player'
+          className='videoPlayer'
         >
-          <div ref={videoRef} className="video-js vjs-default-skin" />
+          <div ref={videoRef} className='video-js vjs-default-skin' />
         </div>
         {sendstate && (
-          <div id="video-container-textfield" className="text-overlay">
-            <Form>
-              <h1 className="text-overlay_title pt-2 pb-2">
-                第{tempQuestionNum}題
-              </h1>
-              <Col className="fs-4 mt-2 mb-2">
-                {info[tempQuestionNum - 1].video_question}
-                {/* {info[0].video_question} */}
-              </Col>
-              <Row>
-                <Col className="fs-4" md={6} xs={6}>
-                  <Form.Check
-                    type="radio"
-                    label={info[tempQuestionNum - 1].option_1[0]}
-                    value={info[tempQuestionNum - 1].option_1[0]}
-                    name="option_1"
-                    id="formHorizontalRadios1"
-                    className="selectOption"
-                    checked={
-                      optionChecked === info[tempQuestionNum - 1].option_1[0]
-                        ? true
-                        : false
-                    }
-                    onChange={handleCheckedAnswer}
-                  />
+          <div id='video-container-textfield' className='text-overlay'>
+            {wrongModal ? (
+              <div id='video-container-textfield' className='text-overlay2'>
+                <div>
+                  {wrongAnswerCount > 2 ? (
+                    <h2>嚴重回答錯誤，正確答案為</h2>
+                  ) : (
+                    <h2>這是錯誤答案喔</h2>
+                  )}
+                  <Button
+                    onClick={() => {
+                      setWrongModal(false);
+                      clearTimeout(timeoutId);
+                    }}
+                  >
+                    確定
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Form>
+                <h1 className='text-overlay_title pt-2 pb-2'>
+                  第{tempQuestionNum}題
+                </h1>
+                <Col className='fs-4 mt-2 mb-2'>
+                  {info[tempQuestionNum - 1].video_question}
+                  {/* {info[0].video_question} */}
                 </Col>
-                <Col className="fs-4" md={6} xs={6}>
-                  <Form.Check
-                    type="radio"
-                    label={info[tempQuestionNum - 1].option_2[0]}
-                    value={info[tempQuestionNum - 1].option_2[0]}
-                    name="option_2"
-                    id="formHorizontalRadios2"
-                    className="selectOption"
-                    checked={
-                      optionChecked === info[tempQuestionNum - 1].option_2[0]
-                        ? true
-                        : false
-                    }
-                    onChange={handleCheckedAnswer}
-                  />
-                </Col>
-                {info[tempQuestionNum - 1].option_3 !== undefined && (
-                  <Col className="fs-4" md={6} xs={6}>
+                <Row>
+                  <Col className='fs-4' md={6} xs={6}>
                     <Form.Check
-                      type="radio"
-                      label={info[tempQuestionNum - 1].option_3[0]}
-                      value={info[tempQuestionNum - 1].option_3[0]}
-                      name="option_3"
-                      id="formHorizontalRadios3"
-                      className="selectOption"
+                      type='radio'
+                      label={info[tempQuestionNum - 1].option_1[0]}
+                      value={info[tempQuestionNum - 1].option_1[0]}
+                      name='option_1'
+                      id='formHorizontalRadios1'
+                      className='selectOption'
                       checked={
-                        optionChecked === info[tempQuestionNum - 1].option_3[0]
+                        optionChecked === info[tempQuestionNum - 1].option_1[0]
                           ? true
                           : false
                       }
                       onChange={handleCheckedAnswer}
                     />
                   </Col>
-                )}
-                {info[tempQuestionNum - 1].option_4 !== undefined && (
-                  <Col className="fs-4" md={6} xs={6}>
+                  <Col className='fs-4' md={6} xs={6}>
                     <Form.Check
-                      type="radio"
-                      label={info[tempQuestionNum - 1].option_4[0]}
-                      value={info[tempQuestionNum - 1].option_4[0]}
-                      name="option_4"
-                      id="formHorizontalRadios4"
-                      className="selectOption"
+                      type='radio'
+                      label={info[tempQuestionNum - 1].option_2[0]}
+                      value={info[tempQuestionNum - 1].option_2[0]}
+                      name='option_2'
+                      id='formHorizontalRadios2'
+                      className='selectOption'
                       checked={
-                        optionChecked === info[tempQuestionNum - 1].option_4[0]
+                        optionChecked === info[tempQuestionNum - 1].option_2[0]
                           ? true
                           : false
                       }
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                        setOptionChecked(e.target.value);
-                      }}
+                      onChange={handleCheckedAnswer}
                     />
                   </Col>
-                )}
-              </Row>
-              <Col className="sendBtn">
-                <BtnBootstrap
-                  id="resetBtn"
-                  btnName="ResetBtn"
-                  btnPosition="btn-start"
-                  text={"重置"}
-                  variant={"btn reset me-3"}
-                  onClickEventName={() => {
-                    setOptionChecked("");
-                  }}
-                />
-                <BtnBootstrap
-                  id="sendBtn"
-                  btnName="ConfirmBtn"
-                  text={"送出"}
-                  variant={"btn send"}
-                  onClickEventName={() => {
-                    handleSubmitAnswer();
-                  }}
-                />
-              </Col>
-            </Form>
+                  {info[tempQuestionNum - 1].option_3 !== undefined && (
+                    <Col className='fs-4' md={6} xs={6}>
+                      <Form.Check
+                        type='radio'
+                        label={info[tempQuestionNum - 1].option_3[0]}
+                        value={info[tempQuestionNum - 1].option_3[0]}
+                        name='option_3'
+                        id='formHorizontalRadios3'
+                        className='selectOption'
+                        checked={
+                          optionChecked ===
+                          info[tempQuestionNum - 1].option_3[0]
+                            ? true
+                            : false
+                        }
+                        onChange={handleCheckedAnswer}
+                      />
+                    </Col>
+                  )}
+                  {info[tempQuestionNum - 1].option_4 !== undefined && (
+                    <Col className='fs-4' md={6} xs={6}>
+                      <Form.Check
+                        type='radio'
+                        label={info[tempQuestionNum - 1].option_4[0]}
+                        value={info[tempQuestionNum - 1].option_4[0]}
+                        name='option_4'
+                        id='formHorizontalRadios4'
+                        className='selectOption'
+                        checked={
+                          optionChecked ===
+                          info[tempQuestionNum - 1].option_4[0]
+                            ? true
+                            : false
+                        }
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          setOptionChecked(e.target.value);
+                        }}
+                      />
+                    </Col>
+                  )}
+                </Row>
+                <Col className='sendBtn'>
+                  <BtnBootstrap
+                    id='resetBtn'
+                    btnName='ResetBtn'
+                    btnPosition='btn-start'
+                    text={'重置'}
+                    variant={'btn reset me-3'}
+                    onClickEventName={() => {
+                      setOptionChecked('');
+                    }}
+                  />
+                  <BtnBootstrap
+                    id='sendBtn'
+                    btnName='ConfirmBtn'
+                    text={'送出'}
+                    variant={'btn send'}
+                    onClickEventName={() => {
+                      handleSubmitAnswer();
+                    }}
+                  />
+                </Col>
+              </Form>
+            )}
           </div>
         )}
       </div>
