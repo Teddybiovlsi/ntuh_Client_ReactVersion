@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import videojs from "video.js";
 import { post } from "../client/axios";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
-import { useNavigate } from "react-router-dom";
 
 export const BasicVideoJS = (props) => {
   const user = JSON.parse(
