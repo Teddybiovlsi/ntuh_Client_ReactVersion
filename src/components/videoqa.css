@@ -64,11 +64,6 @@
 /* pointer-events: none; */
 /* } */
 
-.text-overlay,
-.text-overlay2 {
-  background-color: rgba(154, 111, 170, 0.1);
-}
-
 .text-overlay_title {
   text-align: center;
   background-color: rgba(151, 70, 141, 0.2);
@@ -138,18 +133,18 @@
   margin: 0 auto !important;
 }
 
-.selectOption input[type='radio'] {
+.selectOption input[type="radio"] {
   display: none;
 }
 /* Applying styles when checking the buttons */
-.selectOption input[type='radio']:checked ~ label {
+.selectOption input[type="radio"]:checked ~ label {
   /* background-color: var(--color-blue-grayed); */
   background-color: pink;
   /* border-color: pink; */
   /* border-color: var(--color-blue); */
 }
 
-.selectOption input[type='radio']:checked ~ label:before {
+.selectOption input[type="radio"]:checked ~ label:before {
   background-color: var(--color-blue);
   border-color: var(--color-blue);
   color: white;
