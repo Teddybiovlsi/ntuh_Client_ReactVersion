@@ -8,11 +8,19 @@ import "../../components/videoqa.css";
 
 export default function VideoPlayer() {
   const location = useLocation();
-  const VideoUUID = location.state?.videoID;
-  const VideoPath = location.state?.videoPath;
+  const { videoID, videoPath } = location.state || {};
+
+  useEffect(() => {
+    if (!location.state) {
+      alert("請先選擇影片！");
+      navigate("/");
+    }
+  }, [location.state]);
+
+  if (!location.state) return null;
 
   const [info, setInfo] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const videoJsOptions = {
     controls: true,
@@ -23,7 +31,7 @@ export default function VideoPlayer() {
     muted: true,
     sources: [
       {
-        src: VideoPath,
+        src: videoPath,
         type: "video/mp4",
       },
     ],
@@ -34,7 +42,6 @@ export default function VideoPlayer() {
     if (!ignore) {
       async function fetchVideoData({ api }) {
         try {
-          setLoading(true);
           const response = await get(api);
           const VideoInfo = await response.data.data;
           setInfo(VideoInfo);
@@ -43,7 +50,7 @@ export default function VideoPlayer() {
       }
 
       fetchVideoData({
-        api: `videoQA/${VideoUUID}`,
+        api: `videoQA/${videoID}`,
       });
     }
 
@@ -54,9 +61,5 @@ export default function VideoPlayer() {
 
   if (loading) return <Loading />;
 
-  return (
-    <>
-      <VideoJS options={videoJsOptions} info={info} />
-    </>
-  );
+  return <VideoJS options={videoJsOptions} info={info} />;
 }
