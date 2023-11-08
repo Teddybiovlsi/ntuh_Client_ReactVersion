@@ -13,6 +13,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import styles from "../../styles/pages/HomePage.module.scss";
 import Loading from "../../components/Loading";
 import { get } from "../axios";
+import useModal from "../../js/useModal";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -21,11 +22,16 @@ export default function Home() {
     localStorage?.getItem("user") || sessionStorage?.getItem("user")
   );
 
-  const [showChoseVideoModal, setShowChoseVideoModal] = useState(false);
-  const handleCloseChoseVideoModal = () => setShowChoseVideoModal(false);
-
-  const [showChoseRecordModal, setShowChoseRecordModal] = useState(false);
-  const handleCloseChoseRecordModal = () => setShowChoseRecordModal(false);
+  const [
+    showChoseVideoModal,
+    handleCloseChoseVideoModal,
+    handleShowChoseVideoModal,
+  ] = useModal();
+  const [
+    showChoseRecordModal,
+    handleCloseChoseRecordModal,
+    handleShowChoseRecordModal,
+  ] = useModal();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -140,9 +146,7 @@ export default function Home() {
             <Link
               type="button"
               className={styles.videoContainer}
-              onClick={() => {
-                setShowChoseVideoModal(true);
-              }}
+              onClick={handleShowChoseVideoModal}
             >
               <Row>
                 <MdOutlineVideoLibrary className="fs-1" />
@@ -165,9 +169,7 @@ export default function Home() {
             <Link
               type="button"
               className={styles.recordContainer}
-              onClick={() => {
-                setShowChoseRecordModal(true);
-              }}
+              onClick={handleShowChoseRecordModal}
             >
               <Row>
                 <AiTwotoneReconciliation className="fs-1" />
