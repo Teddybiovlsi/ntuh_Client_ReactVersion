@@ -9,9 +9,7 @@ import {
 } from "react-icons/bs";
 import { AiFillSetting, AiTwotoneReconciliation } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import LoadingComponent from "../../components/LoadingComponent";
 import styles from "../../styles/pages/HomePage.module.scss";
-import Loading from "../../components/Loading";
 import { get } from "../axios";
 import useModal from "../../js/useModal";
 
