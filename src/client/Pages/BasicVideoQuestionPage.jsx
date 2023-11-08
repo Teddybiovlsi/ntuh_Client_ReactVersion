@@ -1,15 +1,13 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import PageTitleHeading from "../../components/PageTitleHeading";
-import jsSHA from "jssha";
-import BtnBootstrap from "../../components/BtnBootstrap";
-import { post } from "../axios";
-import ToastAlert from "../../components/ToastAlert";
+import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import { toast } from "react-toastify";
+import jsSHA from "jssha";
+
+import PageTitleHeading from "../../components/PageTitleHeading";
+import ToastAlert from "../../components/ToastAlert";
 import useModal from "../../js/useModal";
+import { post } from "../axios";
 
 export default function BasicVideoQuestionPage() {
   const user = JSON.parse(
@@ -18,11 +16,9 @@ export default function BasicVideoQuestionPage() {
 
   const location = useLocation();
 
-  const info = location.state?.info;
+  const { info, videoID } = location.state || {};
 
-  const videoID = location.state?.videoID;
-
-  const [currentInfo, setCurrentInfo] = useState(info);
+  const currentInfo = info;
 
   const [shuffledInfo, setShuffledInfo] = useState([]);
 
@@ -30,7 +26,6 @@ export default function BasicVideoQuestionPage() {
 
   const [disabledRepeatSubmit, setDisabledRepeatSubmit] = useState(false);
 
-  // const [showTheScoreModal, setShowTheScoreModal] = useState(false);
   const [scoreModal, handleCloseScoreModal, handleShowScoreModal] = useModal();
 
   const [score, setScore] = useState(0);
@@ -83,41 +78,37 @@ export default function BasicVideoQuestionPage() {
     }
   };
 
-  const handleOptionChange = (
-    questionId,
-    selectedOption,
-    selectedOptionAnswer
-  ) => {
-    setSelectedOptions((prevOptions) => ({
-      ...prevOptions,
-      [questionId]: {
-        quiz_id: questionId,
-        isCorrect: selectedOption,
-        answer: selectedOptionAnswer,
-      },
-    }));
-  };
+  const handleOptionChange = useCallback(
+    (questionId, selectedOption, selectedOptionAnswer) => {
+      setSelectedOptions((prevOptions) => ({
+        ...prevOptions,
+        [questionId]: {
+          quiz_id: questionId,
+          isCorrect: selectedOption,
+          answer: selectedOptionAnswer,
+        },
+      }));
+    },
+    []
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const lengthOfQuestions = currentInfo.length;
 
-    // console.log("lenthOfQuestions", lengthOfQuestions);
-    // console.log("selectedOptions", selectedOptions);
-
-    const correctAnswers = currentInfo.filter(
-      (info) => selectedOptions[info.basic_id].isCorrect === 1
+    const { correctCount } = currentInfo.reduce(
+      (counts, info) => {
+        if (selectedOptions[info.basic_id].isCorrect === 1) {
+          counts.correctCount += 1;
+        }
+        return counts;
+      },
+      { correctCount: 0 }
     );
-
-    const wrongAnswers = currentInfo.filter(
-      (info) => selectedOptions[info.basic_id].isCorrect === 0
-    );
-    // console.log("correctAnswers", correctAnswers);
-    // console.log("wrongAnswers", wrongAnswers);
 
     // 滿分為100分，若題目無法整除，則以四捨五入計算
-    const score = Math.round((correctAnswers.length / lengthOfQuestions) * 100);
+    const score = Math.round((correctCount / lengthOfQuestions) * 100);
 
     setScore(score);
     handleShowScoreModal();
