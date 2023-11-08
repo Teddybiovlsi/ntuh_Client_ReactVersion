@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Col, Container, Row, Form, Table } from "react-bootstrap";
 import { get } from "../axios";
 import LoadingComponent from "../../components/LoadingComponent";
@@ -63,16 +63,19 @@ export default function RecordPage({ recordType = 0 }) {
     updateShowDataRecord(0, selectDataCount);
   }, [filteredDataRecord, selectDataCount]);
 
-  const handlePageClick = (event) => {
-    setCurrentPage(event.selected);
-    const start = event.selected * selectDataCount;
-    const end = start + selectDataCount;
-    setPagination((prevPagination) => ({
-      ...prevPagination,
-      itemOffset: start,
-      endOffset: end,
-    }));
-  };
+  const handlePageClick = useCallback(
+    (event) => {
+      setCurrentPage(event.selected);
+      const start = event.selected * selectDataCount;
+      const end = start + selectDataCount;
+      setPagination((prevPagination) => ({
+        ...prevPagination,
+        itemOffset: start,
+        endOffset: end,
+      }));
+    },
+    [selectDataCount]
+  );
 
   useEffect(() => {
     const usrToken = JSON.parse(
@@ -170,27 +173,31 @@ export default function RecordPage({ recordType = 0 }) {
     </thead>
   );
 
-  const tableBody = (
-    <tbody>
-      {showDataRecord.map((item, index) => {
-        const { clientVideoCheck, chapter, answerState, praticeDate } = item;
+  const tableBody = useMemo(
+    () => (
+      <tbody>
+        {showDataRecord.map((item, index) => {
+          const { clientVideoCheck, chapter, answerState, praticeDate } = item;
 
-        const formattedDate = new Date(praticeDate).toLocaleString();
+          const formattedDate = new Date(praticeDate).toLocaleString();
 
-        return (
-          <tr key={index}>
-            <td>{index + 1}</td>
-            <td>{clientVideoCheck}</td>
-            <td>{chapter}</td>
-            <td>{answerState ? "是" : "否"}</td>
-            <td>{formattedDate}</td>
-          </tr>
-        );
-      })}
-    </tbody>
+          return (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{clientVideoCheck}</td>
+              <td>{chapter}</td>
+              <td>{answerState ? "是" : "否"}</td>
+              <td>{formattedDate}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    ),
+    [showDataRecord]
   );
 
-  if (loading) return <LoadingComponent title={recordTypeString} />;
+  if (loading)
+    return <LoadingComponent title={recordTypeString} text="紀錄資訊載入中" />;
 
   return (
     <Container>
@@ -296,7 +303,7 @@ export default function RecordPage({ recordType = 0 }) {
         <Row>
           <Col md={6} className="mx-auto">
             <ReactPaginate
-              forcePage={currentPage}
+              forcePage={pagination.itemsPerPage > 0 ? currentPage : -1}
               previousLabel={"上一頁"}
               nextLabel={"下一頁"}
               breakLabel={"..."}
