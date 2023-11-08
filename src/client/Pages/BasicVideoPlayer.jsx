@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import BasicVideoJS from "../../components/BasicVideoJS";
 import LoadingComponent from "../../components/LoadingComponent";
 import { post } from "../axios";
@@ -11,16 +11,34 @@ export default function BasicVideoPlayer() {
     localStorage.getItem("user") || sessionStorage.getItem("user")
   );
 
+  // 使用 React Router 的 useNavigate 鉤子來獲取 navigate 函數，用於在應用程式中導航
+  const navigate = useNavigate();
+
+  // 使用 React Router 的 useLocation 鉤子來獲取當前路由的位置資訊
   const location = useLocation();
 
-  const [loading, setLoading] = useState(true);
+  // 從 location.state 中解構出 info、videoPath、videoID 和 latestWatchTime，如果 location.state 為 null 或 undefined，則使用預設值
+  const {
+    info = {},
+    videoPath = "",
+    videoID = "",
+    latestWatchTime = 0,
+  } = location?.state || {};
 
+  // 使用 useEffect 鉤子來在 location.state 為 null 或 undefined 時顯示警告並導航到首頁
+  useEffect(() => {
+    if (!location.state) {
+      alert("請先選擇影片！");
+      navigate("/");
+    }
+  }, [location.state]);
+
+  // 如果 location.state 為 null 或 undefined，則不渲染任何內容
   if (!location.state) {
-    alert("請先選擇影片！");
-    return <Navigate to="/" replace />;
+    return null;
   }
 
-  const { info, videoPath, videoID, latestWatchTime } = location?.state;
+  const [loading, setLoading] = useState(true);
 
   const videoJsOptions = {
     controls: true,
