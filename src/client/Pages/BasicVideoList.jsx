@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Stack, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -30,13 +30,17 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
       localStorage.getItem("user") || sessionStorage.getItem("user")
     ) || {};
 
-  const usrToken = user.client_token;
-  const usrVideo = user.video;
+  const usrToken = user?.client_token;
+  const usrVideo = user?.video;
 
   const title = `基本練習衛教資訊`;
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(null);
+  const handleCloseStartModal = () => {
+    setOpen(null);
+  };
+
   const [
     isConfirmingToLatestTime,
     closeIsConfirmingToLatestTime,
@@ -44,12 +48,8 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
   ] = useModal();
 
   const [originVideoData, setOriginVideoData] = useState([]);
-  const [QuestionData, setQuestionData] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
-  const [eachVideoDuration, setEachVideoDuration] = useState([]);
-  const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
 
   const navigate = useNavigate();
 
@@ -103,9 +103,9 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
     }
   };
   // 設定每個影片的總時長
-  useEffect(() => {
+  const eachVideoDuration = useMemo(() => {
     if (originVideoData.length !== 0) {
-      const eachVideoDurationArray = originVideoData.map((video) => {
+      return originVideoData.map((video) => {
         const videoDuration = Math.round(video.videoDuration);
         const videoDurationMinute = Math.floor(videoDuration / 60);
         const videoDurationSecond = videoDuration % 60;
@@ -116,8 +116,8 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
           return `${videoDurationMinute}:${videoDurationSecond}`;
         }
       });
-      setEachVideoDuration(eachVideoDurationArray);
     }
+    return [];
   }, [originVideoData]);
 
   if (loading) {
@@ -131,16 +131,6 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
       </Container>
     );
   }
-  if (
-    !localStorage.getItem("iphoneAlertShown") &&
-    navigator.userAgent.match(/iPhone/i)
-  ) {
-    alert(
-      "目前使用iPhone，請留意在影片撥放全螢幕下無法正確顯示問題，請關閉全螢幕即可正確作答"
-    );
-    localStorage.setItem("iphoneAlertShown", true);
-  }
-
   return (
     <Container>
       <h1 className="fw-bold text-center">{title}</h1>
@@ -184,19 +174,14 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
           </div>
         );
       })}
-      <Modal
-        show={open !== null}
-        onHide={() => {
-          setOpen(null);
-        }}
-      >
+      <Modal show={open !== null} onHide={handleCloseStartModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇欲觀看的類型</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
             <Stack gap={3}>
-              {open !== null && (
+              {open && (
                 <>
                   目前影片觀看進度：
                   {open !== null && open.videoLastestTime == 0 ? (
