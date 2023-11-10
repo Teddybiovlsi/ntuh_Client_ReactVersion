@@ -8,7 +8,7 @@ import "../../components/videoqa.css";
 
 export default function VideoPlayer() {
   const location = useLocation();
-  const { videoID, videoPath } = location.state || {};
+  const { videoID, videoPath, questionData } = location.state || {};
 
   useEffect(() => {
     if (!location.state) {
@@ -61,5 +61,12 @@ export default function VideoPlayer() {
 
   if (loading) return <Loading />;
 
-  return <VideoJS options={videoJsOptions} info={info} />;
+  return (
+    <VideoJS
+      options={videoJsOptions}
+      info={info}
+      questionData={questionData}
+      videoID={videoID}
+    />
+  );
 }
