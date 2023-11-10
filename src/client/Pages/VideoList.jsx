@@ -332,6 +332,7 @@ export default function VideoList({ PageTitle = 0, loadingText = "Loading" }) {
                     state: {
                       videoPath: open.video_url,
                       videoID: open.videoCertainID,
+                      questionData: open.QuestionData,
                     },
                   });
                 }}
