@@ -1,20 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Stack,
+} from "react-bootstrap";
 import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
+import { post } from "../client/axios";
 
 export const VideoJS = (props) => {
+  const user = JSON.parse(
+    localStorage.getItem("user") || sessionStorage.getItem("user")
+  );
+
   const videoRef = useRef(null);
-  const [currentTime, setCurrentTime] = useState(null);
   const playerRef = useRef(null);
-  const { options, info } = props;
+  const { options, info, questionData, videoID } = props;
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
+
+  const [remainingTime, setRemainingTime] = useState(0);
 
   const [wrongAnswer, setWrongAnswer] = useState(false);
   const [wrongAnswerCount, setWrongAnswerCount] = useState(0);
@@ -25,12 +39,203 @@ export const VideoJS = (props) => {
   const [answerState, setAnswerState] = useState([]);
   const [haveWatchedTime, setHaveWatchedTime] = useState(0);
 
+  const [timeOut, setTimeOut] = useState(false);
+  const [shouldReset, setShouldReset] = useState(true);
+
+  const [correctModal, setCorrectModal] = useState(false);
   const [wrongModal, setWrongModal] = useState(false);
   const [wrongAnswerReachLimit, setWrongAnswerReachLimit] = useState(false);
 
+  // set the time out id
+  const timeoutId = useRef(null);
+  // set the count down interval id
+  const countDownIntervalId = useRef(null);
+
+  const uploadTheAnswer = async (data) => {
+    // let alertToastID = toast.loading("上傳中...");
+    try {
+      const response = await post(`client/record/${user.client_token}`, data);
+
+      console.log("上傳成功");
+    } catch (error) {
+      if (error.response.data.error === "Token expired") {
+        alert("登入逾時，請重新登入！");
+        localStorage.getItem("user") && localStorage.removeItem("user");
+        sessionStorage.getItem("user") && sessionStorage.removeItem("user");
+        navigate("/", { replace: true });
+      } else {
+        console.log(error.response);
+
+        console.log("上傳失敗");
+      }
+    }
+  };
+
+  // 開始計時
+  const startCountDown = (remainingTime = 0) => {
+    if (remainingTime === 0) return;
+
+    setRemainingTime(remainingTime);
+
+    countDownIntervalId.current = setInterval(() => {
+      setRemainingTime((remainingTime) => remainingTime - 1);
+    }, 1000);
+
+    timeoutId.current = setTimeout(() => {
+      setTimeOut(true);
+    }, remainingTime * 1000);
+  };
+
+  // 重置並繼續播放影片
+  const resetAndPlay = () => {
+    clearInterval(countDownIntervalId.current);
+    clearTimeout(timeoutId.current);
+    setOptionChecked("");
+    setCorrectModal(false);
+    setWrongModal(false);
+    setShouldReset(false);
+    setWrongAnswerCount(0);
+    setSendstate(false);
+    playerRef.current.play();
+  };
+
+  // set 當下所選擇的答案名稱
+  const handleCheckedAnswer = (e) => {
+    setOptionChecked(e.target.value);
+  };
+
+  // 送出答案function
+  function handleSubmitAnswer(answer = "") {
+    clearInterval(countDownIntervalId.current);
+    clearTimeout(timeoutId.current);
+
+    let chosenAnswer = answer || optionChecked || "noAnswer";
+
+    console.log("chosenAnswer", chosenAnswer);
+
+    // console.log("chosenAnswer is", chosenAnswer);
+
+    // console.log("tempQuestionNum", tempQuestionNum);
+    // console.log("info[tempQuestionNum - 1]", info[tempQuestionNum - 1]);
+    // console.log("optionChecked", optionChecked);
+    // 如果為警告訊息，則直接接續撥放影片
+    if (info[tempQuestionNum - 1].video_is_question === 0) {
+      const data = {
+        token: user.client_token,
+        videoID: videoID,
+        quizID: [info[tempQuestionNum - 1].quiz_id],
+        answerStatus: [true],
+        already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
+      };
+
+      uploadTheAnswer(data);
+      resetAndPlay();
+      return;
+    } else {
+      let correctAnswer;
+
+      for (let i = 1; i <= 4; i++) {
+        let option = info[tempQuestionNum - 1][`option_${i}`];
+        if (option !== undefined && option[1] === 1) {
+          correctAnswer = option[0];
+          break;
+        }
+      }
+
+      if (chosenAnswer === "noAnswer") {
+        if (wrongAnswerCount < 3) {
+          const data = {
+            token: user.client_token,
+            videoID: videoID,
+            quizID: [info[tempQuestionNum - 1].quiz_id],
+            answerStatus: [false],
+            already_watch_time: 0,
+          };
+
+          uploadTheAnswer(data);
+        } else {
+          const data = {
+            token: user.client_token,
+            videoID: videoID,
+            quizID: [info[tempQuestionNum - 1].quiz_id],
+            answerStatus: [true],
+            already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
+          };
+
+          uploadTheAnswer(data);
+        }
+
+        setShouldReset(true);
+        setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
+        setWrongModal(true);
+      } else {
+        console.log("correctAnswer", correctAnswer);
+
+        if (optionChecked === correctAnswer) {
+          setAnswerState([
+            ...answerState,
+            {
+              tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
+              correctAnswer: true,
+              wrongAnswer: "",
+              timeOutNoAnswer: false,
+            },
+          ]);
+          const data = {
+            token: user.client_token,
+            videoID: videoID,
+            quizID: [info[tempQuestionNum - 1].quiz_id],
+            answerStatus: [true],
+            already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
+          };
+
+          uploadTheAnswer(data);
+
+          console.log("data", data);
+
+          setCorrectModal(true);
+        } else {
+          if (wrongAnswerCount < 3) {
+            const data = {
+              token: user.client_token,
+              videoID: videoID,
+              quizID: [info[tempQuestionNum - 1].quiz_id],
+              answerStatus: [false],
+              already_watch_time: 0,
+            };
+
+            uploadTheAnswer(data);
+          } else {
+            const data = {
+              token: user.client_token,
+              videoID: videoID,
+              quizID: [info[tempQuestionNum - 1].quiz_id],
+              answerStatus: [true],
+              already_watch_time:
+                info[tempQuestionNum - 1].video_interrupt_time,
+            };
+
+            uploadTheAnswer(data);
+          }
+
+          setOptionChecked("");
+          setShouldReset(true);
+          setAnswer(correctAnswer);
+          setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
+          setWrongModal(true);
+        }
+      }
+    }
+  }
+
+  const handleTimeOut = () => {
+    setTimeOut(true);
+  };
+
+  const [shuffledInfo, setShuffledInfo] = useState();
+
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
-    console.log("shuffledArray", shuffledArray.length);
     for (let i = shuffledArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledArray[i], shuffledArray[j]] = [
@@ -38,14 +243,12 @@ export const VideoJS = (props) => {
         shuffledArray[i],
       ];
     }
-
     return shuffledArray;
   };
 
-  const [shuffledInfo, setShuffledInfo] = useState();
-
   const handleShuffle = (info) => {
     const values = Object.values(info.choice);
+
     const shuffledValues = shuffleArray(values);
 
     const newChoice = Object.keys(info.choice).reduce((result, key, index) => {
@@ -56,13 +259,16 @@ export const VideoJS = (props) => {
     return { ...info, choice: newChoice };
   };
 
+  useEffect(() => {
+    if (shouldReset) {
+      const shuffledInfos = questionData.map((info) => handleShuffle(info));
+      setShuffledInfo(shuffledInfos);
+      setShouldReset(false);
+    }
+  }, [shouldReset]);
+
   // calculate the total length of the array
   let arrayNum = 0;
-  let timeoutId = null;
-
-  const handleCheckedAnswer = (e) => {
-    setOptionChecked(e.target.value);
-  };
 
   const toggleFullScreen = () => {
     const videoElement = document.getElementById("video-container");
@@ -126,7 +332,7 @@ export const VideoJS = (props) => {
       videoRef.current.appendChild(videoElement);
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
-        videojs.log("player is ready");
+        // videojs.log("player is ready");
       }));
 
       // addChild("componentName", {componentProps}, componentIndex)
@@ -152,8 +358,8 @@ export const VideoJS = (props) => {
         // console.log("player is play");
       });
       player.on("pause", () => {
-        // console.log("ArrayNum", arrayNum);
-        // console.log("tempQuestionNum", tempQuestionNum);
+        console.log("ArrayNum", arrayNum);
+
         setTempQuestionNum(arrayNum);
       });
 
@@ -173,12 +379,19 @@ export const VideoJS = (props) => {
             player.pause();
             // handleShuffle(info.choice);
             setSendstate(true);
+            setRemainingTime(info[arrayNum].video_duration);
 
-            timeoutId = setTimeout(() => {
-              handleSubmitAnswer();
-              // setSendstate(false);
-              // player.play();
+            countDownIntervalId.current = setInterval(() => {
+              setRemainingTime((remainingTime) => remainingTime - 1);
+            }, 1000);
+
+            timeoutId.current = setTimeout(() => {
+              // handleSubmitAnswer();
+              handleTimeOut();
+              clearTimeout(timeoutId.current);
             }, info[arrayNum].video_duration * 1000);
+
+            // startCountDown(info[arrayNum].video_duration);
             arrayNum++;
           }
         }
@@ -209,6 +422,16 @@ export const VideoJS = (props) => {
       }
     };
   }, [playerRef]);
+
+  // 時間到時，自動送出答案
+  // 若沒有答案則送出預設值
+  // 若有答案則送出當下所選擇之答案
+  useEffect(() => {
+    if (timeOut) {
+      handleSubmitAnswer(optionChecked);
+      setTimeOut(false);
+    }
+  }, [timeOut, optionChecked]);
 
   useEffect(() => {
     if (
@@ -255,85 +478,6 @@ export const VideoJS = (props) => {
     }
   }
 
-  function handleSubmitAnswer() {
-    let chosenAnswer = optionChecked === "" ? "noAnswer" : optionChecked;
-    let correctAnswer;
-
-    for (let i = 1; i <= 4; i++) {
-      let option = info[tempQuestionNum - 1][`option_${i}`];
-      if (option !== undefined && option[1] === 1) {
-        correctAnswer = option[0];
-        break;
-      }
-    }
-    if (chosenAnswer === "noAnswer") {
-      clearTimeout(timeoutId);
-      setAnswerState([
-        ...answerState,
-        {
-          tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
-          correctAnswer: false,
-          wrongAnswer: "",
-          timeOutNoAnswer: true,
-        },
-      ]);
-
-      setAnswer(correctAnswer);
-      setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
-      console.log("wrongAnswerCount", wrongAnswerCount);
-
-      console.log(
-        "info[tempQuestionNum - 1].video_duration",
-        info[tempQuestionNum - 1].video_duration
-      );
-      setWrongModal(true);
-    } else {
-      if (optionChecked === correctAnswer) {
-        setAnswerState([
-          ...answerState,
-          {
-            tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
-            correctAnswer: true,
-            wrongAnswer: "",
-            timeOutNoAnswer: false,
-          },
-        ]);
-        setSendstate(false);
-        playerRef.current.play();
-      } else {
-        setAnswer(correctAnswer);
-        setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
-        console.log("wrongAnswerCount", wrongAnswerCount);
-
-        console.log(
-          "info[tempQuestionNum - 1].video_duration",
-          info[tempQuestionNum - 1].video_duration
-        );
-        setWrongModal(true);
-
-        clearTimeout(timeoutId);
-
-        // timeoutId = setTimeout(() => {
-        //   console.log("timeoutId", timeoutId);
-        //   // setSendstate(false);
-        //   // playerRef.current.play();
-        // }, info[tempQuestionNum - 1].video_duration * 1000);
-      }
-
-      // setAnswerState([
-      //   ...answerState,
-      //   {
-      //     tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
-      //     correctAnswer: false,
-      //     wrongAnswer: optionChecked,
-      //     timeOutNoAnswer: false,
-      //   },
-      // ]);
-      // setSendstate(false);
-      // playerRef.current.play();
-    }
-  }
-
   return (
     <div id="video-container">
       <div className="video-container_Container">
@@ -346,48 +490,143 @@ export const VideoJS = (props) => {
         </div>
         {sendstate && (
           <div id="video-container-textfield" className="text-overlay">
-            {wrongModal ? (
-              <div id="video-container-textfield" className="text-overlay2">
-                <h1 className="text-overlay_title pt-2 pb-2">
-                  <b>提示：</b>第{tempQuestionNum}題
-                </h1>
-                <Container>
-                  {wrongAnswerCount > 2 ? (
+            {info[tempQuestionNum - 1].video_is_question === 1 ? (
+              correctModal && !wrongModal ? (
+                <div id="video-container-textfield" className="text-overlay2">
+                  <h1 className="text-overlay_title pt-2 pb-2">
+                    <b>提示：</b>第{tempQuestionNum}題
+                  </h1>
+                  <Container>
                     <Col className="fs-4 ms-2 mt-2 mb-2">
-                      <p>
-                        <b className="text-danger">回答錯誤達到上限</b>
-                        ，正確答案為
-                        <b className="text-success">{answer}</b>
+                      <p className="text-center text-success m-0">
+                        恭喜答對了！
                       </p>
                     </Col>
-                  ) : (
-                    <Col className="fs-4 ms-2 mt-2 mb-2">
-                      <p className="text-danger">這是錯誤答案喔</p>
+                  </Container>
+                  <Stack>
+                    <BtnBootstrap
+                      onClickEventName={() => {
+                        resetAndPlay();
+                      }}
+                      text={"確定"}
+                      variant={"btn send"}
+                    />
+                  </Stack>
+                </div>
+              ) : wrongModal && !correctModal ? (
+                <div id="video-container-textfield" className="text-overlay2">
+                  <h1 className="text-overlay_title pt-2 pb-2">
+                    <b>提示：</b>第{tempQuestionNum}題
+                  </h1>
+                  <Container>
+                    {wrongAnswerCount > 2 ? (
+                      <Col className="fs-4 ms-2 mt-2 mb-2">
+                        <p>
+                          <b className="text-danger">回答錯誤達到上限</b>
+                          ，正確答案為
+                          <b className="text-success">{answer}</b>
+                        </p>
+                      </Col>
+                    ) : (
+                      <Col className="ms-2 mt-2 mb-2">
+                        <p className="fs-3 text-center text-danger m-0">
+                          這是錯誤答案喔
+                        </p>
+                      </Col>
+                    )}
+                  </Container>
+                  <Stack>
+                    <BtnBootstrap
+                      onClickEventName={() => {
+                        startCountDown(
+                          info[tempQuestionNum - 1].video_duration
+                        );
+                        setWrongModal(false);
+
+                        if (wrongAnswerCount > 2) {
+                          resetAndPlay();
+                        }
+                      }}
+                      text={"確定"}
+                      variant={"btn send"}
+                    />
+                  </Stack>
+                </div>
+              ) : (
+                <Form>
+                  <h1 className="text-overlay_title pt-2 pb-2">
+                    第{tempQuestionNum}題
+                  </h1>
+                  <Col className="fs-4 ms-2 mt-2 mb-2">
+                    {info[tempQuestionNum - 1].video_question}
+                  </Col>
+                  <Row>
+                    {shuffledInfo[tempQuestionNum - 1].choice.option_1 && (
+                      <Option
+                        option={
+                          shuffledInfo[tempQuestionNum - 1].choice.option_1
+                        }
+                        optionChecked={optionChecked}
+                        handleCheckedAnswer={handleCheckedAnswer}
+                      />
+                    )}
+                    {shuffledInfo[tempQuestionNum - 1].choice.option_2 && (
+                      <Option
+                        option={
+                          shuffledInfo[tempQuestionNum - 1].choice.option_2
+                        }
+                        optionChecked={optionChecked}
+                        handleCheckedAnswer={handleCheckedAnswer}
+                      />
+                    )}
+                    {shuffledInfo[tempQuestionNum - 1].choice.option_3 && (
+                      <Option
+                        option={
+                          shuffledInfo[tempQuestionNum - 1].choice.option_3
+                        }
+                        optionChecked={optionChecked}
+                        handleCheckedAnswer={handleCheckedAnswer}
+                      />
+                    )}
+                    {shuffledInfo[tempQuestionNum - 1].choice.option_4 && (
+                      <Option
+                        option={
+                          shuffledInfo[tempQuestionNum - 1].choice.option_4
+                        }
+                        optionChecked={optionChecked}
+                        handleCheckedAnswer={handleCheckedAnswer}
+                      />
+                    )}
+                  </Row>
+
+                  <Stack gap={2}>
+                    <p className="m-0">
+                      剩餘時間：<b>{remainingTime}</b>
+                    </p>
+                    <Col className="sendBtn">
+                      <BtnBootstrap
+                        id="resetBtn"
+                        btnName="ResetBtn"
+                        btnPosition="btn-start"
+                        text={"重置"}
+                        variant={"btn reset me-3"}
+                        onClickEventName={() => {
+                          setOptionChecked("");
+                        }}
+                      />
+                      <BtnBootstrap
+                        id="sendBtn"
+                        btnName="ConfirmBtn"
+                        text={"送出"}
+                        variant={"btn send"}
+                        onClickEventName={() => {
+                          handleSubmitAnswer();
+                        }}
+                      />
                     </Col>
-                  )}
-                </Container>
-                <BtnBootstrap
-                  onClickEventName={() => {
-                    console.log("繼續倒數");
-                    console.log(
-                      "video_duration",
-                      info[tempQuestionNum - 1].video_duration
-                    );
-                    clearTimeout(timeoutId);
-                    timeoutId = setTimeout(() => {
-                      console.log("timeoutId", timeoutId);
-                      handleSubmitAnswer();
-                    }, info[tempQuestionNum - 1].video_duration * 1000);
-                    setWrongModal(false);
-                    if (wrongAnswerCount > 2) {
-                      setSendstate(false);
-                      playerRef.current.play();
-                    }
-                  }}
-                  text={"確定"}
-                  variant={"btn send"}
-                />
-              </div>
+                  </Stack>
+                </Form>
+              )
             ) : (
               <Form>
                 <h1 className="text-overlay_title pt-2 pb-2">
@@ -395,94 +634,15 @@ export const VideoJS = (props) => {
                 </h1>
                 <Col className="fs-4 ms-2 mt-2 mb-2">
                   {info[tempQuestionNum - 1].video_question}
-                  {/* {info[0].video_question} */}
                 </Col>
-                <Row>
-                  <Col className="fs-4" md={6} xs={6}>
-                    <Form.Check
-                      type="radio"
-                      label={info[tempQuestionNum - 1].option_1[0]}
-                      value={info[tempQuestionNum - 1].option_1[0]}
-                      name="option_1"
-                      id="formHorizontalRadios1"
-                      className="selectOption"
-                      checked={
-                        optionChecked === info[tempQuestionNum - 1].option_1[0]
-                          ? true
-                          : false
-                      }
-                      onChange={handleCheckedAnswer}
-                    />
-                  </Col>
-                  <Col className="fs-4" md={6} xs={6}>
-                    <Form.Check
-                      type="radio"
-                      label={info[tempQuestionNum - 1].option_2[0]}
-                      value={info[tempQuestionNum - 1].option_2[0]}
-                      name="option_2"
-                      id="formHorizontalRadios2"
-                      className="selectOption"
-                      checked={
-                        optionChecked === info[tempQuestionNum - 1].option_2[0]
-                          ? true
-                          : false
-                      }
-                      onChange={handleCheckedAnswer}
-                    />
-                  </Col>
-                  {info[tempQuestionNum - 1].option_3 !== undefined && (
-                    <Col className="fs-4" md={6} xs={6}>
-                      <Form.Check
-                        type="radio"
-                        label={info[tempQuestionNum - 1].option_3[0]}
-                        value={info[tempQuestionNum - 1].option_3[0]}
-                        name="option_3"
-                        id="formHorizontalRadios3"
-                        className="selectOption"
-                        checked={
-                          optionChecked ===
-                          info[tempQuestionNum - 1].option_3[0]
-                            ? true
-                            : false
-                        }
-                        onChange={handleCheckedAnswer}
-                      />
-                    </Col>
-                  )}
-                  {info[tempQuestionNum - 1].option_4 !== undefined && (
-                    <Col className="fs-4" md={6} xs={6}>
-                      <Form.Check
-                        type="radio"
-                        label={info[tempQuestionNum - 1].option_4[0]}
-                        value={info[tempQuestionNum - 1].option_4[0]}
-                        name="option_4"
-                        id="formHorizontalRadios4"
-                        className="selectOption"
-                        checked={
-                          optionChecked ===
-                          info[tempQuestionNum - 1].option_4[0]
-                            ? true
-                            : false
-                        }
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                          setOptionChecked(e.target.value);
-                        }}
-                      />
-                    </Col>
-                  )}
-                </Row>
-                <Col className="sendBtn">
-                  <BtnBootstrap
-                    id="resetBtn"
-                    btnName="ResetBtn"
-                    btnPosition="btn-start"
-                    text={"重置"}
-                    variant={"btn reset me-3"}
-                    onClickEventName={() => {
-                      setOptionChecked("");
-                    }}
-                  />
+                <Col className="ms-2 mt-2 mb-2">
+                  請按下OK或等待時間結束後，即可接續播放影片
+                </Col>
+
+                <Stack gap={2}>
+                  <p className="m-0">
+                    剩餘時間：<b>{remainingTime}</b>
+                  </p>
                   <BtnBootstrap
                     id="sendBtn"
                     btnName="ConfirmBtn"
@@ -492,7 +652,7 @@ export const VideoJS = (props) => {
                       handleSubmitAnswer();
                     }}
                   />
-                </Col>
+                </Stack>
               </Form>
             )}
           </div>
@@ -503,3 +663,18 @@ export const VideoJS = (props) => {
 };
 
 export default VideoJS;
+
+const Option = ({ option, optionChecked, handleCheckedAnswer }) => (
+  <Col className="fs-4" md={6} xs={6}>
+    <Form.Check
+      type="radio"
+      label={option[0]}
+      value={option[0]}
+      name={`option_${option[0]}`}
+      id={`formHorizontalRadios${option[0]}`}
+      className="selectOption"
+      checked={optionChecked === option[0]}
+      onChange={handleCheckedAnswer}
+    />
+  </Col>
+);
