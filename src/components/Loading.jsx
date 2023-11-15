@@ -1,5 +1,13 @@
 import React from "react";
 import styles from "../styles/components/Loading.module.scss";
+/**
+ * 這個 component 主要使用於 顯示載入中的動畫效果。
+ *
+ * @param {Object} props - 組件的 props。
+ * @param {string} [props.text="載入中"] - 載入中的文字。
+ *
+ * @returns {JSX.Element} 一個顯示載入中的動畫效果。
+ */
 
 export default function Loading({ text = "載入中" }) {
   return (
