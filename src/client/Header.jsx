@@ -1,23 +1,19 @@
+import { AiFillSetting } from "react-icons/ai";
 import {
   Container,
   Nav,
   Navbar,
   NavDropdown,
   Offcanvas,
-  Button,
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
+
+import { clearUserSession, getUserSession } from "../js/userAction";
 import styles from "../styles/components/NavStyle.module.scss";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BsGlobeAmericas } from "react-icons/bs";
-import { AiFillSetting } from "react-icons/ai";
 
 export default function Header({ expand = "lg" }) {
-  const user = JSON.parse(
-    localStorage?.getItem("user") || sessionStorage?.getItem("user")
-  );
-
+  const user = getUserSession();
   const navigate = useNavigate();
 
   return (
@@ -124,8 +120,7 @@ export default function Header({ expand = "lg" }) {
                   <NavDropdown.Item
                     as={"button"}
                     onClick={() => {
-                      localStorage.getItem("user") && localStorage.clear();
-                      sessionStorage.getItem("user") && sessionStorage.clear();
+                      clearUserSession();
                       navigate("/");
                     }}
                   >
