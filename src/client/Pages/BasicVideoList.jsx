@@ -9,6 +9,14 @@ import { AiFillLock } from "react-icons/ai";
 import styles from "../../styles/pages/VideoList.module.scss";
 import useModal from "../../js/useModal";
 import { ProgressBar } from "react-bootstrap";
+import { clearUserSession, getUserSession } from "../../js/userAction";
+
+/**
+ * 基本練習影片列表
+ *
+ * @param {string} loadingText - 載入時的文字
+ * @returns {JSX.Element} 顯示基本練習衛教資訊的頁面
+ */
 
 export default function BasicVideoList({ loadingText = "資訊載入中" }) {
   const convertTheWatchTimePercentage = ({
@@ -25,10 +33,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
     }
   };
 
-  const user =
-    JSON.parse(
-      localStorage.getItem("user") || sessionStorage.getItem("user")
-    ) || {};
+  const user = getUserSession();
 
   const usrToken = user?.client_token;
   const usrVideo = user?.video;
@@ -96,8 +101,14 @@ export default function BasicVideoList({ loadingText = "資訊載入中" }) {
 
         alert(errorMessage);
         navigate("/");
+      }
+      if (errorMessage === "影片Index錯誤，請重新嘗試") {
+        alert("影片有新版本，請重新登入");
+        clearUserSession();
+        navigate("/", { replace: true });
       } else {
-        alert("發生不明錯誤，請重新嘗試");
+        alert("發生不明錯誤，請重新登入");
+        clearUserSession();
         navigate("/Home", { replace: true });
       }
     }
