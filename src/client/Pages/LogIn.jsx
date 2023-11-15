@@ -6,6 +6,8 @@ import { post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
+import { setUserSession } from "../../js/userAction";
+
 import "react-toastify/dist/ReactToastify.css";
 
 export default function LogIn() {
@@ -88,13 +90,8 @@ export default function LogIn() {
 
   useEffect(() => {
     if (tempuser !== null) {
-      if (userInfo.isRemember) {
-        localStorage.setItem("user", JSON.stringify(tempuser));
-        setCheckuserInfo(tempuser);
-      } else {
-        sessionStorage.setItem("user", JSON.stringify(tempuser));
-        setCheckuserInfo(tempuser);
-      }
+      setUserSession(tempuser, userInfo.isRemember);
+      setCheckuserInfo(tempuser);
     }
   }, [tempuser]);
 
