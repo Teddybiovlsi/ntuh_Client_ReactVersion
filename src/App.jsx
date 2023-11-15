@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Header from "./client/Header";
 import { Route, Routes } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import Header from "./client/Header";
 import UserComment from "./client/Pages/UserComment";
 import Home from "./client/Pages/Home";
 import LogIn from "./client/Pages/LogIn";
-import { useLocation } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 import VideoList from "./client/Pages/VideoList";
 import VideoPlayer from "./client/Pages/VideoPlayer";
 import AuthProtected from "./AuthProtected";
@@ -19,7 +20,6 @@ import UsingTip from "./client/Pages/UsingTip";
 import BasicVideoList from "./client/Pages/BasicVideoList";
 import BasicVideoPlayer from "./client/Pages/BasicVideoPlayer";
 import BasicVideoQuestionPage from "./client/Pages/BasicVideoQuestionPage";
-import { post } from "./client/axios";
 import VideoOnlyPlayer from "./client/Pages/VideoOnlyPlayer";
 
 export default function App() {
