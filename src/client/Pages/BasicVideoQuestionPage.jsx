@@ -1,6 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Form,
+  Image,
+  Modal,
+  Row,
+  Stack,
+} from "react-bootstrap";
 import { toast } from "react-toastify";
 import jsSHA from "jssha";
 
@@ -167,21 +175,38 @@ export default function BasicVideoQuestionPage() {
                 {Object.keys(question.choice).map((key, index) => {
                   // console.log("question", question.video_question);
                   return (
-                    <Form.Check
-                      type="radio"
-                      label={question.choice[key][0]}
-                      name={`basic${question.basic_id}`}
-                      key={question.choice[key][0]}
-                      id={`basic${question.basic_id}${index}`}
-                      onChange={() =>
-                        handleOptionChange(
-                          question.basic_id,
-                          question.choice[key][1],
-                          question.choice[key][0]
-                        )
-                      }
-                      required
-                    />
+                    <Row key={`row-${key}`}>
+                      <label
+                        key={`label-${key}`}
+                        htmlFor={`basic${question.basic_id}${index}`}
+                      >
+                        <Form.Check
+                          type="radio"
+                          label={question.choice[key][0]}
+                          name={`basic${question.basic_id}`}
+                          key={question.choice[key][0]}
+                          id={`basic${question.basic_id}${index}`}
+                          onChange={() =>
+                            handleOptionChange(
+                              question.basic_id,
+                              question.choice[key][1],
+                              question.choice[key][0]
+                            )
+                          }
+                          required
+                        />
+                        {question.choice[key][2] && (
+                          <Image
+                            src={`${question.choice[key][2]}`}
+                            alt={`basic${question.basic_id}${index}`}
+                            rounded
+                            fluid
+                            className="mt-3"
+                            style={{ maxHeight: "200px", cursor: "pointer" }}
+                          />
+                        )}
+                      </label>
+                    </Row>
                   );
                 })}
               </div>
