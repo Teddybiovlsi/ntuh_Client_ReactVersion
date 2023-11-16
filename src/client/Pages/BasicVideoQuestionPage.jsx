@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Container,
@@ -8,15 +8,15 @@ import {
   Modal,
   Row,
   Stack,
-} from 'react-bootstrap';
-import { toast } from 'react-toastify';
-import jsSHA from 'jssha';
+} from "react-bootstrap";
+import { toast } from "react-toastify";
+import jsSHA from "jssha";
 
-import PageTitleHeading from '../../components/PageTitleHeading';
-import ToastAlert from '../../components/ToastAlert';
-import useModal from '../../js/useModal';
-import { post } from '../axios';
-import { clearUserSession, getUserSession } from '../../js/userAction';
+import PageTitleHeading from "../../components/PageTitleHeading";
+import ToastAlert from "../../components/ToastAlert";
+import useModal from "../../js/useModal";
+import { post } from "../axios";
+import { clearUserSession, getUserSession } from "../../js/userAction";
 
 export default function BasicVideoQuestionPage() {
   const user = getUserSession();
@@ -51,33 +51,26 @@ export default function BasicVideoQuestionPage() {
       if (isReloadingPage) {
         handleCloseScoreModal();
       } else {
-        toast.success('上傳紀錄成功，3秒後將自動跳轉自首頁', {
+        toast.success("上傳紀錄成功，3秒後將自動跳轉自首頁", {
           autoClose: 3000,
         });
 
         setTimeout(() => {
-          navigate('/', { replace: true });
+          navigate("/", { replace: true });
         }, 3000);
       }
     } catch (error) {
-      if (error.response.data.error === 'Token expired') {
-        alert('登入逾時，請重新登入！');
+      if (error.response.data.error === "Token expired") {
+        alert("登入逾時，請重新登入！");
         clearUserSession();
-        navigate('/', { replace: true });
+        navigate("/", { replace: true });
       } else {
-        if (isReloadingPage) {
-          navigate(0);
-        } else {
-          toast.update(alertToastID, {
-            render: '上傳失敗，請稍後再試',
-            type: 'error',
-            isLoading: false,
-            autoClose: 3000,
-          });
-          setTimeout(() => {
-            setDisabledRepeatSubmit(false);
-          }, 3000);
-        }
+        toast.error("上傳紀錄失敗，請稍後再試", {
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          setDisabledRepeatSubmit(false);
+        }, 3000);
       }
     }
   };
@@ -123,9 +116,9 @@ export default function BasicVideoQuestionPage() {
   };
 
   const hashTheKeyText = (keyText) => {
-    const shaObj = new jsSHA('SHA-256', 'TEXT');
+    const shaObj = new jsSHA("SHA-256", "TEXT");
     shaObj.update(keyText);
-    const hash = shaObj.getHash('HEX');
+    const hash = shaObj.getHash("HEX");
     return hash;
   };
 
@@ -160,13 +153,13 @@ export default function BasicVideoQuestionPage() {
 
   return (
     <>
-      <PageTitleHeading text='基礎練習題目測驗' styleOptions={4} />
+      <PageTitleHeading text="基礎練習題目測驗" styleOptions={4} />
       <Container>
         <Form onSubmit={handleSubmit}>
           {shuffledInfo.map((question, index) => {
             return (
               <div key={question.basic_id}>
-                <p className='fs-4 m-0'>
+                <p className="fs-4 m-0">
                   {`第${index + 1}題.`}
                   {question.video_question}
                 </p>
@@ -180,7 +173,7 @@ export default function BasicVideoQuestionPage() {
                         htmlFor={`basic${question.basic_id}${index}`}
                       >
                         <Form.Check
-                          type='radio'
+                          type="radio"
                           label={question.choice[key][0]}
                           name={`basic${question.basic_id}`}
                           key={question.choice[key][0]}
@@ -200,8 +193,8 @@ export default function BasicVideoQuestionPage() {
                             alt={`basic${question.basic_id}${index}`}
                             rounded
                             fluid
-                            className='mt-3'
-                            style={{ maxHeight: '200px', cursor: 'pointer' }}
+                            className="mt-3"
+                            style={{ maxHeight: "200px", cursor: "pointer" }}
                           />
                         )}
                       </label>
@@ -212,36 +205,48 @@ export default function BasicVideoQuestionPage() {
             );
           })}
           <Button
-            variant='outline-primary'
-            type='submit'
-            className='mt-3 float-end'
+            variant="outline-primary"
+            type="submit"
+            className="mt-3 float-end"
             // disabled={disabledRepeatSubmit}
-            size='md'
+            size="md"
           >
             送出
           </Button>
         </Form>
       </Container>
       <ToastAlert />
-      <Modal show={scoreModal} onHide={handleCloseScoreModal}>
+      <Modal
+        show={scoreModal}
+        onHide={() => {
+          uploadTheAnswer(
+            {
+              checkID: videoID,
+              accuracy: score,
+              answer: JSON.stringify(selectedOptions),
+            },
+            false
+          );
+        }}
+      >
         <Modal.Header>
           <Modal.Title>本次基礎練習結果</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h3 className={score >= 100 ? 'text-success' : 'text-danger'}>
+          <h3 className={score >= 100 ? "text-success" : "text-danger"}>
             {`本次分數為: ${score}分`}
             {score >= 100 && (
               <>
                 <br />
-                <b className='text-success'>你很棒喔，恭喜拿到滿分！</b>
+                <b className="text-success">你很棒喔，恭喜拿到滿分！</b>
               </>
             )}
           </h3>
           <p>
-            {score < 100 
-              ? (answerCount < 2 
-                ? '是否要再重新練習看看呢？' 
-                : '下次再努力，你一定可以拿到滿分的分數！') 
+            {score < 100
+              ? answerCount < 2
+                ? "是否要再重新練習看看呢？"
+                : "下次再努力，你一定可以拿到滿分的分數！"
               : null}
           </p>
         </Modal.Body>
@@ -249,7 +254,7 @@ export default function BasicVideoQuestionPage() {
           <Stack gap={3}>
             {score < 100 && answerCount < 2 && (
               <Button
-                variant='outline-primary'
+                variant="outline-primary"
                 onClick={() => {
                   const data = {
                     checkID: videoID,
@@ -263,7 +268,7 @@ export default function BasicVideoQuestionPage() {
               </Button>
             )}
             <Button
-              variant='outline-secondary'
+              variant="outline-secondary"
               onClick={() => {
                 uploadTheAnswer(
                   {
