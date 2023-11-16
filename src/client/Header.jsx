@@ -64,11 +64,14 @@ export default function Header({ expand = "lg" }) {
               {/* 練習紀錄 */}
               {user !== null ? (
                 <NavDropdown title="練習紀錄" id="collasible-nav-dropdown">
+                  <LinkContainer to="/record/basic">
+                    <NavDropdown.Item>基礎練習</NavDropdown.Item>
+                  </LinkContainer>
                   <LinkContainer to="/record/pratice">
-                    <NavDropdown.Item>練習用</NavDropdown.Item>
+                    <NavDropdown.Item>練習</NavDropdown.Item>
                   </LinkContainer>{" "}
                   <LinkContainer to="/record/test">
-                    <NavDropdown.Item>測驗用</NavDropdown.Item>
+                    <NavDropdown.Item>測驗</NavDropdown.Item>
                   </LinkContainer>{" "}
                 </NavDropdown>
               ) : null}

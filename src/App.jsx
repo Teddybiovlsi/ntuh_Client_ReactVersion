@@ -21,6 +21,7 @@ import BasicVideoList from "./client/Pages/BasicVideoList";
 import BasicVideoPlayer from "./client/Pages/BasicVideoPlayer";
 import BasicVideoQuestionPage from "./client/Pages/BasicVideoQuestionPage";
 import VideoOnlyPlayer from "./client/Pages/VideoOnlyPlayer";
+import BasicRecordPage from "./client/Pages/BasicRecordPage";
 
 export default function App() {
   const location = useLocation();
@@ -80,6 +81,7 @@ export default function App() {
             <Route path="/video" element={<VideoPlayer />} />
             {/* 有包含問題影片章節選擇（練習／測驗用） */}
             <Route path="/video/chapter" element={<VideoChapterPlayer />} />
+            <Route path="/record/basic" element={<BasicRecordPage />} />
             <Route
               path="/record/pratice"
               element={<RecordPage recordType={0} />}
