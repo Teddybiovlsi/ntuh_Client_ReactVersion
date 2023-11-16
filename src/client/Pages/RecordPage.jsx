@@ -4,6 +4,7 @@ import { get } from "../axios";
 import LoadingComponent from "../../components/LoadingComponent";
 import DataSize from "../JSON/slectDataSize.json";
 import ReactPaginate from "react-paginate";
+import PageTitleHeading from "../../components/PageTitleHeading";
 
 export default function RecordPage({ recordType = 0 }) {
   // 取得當前時間
@@ -203,7 +204,7 @@ export default function RecordPage({ recordType = 0 }) {
     <Container>
       <Col>
         <Row className="text-center">
-          <h1>{recordTypeString}</h1>
+          <PageTitleHeading text={recordTypeString} styleOptions={2} />
         </Row>
         <Row>
           <Col md={6}>
