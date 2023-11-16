@@ -5,6 +5,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import DataSize from "../JSON/slectDataSize.json";
 import ReactPaginate from "react-paginate";
 import PageTitleHeading from "../../components/PageTitleHeading";
+import { getUserSession } from "../../js/userAction";
 
 export default function RecordPage({ recordType = 0 }) {
   // 取得當前時間
@@ -79,9 +80,7 @@ export default function RecordPage({ recordType = 0 }) {
   );
 
   useEffect(() => {
-    const usrToken = JSON.parse(
-      localStorage?.getItem("user") || sessionStorage?.getItem("user")
-    )?.client_token;
+    const usrToken = getUserSession()?.client_token;
     setLoading(true);
     handelRecord({ api: `client/record/${usrToken}` });
   }, [recordType]);
