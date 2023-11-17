@@ -14,6 +14,8 @@ export default function BasicRecordPage() {
   const [originDataRecord, setOriginDataRecord] = useState([]);
   const [filteredDataRecord, setFilteredDataRecord] = useState([]);
   const [totalVideoName, setTotalVideoName] = useState([]);
+  const [finshWatch, setFinshWatch] = useState([]);
+  const [haveQuiz, setHaveQuiz] = useState([]);
 
   const [calEachTotalPratice, setCalEachTotalPratice] = useState([]);
   const [calEachTotalLatestDate, setCalEachTotalLatestDate] = useState([]);
@@ -32,11 +34,18 @@ export default function BasicRecordPage() {
   const handelRecord = async ({ api }) => {
     try {
       const res = await get(api);
-      const { data, clientVideoName } = res.data;
+      const {
+        data,
+        clientVideoName,
+        clientCheckVideoFinshWatch,
+        clientCheckVideoHaveQuiz,
+      } = res.data;
 
       setOriginDataRecord(data);
       setFilteredDataRecord(data);
       setTotalVideoName(clientVideoName);
+      setFinshWatch(clientCheckVideoFinshWatch);
+      setHaveQuiz(clientCheckVideoHaveQuiz);
       // updateShowDataRecord(0, selectDataCount);
 
       setTimeout(() => {
@@ -112,36 +121,53 @@ export default function BasicRecordPage() {
                   </p>
                 </Col>
 
-                <Col
-                  // xs={calEachHighestAccuracy[index] === "目前無分數" ? 12 : 12}
-                  md={6}
-                  className="my-auto"
-                >
+                <Col md={6} className="my-auto">
                   <p className="m-0 fs-5">
-                    分數：
+                    完成觀看：
                     <b
                       className={` ${
-                        calEachHighestAccuracy[index] < 100 ||
-                        calEachHighestAccuracy[index] === "目前無分數"
-                          ? "text-danger "
-                          : "text-success"
+                        finshWatch[index] ? "text-success" : "text-danger "
                       }`}
                     >
-                      {calEachHighestAccuracy[index]}
+                      {finshWatch[index] ? "是" : "否"}
                     </b>
                   </p>
                 </Col>
-                <p className="fs-5 m-0">
-                  最新日期：
-                  <b
-                    className={`${
-                      calEachTotalLatestDate[index] === "查無對應最新日期" &&
-                      "text-danger"
-                    }`}
-                  >
-                    {calEachTotalLatestDate[index]}
-                  </b>
-                </p>
+                {haveQuiz[index] && (
+                  <>
+                    <Col md={6} className="my-auto">
+                      <p className="m-0 fs-5">
+                        {/* 完成觀看： */}
+                        分數：
+                        <b
+                          className={` ${
+                            calEachHighestAccuracy[index] < 100 ||
+                            calEachHighestAccuracy[index] === "目前無分數"
+                              ? "text-danger "
+                              : "text-success"
+                          }`}
+                        >
+                          {/* {finshWatch[index] ? "是" : "否"} */}
+                          {calEachHighestAccuracy[index]}
+                        </b>
+                      </p>
+                    </Col>
+                    <Col md={6} className="my-auto">
+                      <p className="fs-5 m-0">
+                        最新測驗日期：
+                        <b
+                          className={`${
+                            calEachTotalLatestDate[index] ===
+                              "查無對應最新日期" && "text-danger"
+                          }`}
+                        >
+                          {calEachTotalLatestDate[index]}
+                        </b>
+                      </p>
+                    </Col>
+                  </>
+                )}
+
                 {calEachHighestAccuracy[index] !== "目前無分數" && (
                   <BtnBootstrap
                     btnSize="md"
