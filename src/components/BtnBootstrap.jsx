@@ -8,6 +8,9 @@ import Button from "react-bootstrap/Button";
  * @param {string} props.btnID - 該按鍵的 ID 名稱。
  * @param {string} props.btnName - 該按鍵的 name 名稱，通常使用於表單中識別。
  * @param {string} [props.btnPosition] - 可不填寫，在此定義為按鍵的 class 名稱並搭配 React-BootStrap 的 spacing 參數進行調整按鍵位置。
+ * @param {('submit'|'button')} [props.btnType] - 可不填寫，在此定義為按鍵類型。
+ * @param {('lg'|'md'|'sm'|'xl'|'xs')} [props.btnSize] - 可不填寫，在此定義為按鍵的大小。
+ * @param {string} [props.btnTitle] - 可不填寫，在此定義為按鍵的 title 屬性。
  * @param {Function} props.onClickEventName - 該按鍵的點擊事件。
  * @param {string} props.text - 該按鍵要顯示於畫面上的文字。
  * @param {boolean} [props.disabled=false] - 可配合一些條件運算讓按鍵無法被按下。
