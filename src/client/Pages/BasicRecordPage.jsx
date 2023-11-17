@@ -78,7 +78,7 @@ export default function BasicRecordPage() {
                     new Date(item.latestQuizDate).getTime()
                   )
                 )
-              ).toLocaleString()
+              ).toLocaleDateString()
             : "查無對應最新日期";
 
         const eachHighestAccuracy =
@@ -154,7 +154,7 @@ export default function BasicRecordPage() {
                     </Col>
                     <Col md={6} className="my-auto">
                       <p className="fs-5 m-0">
-                        最新測驗日期：
+                        最後測驗日期：
                         <b
                           className={`${
                             calEachTotalLatestDate[index] ===
@@ -170,6 +170,7 @@ export default function BasicRecordPage() {
 
                 {calEachHighestAccuracy[index] !== "目前無分數" && (
                   <BtnBootstrap
+                    btnPosition="my-2"
                     btnSize="md"
                     onClickEventName={() => {}}
                     variant="outline-primary"
