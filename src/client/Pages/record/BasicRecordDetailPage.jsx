@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
+  Accordion,
   Button,
   Col,
   Container,
   Dropdown,
   DropdownButton,
+  Modal,
   Row,
   Stack,
 } from "react-bootstrap";
@@ -33,6 +35,8 @@ export default function BasicRecordDetailPage() {
   const [defaultSort, setDefaultSort] = useState("latestDate");
   // 預設為降序，當使用者點選同一個排序方式時，則改變排序方式。
   const [defaultSortOrder, setDefaultSortOrder] = useState("dsc"); // asc: 升序, dsc: 降序
+
+  const [recordProfile, setRecordProfile] = useState(null); // 紀錄作答情形
 
   /**
    * 當組件掛載時，檢查 `videoData` 是否存在。
@@ -160,6 +164,9 @@ export default function BasicRecordDetailPage() {
               className="mb-2 p-3 border border-2 rounded-3 shadow justify-content-md-center"
               key={`rowButton${index}`}
               role="button"
+              onClick={() => {
+                setRecordProfile(data.eachQuizAnswerContent);
+              }}
             >
               <Col className="fs-4">
                 {formatLatestQuizDate}
@@ -177,7 +184,7 @@ export default function BasicRecordDetailPage() {
             </Row>
           );
         })}
-        {/* <Modal
+        <Modal
           show={recordProfile !== null}
           onHide={() => {
             setRecordProfile(null);
@@ -242,7 +249,7 @@ export default function BasicRecordDetailPage() {
                 })}
             </Accordion>
           </Modal.Body>
-        </Modal> */}
+        </Modal>
       </Container>
     </>
   );
