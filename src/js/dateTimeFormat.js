@@ -7,7 +7,7 @@
    *                        如果為 "time"，則函數返回時間字串。
    * @returns {string} 格式化的日期或時間字串。
    */
-  const convertTimestampToDateOrTime = (time, type) => {
+  export const convertTimestampToDateOrTime = (time, type) => {
     if (type === "date") {
       return new Date(time).toLocaleDateString();
     }
