@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import LoadingComponent from "../../components/LoadingComponent";
 import { Accordion, Col, Container, Modal, Row } from "react-bootstrap";
 import { getUserSession } from "../../js/userAction";
+import { convertTimestampToDateOrTime } from "../../js/dateTimeFormat";
 import { get } from "../axios";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import BtnBootstrap from "../../components/BtnBootstrap";
+import { useNavigate } from "react-router-dom";
 
 export default function BasicRecordListPage() {
   const user = getUserSession();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
 
@@ -52,18 +55,6 @@ export default function BasicRecordListPage() {
     }
   };
 
-  const handleFilterEachPratice = (videoName) => {
-    const filteredData = originDataRecord.filter(
-      (item) => item.clientVideoCheck === videoName
-    );
-
-    setFilteredDataRecord(filteredData);
-  };
-
-  useEffect(() => {
-    console.log("filteredDataRecord", filteredDataRecord);
-  }, [filteredDataRecord]);
-
   useEffect(() => {
     if (originDataRecord.length > 0) {
       const calEachTotalPratice = [];
@@ -79,13 +70,14 @@ export default function BasicRecordListPage() {
 
         const eachLatestDate =
           filteredData.length > 0
-            ? new Date(
+            ? convertTimestampToDateOrTime(
                 Math.max(
                   ...filteredData.map((item) =>
                     new Date(item.latestQuizDate).getTime()
                   )
-                )
-              ).toLocaleDateString()
+                ),
+                "date"
+              )
             : "查無對應最新日期";
 
         const eachHighestAccuracy =
@@ -117,7 +109,7 @@ export default function BasicRecordListPage() {
               <Row
                 // role="button"
                 className={`mb-2 p-3 border border-2 rounded-3 shadow justify-content-md-center`}
-                key={`rowButton${index}`}
+                key={`rowContainer${index}`}
               >
                 <Col md={6} className="my-auto">
                   <p className="fs-5 m-0" title={videoName}>
@@ -178,7 +170,11 @@ export default function BasicRecordListPage() {
                     btnPosition="my-2"
                     btnSize="md"
                     onClickEventName={() => {
-                      handleFilterEachPratice(videoName);
+                      navigate("/record/basic/" + videoName, {
+                        state: {
+                          videoData: originDataRecord,
+                        },
+                      });
                     }}
                     variant="outline-primary"
                     title="閱讀更多"
@@ -193,72 +189,6 @@ export default function BasicRecordListPage() {
             <p>目前尚未有任何紀錄</p>
           </Col>
         )}
-        {/* <Modal
-          show={recordProfile !== null}
-          onHide={() => {
-            setRecordProfile(null);
-          }}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>作答情形</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Accordion>
-              {recordProfile &&
-                recordProfile.map((recordProfile, index) => {
-                  return (
-                    <Accordion.Item eventKey={recordProfile.questionContent}>
-                      <Accordion.Header>
-                        <b
-                          className={
-                            recordProfile.isValid
-                              ? "text-success"
-                              : "text-danger"
-                          }
-                        >
-                          問題：{recordProfile.questionContent}
-                        </b>
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        <Container>
-                          <Row>
-                            <p>
-                              <b className="text-primary">作答內容:</b>
-                              {recordProfile.responseContent}
-                            </p>
-                          </Row>
-                          <Row>
-                            <p>
-                              <b className="text-primary">是否正確:</b>
-                              <b
-                                className={
-                                  recordProfile.isValid
-                                    ? "text-success"
-                                    : "text-danger"
-                                }
-                              >
-                                {recordProfile.isValid ? "正確" : "錯誤"}
-                              </b>
-                            </p>
-                          </Row>
-                          {recordProfile.isValid === false && (
-                            <Row>
-                              <p>
-                                <b className="text-primary">正確答案:</b>
-                                <b className="text-success">
-                                  {recordProfile.correctAnswer}
-                                </b>
-                              </p>
-                            </Row>
-                          )}
-                        </Container>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                  );
-                })}
-            </Accordion>
-          </Modal.Body>
-        </Modal> */}
       </Container>
     </>
   );
