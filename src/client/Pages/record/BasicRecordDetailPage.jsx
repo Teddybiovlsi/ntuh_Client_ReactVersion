@@ -54,7 +54,7 @@ export default function BasicRecordDetailPage() {
     if (defaultSort === "latestDate") {
       setRecordData(
         filterCondition.sort((a, b) => {
-          if (defaultSortOrder === "asc") {
+          if (defaultSortOrder === "dsc") {
             return (
               new Date(b.latestQuizDate).getTime() -
               new Date(a.latestQuizDate).getTime()
