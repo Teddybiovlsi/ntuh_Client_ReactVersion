@@ -6,7 +6,7 @@ import { get } from "../axios";
 import PageTitleHeading from "../../components/PageTitleHeading";
 import BtnBootstrap from "../../components/BtnBootstrap";
 
-export default function BasicRecordPage() {
+export default function BasicRecordListPage() {
   const user = getUserSession();
 
   const [loading, setLoading] = useState(true);
@@ -20,8 +20,6 @@ export default function BasicRecordPage() {
   const [calEachTotalPratice, setCalEachTotalPratice] = useState([]);
   const [calEachTotalLatestDate, setCalEachTotalLatestDate] = useState([]);
   const [calEachHighestAccuracy, setCalEachHighestAccuracy] = useState([]);
-
-  const [recordProfile, setRecordProfile] = useState(null);
 
   useEffect(() => {
     const usrToken = user?.client_token;
@@ -42,20 +40,29 @@ export default function BasicRecordPage() {
       } = res.data;
 
       setOriginDataRecord(data);
-      setFilteredDataRecord(data);
       setTotalVideoName(clientVideoName);
       setFinshWatch(clientCheckVideoFinshWatch);
       setHaveQuiz(clientCheckVideoHaveQuiz);
-      // updateShowDataRecord(0, selectDataCount);
 
       setTimeout(() => {
         setLoading(false);
       }, 1000);
     } catch (error) {
-      // Handle error if needed
       console.error("Error:", error);
     }
   };
+
+  const handleFilterEachPratice = (videoName) => {
+    const filteredData = originDataRecord.filter(
+      (item) => item.clientVideoCheck === videoName
+    );
+
+    setFilteredDataRecord(filteredData);
+  };
+
+  useEffect(() => {
+    console.log("filteredDataRecord", filteredDataRecord);
+  }, [filteredDataRecord]);
 
   useEffect(() => {
     if (originDataRecord.length > 0) {
@@ -91,7 +98,7 @@ export default function BasicRecordPage() {
         calEachHighestAccuracy.push(eachHighestAccuracy);
       });
 
-      setCalEachTotalPratice(calEachTotalPratice);
+      // setCalEachTotalPratice(calEachTotalPratice);
       setCalEachTotalLatestDate(calEachTotalLatestDate);
       setCalEachHighestAccuracy(calEachHighestAccuracy);
     }
@@ -129,7 +136,7 @@ export default function BasicRecordPage() {
                         finshWatch[index] ? "text-success" : "text-danger "
                       }`}
                     >
-                      {finshWatch[index] ? "是" : "否"}
+                      {finshWatch[index] ? "完成" : "未完成"}
                     </b>
                   </p>
                 </Col>
@@ -137,7 +144,6 @@ export default function BasicRecordPage() {
                   <>
                     <Col md={6} className="my-auto">
                       <p className="m-0 fs-5">
-                        {/* 完成觀看： */}
                         分數：
                         <b
                           className={` ${
@@ -147,7 +153,6 @@ export default function BasicRecordPage() {
                               : "text-success"
                           }`}
                         >
-                          {/* {finshWatch[index] ? "是" : "否"} */}
                           {calEachHighestAccuracy[index]}
                         </b>
                       </p>
@@ -172,7 +177,9 @@ export default function BasicRecordPage() {
                   <BtnBootstrap
                     btnPosition="my-2"
                     btnSize="md"
-                    onClickEventName={() => {}}
+                    onClickEventName={() => {
+                      handleFilterEachPratice(videoName);
+                    }}
                     variant="outline-primary"
                     title="閱讀更多"
                     text="閱讀更多"
@@ -186,51 +193,7 @@ export default function BasicRecordPage() {
             <p>目前尚未有任何紀錄</p>
           </Col>
         )}
-
-        {/* {filteredDataRecord.length > 0 ? (
-    filteredDataRecord.map((item, index) => {
-      const { accuracy, clientVideoCheck, latestQuizDate } = item;
-
-      const formattedDate = new Date(latestQuizDate).toLocaleDateString();
-
-      return (
-        <Row
-          // role="button"
-          className={`mb-2 p-3 border border-2 rounded-3 shadow `}
-          key={`rowButton${index}`}
-        >
-          <Col xs={8}>
-            <h2>{clientVideoCheck}</h2>
-            <p className="m-0">{formattedDate}</p>
-          </Col>
-          <Col xs={2} className="my-auto">
-            <p
-              className={`m-0 fs-3 text-center ${
-                accuracy < 100 ? "text-danger" : "text-success"
-              }`}
-            >
-              {accuracy}
-            </p>
-          </Col>
-          <Col
-            xs={2}
-            className="my-auto fs-1"
-            role="button"
-            onClick={() => {
-              setRecordProfile(item.eachQuizAnswerContent);
-            }}
-          >
-            <MdReadMore />
-          </Col>
-        </Row>
-      );
-    })
-  ) : (
-    <Col>
-      <p>目前尚未有任何紀錄</p>
-    </Col>
-  )} */}
-        <Modal
+        {/* <Modal
           show={recordProfile !== null}
           onHide={() => {
             setRecordProfile(null);
@@ -295,7 +258,7 @@ export default function BasicRecordPage() {
                 })}
             </Accordion>
           </Modal.Body>
-        </Modal>
+        </Modal> */}
       </Container>
     </>
   );
