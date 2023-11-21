@@ -8,6 +8,8 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
+import { PiPersonSimpleWalkBold } from "react-icons/pi";
+import { CiSettings } from "react-icons/ci";
 
 import { clearUserSession, getUserSession } from "../js/userAction";
 import styles from "../styles/components/NavStyle.module.scss";
@@ -128,6 +130,7 @@ export default function Header({ expand = "lg" }) {
                     }}
                   >
                     登出
+                    <PiPersonSimpleWalkBold />
                   </NavDropdown.Item>
                 ) : (
                   <LinkContainer to="/">
