@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Form, Col, Row } from "react-bootstrap";
+import { Container, Form, Col, Row, Stack } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { post } from "../axios";
@@ -7,6 +7,7 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
 import { setUserSession } from "../../js/userAction";
+import { MdEmojiPeople } from "react-icons/md";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -131,17 +132,6 @@ export default function LogIn() {
               </Form.Control.Feedback>
             </Form.Group>
             <Row>
-              {/* <Link to="/Register">註冊</Link> */}
-              <Col>
-                <Link
-                  to="/forgetPassword"
-                  className="float-end text-decoration-none"
-                >
-                  忘記密碼
-                </Link>
-              </Col>
-            </Row>
-            <Row>
               <Col>
                 <Form.Check
                   type="checkbox"
@@ -157,16 +147,32 @@ export default function LogIn() {
                   }}
                 />
               </Col>
-              <Col>
-                <BtnBootstrap
-                  btnPosition="mt-2 float-end"
-                  btnSize="md"
-                  variant="primary"
-                  btnType="submit"
-                  text="登入"
-                />
+              <Col className="mt-2 text-end">
+                <Link to="/forgetPassword" className="text-decoration-none">
+                  忘記密碼
+                </Link>
               </Col>
             </Row>
+            <Stack gap={1}>
+              <BtnBootstrap
+                btnSize="md"
+                variant="outline-primary"
+                btnType="submit"
+                text="登入"
+              />
+              <BtnBootstrap
+                btnSize="md"
+                variant="outline-secondary"
+                btnType="button"
+                onClickEventName={() => {}}
+                text={
+                  <>
+                    <MdEmojiPeople />
+                    訪客登入
+                  </>
+                }
+              />
+            </Stack>
           </Col>
         </Form>
         <ToastAlert />
