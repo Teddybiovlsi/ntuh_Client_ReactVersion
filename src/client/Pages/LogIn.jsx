@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Form, Col, Row, Stack } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { post } from "../axios";
+import { get, post } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
@@ -46,14 +46,23 @@ export default function LogIn() {
 
     setValidated(true);
   };
-
+  /**
+   * 透過 `axios` 套件，向後端發送登入請求。
+   *
+   * @param {Object} data - 使用者輸入的帳號密碼資料。
+   * @param {string} data.user_account - 使用者輸入的帳號。
+   * @param {string} data.user_password - 使用者輸入的密碼。
+   * @param {boolean} data.isRemember - 使用者是否勾選「記住我」。
+   *
+   * @returns {Object} userInfo - 後端回傳的使用者資料。
+   */
   const fetchaLoginData = async (data) => {
     let clientSubmit = toast.loading("登入中...");
     try {
-      console.log(data);
+      // console.log(data);
       const response = await post("client/login", data);
 
-      const userInfo = await response.data;
+      const userInfo = response.data;
 
       setTempUser(userInfo);
       // console.log(userInfo);
@@ -70,7 +79,7 @@ export default function LogIn() {
       }, 3000);
     } catch (error) {
       // console.log(error.response.data);
-      console.log(error.code);
+      // console.log(error.code);
       if (error.code === "ECONNABORTED") {
         toast.update(clientSubmit, {
           render: "連線逾時，請稍後再試",
@@ -86,6 +95,27 @@ export default function LogIn() {
           autoClose: 3000,
         });
       }
+    }
+  };
+
+  /**
+   * 透過 `axios` 套件，向後端發送訪客登入請求。
+   *
+   * @returns {Object} guestInfo - 後端回傳的訪客資料。
+   * @returns {string} guestInfo.permission - 訪客的權限。
+   * @returns {string} guestInfo.guestInfo - 訪客的臨時權杖。
+   * @returns {string} guestInfo.expires_in - 訪客臨時權杖的逾期時間。
+   */
+  const fetchGuestLoginData = async () => {
+    try {
+      const response = await get("guest/temporaryToken");
+      const guestInfo = response.data;
+
+      setUserSession(guestInfo, false);
+      navigate("/Home");
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   };
 
@@ -164,7 +194,9 @@ export default function LogIn() {
                 btnSize="md"
                 variant="outline-secondary"
                 btnType="button"
-                onClickEventName={() => {}}
+                onClickEventName={() => {
+                  fetchGuestLoginData();
+                }}
                 text={
                   <>
                     <MdEmojiPeople />

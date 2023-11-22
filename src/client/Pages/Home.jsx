@@ -12,13 +12,14 @@ import { useNavigate } from "react-router-dom";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { get } from "../axios";
 import useModal from "../../js/useModal";
+import { clearUserSession, getUserSession } from "../../js/userAction";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  const usrName = JSON.parse(
-    localStorage?.getItem("user") || sessionStorage?.getItem("user")
-  );
+  const user = getUserSession();
+
+  const permission = user.permission;
 
   const [
     showChoseVideoModal,
@@ -36,9 +37,11 @@ export default function Home() {
   const [usrInfo, setUsrInfo] = useState();
 
   useEffect(() => {
-    getUserRecord({
-      api: `client/web/record/${usrName.client_token}`,
-    });
+    if (permission === "ylhClient") {
+      getUserRecord({
+        api: `client/web/record/${user.client_token}`,
+      });
+    }
   }, []);
 
   const getUserRecord = async ({ api }) => {
@@ -67,14 +70,13 @@ export default function Home() {
 
   const handleSessionTimeout = () => {
     alert("登入逾時，請重新登入");
-    if (sessionStorage.getItem("user")) sessionStorage.clear();
-    if (localStorage.getItem("user")) localStorage.clear();
+    clearUserSession();
     navigate("/");
   };
 
   useEffect(() => {
-    if (usrName === null) {
-      localStorage.clear();
+    if (user === null) {
+      clearUserSession();
       navigate("/");
     }
   }, []);
@@ -88,56 +90,58 @@ export default function Home() {
 
   return (
     <>
-      <Col className="mb-3">
-        <Row>
-          <Card>
-            <Card.Title>{usrName.client_name} 您好</Card.Title>
-            {loading === false ? (
-              <Card.Body>
-                {error ? (
-                  <Card.Text>查無用戶當前練習紀錄</Card.Text>
-                ) : (
-                  <>
-                    <Card.Text>
-                      總瀏覽影片次數：{usrInfo.TotalWatchCount}次
-                    </Card.Text>
-                    <Card.Text>
-                      影片總觀看時間：
-                      {handleConvertTime(usrInfo.TotalWatchTime)}
-                    </Card.Text>
-                    <Card.Text>完成觀看影片數量：</Card.Text>
-                    <Card.Text className="ms-3">
-                      基礎練習用：
-                      {usrInfo.TotalFinishBasicVideo}部
-                      <Link to={"/basic"} className="text-decoration-none">
-                        [點擊繼續觀看]
-                      </Link>
-                    </Card.Text>
-                    <Card.Text className="ms-3">
-                      練習用：
-                      {usrInfo.TotalFinishPraticeVideo}部
-                      <Link to={"/pratice"} className="text-decoration-none">
-                        [點擊繼續觀看]
-                      </Link>
-                    </Card.Text>
-                    <Card.Text className="ms-3">
-                      測驗用：
-                      {usrInfo.TotalFinishTestVideo}部
-                      <Link to={"/test"} className="text-decoration-none">
-                        [點擊繼續觀看]
-                      </Link>
-                    </Card.Text>
-                  </>
-                )}
-              </Card.Body>
-            ) : (
-              <Card.Body>
-                <Card.Text>用戶資訊載入中</Card.Text>
-              </Card.Body>
-            )}
-          </Card>
-        </Row>
-      </Col>
+      {permission === "ylhClient" && (
+        <Col className="mb-3">
+          <Row>
+            <Card>
+              <Card.Title>{user.client_name} 您好</Card.Title>
+              {loading === false ? (
+                <Card.Body>
+                  {error ? (
+                    <Card.Text>查無用戶當前練習紀錄</Card.Text>
+                  ) : (
+                    <>
+                      <Card.Text>
+                        總瀏覽影片次數：{usrInfo.TotalWatchCount}次
+                      </Card.Text>
+                      <Card.Text>
+                        影片總觀看時間：
+                        {handleConvertTime(usrInfo.TotalWatchTime)}
+                      </Card.Text>
+                      <Card.Text>完成觀看影片數量：</Card.Text>
+                      <Card.Text className="ms-3">
+                        基礎練習用：
+                        {usrInfo.TotalFinishBasicVideo}部
+                        <Link to={"/basic"} className="text-decoration-none">
+                          [點擊繼續觀看]
+                        </Link>
+                      </Card.Text>
+                      <Card.Text className="ms-3">
+                        練習用：
+                        {usrInfo.TotalFinishPraticeVideo}部
+                        <Link to={"/pratice"} className="text-decoration-none">
+                          [點擊繼續觀看]
+                        </Link>
+                      </Card.Text>
+                      <Card.Text className="ms-3">
+                        測驗用：
+                        {usrInfo.TotalFinishTestVideo}部
+                        <Link to={"/test"} className="text-decoration-none">
+                          [點擊繼續觀看]
+                        </Link>
+                      </Card.Text>
+                    </>
+                  )}
+                </Card.Body>
+              ) : (
+                <Card.Body>
+                  <Card.Text>用戶資訊載入中</Card.Text>
+                </Card.Body>
+              )}
+            </Card>
+          </Row>
+        </Col>
+      )}
       <Container>
         <Row>
           <Col sm={2} xs={4}>
@@ -163,18 +167,20 @@ export default function Home() {
               </Row>
             </Link>
           </Col>
-          <Col sm={2} xs={4}>
-            <Link
-              type="button"
-              className={styles.recordContainer}
-              onClick={handleShowChoseRecordModal}
-            >
-              <Row>
-                <AiTwotoneReconciliation className="fs-1" />
-                <p className="text-center fs-5">練習紀錄</p>
-              </Row>
-            </Link>
-          </Col>
+          {permission === "ylhClient" && (
+            <Col sm={2} xs={4}>
+              <Link
+                type="button"
+                className={styles.recordContainer}
+                onClick={handleShowChoseRecordModal}
+              >
+                <Row>
+                  <AiTwotoneReconciliation className="fs-1" />
+                  <p className="text-center fs-5">練習紀錄</p>
+                </Row>
+              </Link>
+            </Col>
+          )}
           <Col sm={2} xs={4}>
             <Link to="/usingTip" className={styles.tutorialContainer}>
               <Row>
@@ -191,14 +197,16 @@ export default function Home() {
               </Row>
             </Link>
           </Col>
-          <Col sm={2} xs={4}>
-            <Link to="/setting" className={styles.settingContainer}>
-              <Row>
-                <AiFillSetting className="fs-1" />
-                <p className="text-center fs-5">使用者設定</p>
-              </Row>
-            </Link>
-          </Col>
+          {permission === "ylhClient" && (
+            <Col sm={2} xs={4}>
+              <Link to="/setting" className={styles.settingContainer}>
+                <Row>
+                  <AiFillSetting className="fs-1" />
+                  <p className="text-center fs-5">使用者設定</p>
+                </Row>
+              </Link>
+            </Col>
+          )}
         </Row>
       </Container>
       {/*  */}

@@ -10,12 +10,16 @@ import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { PiPersonSimpleWalkBold } from "react-icons/pi";
 import { CiSettings } from "react-icons/ci";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 import { clearUserSession, getUserSession } from "../js/userAction";
 import styles from "../styles/components/NavStyle.module.scss";
 
 export default function Header({ expand = "lg" }) {
   const user = getUserSession();
+
+  const permission = user.permission;
+
   const navigate = useNavigate();
 
   return (
@@ -45,7 +49,15 @@ export default function Header({ expand = "lg" }) {
           <Offcanvas.Body>
             <Nav className="me-auto">
               {user !== null ? (
-                <NavDropdown title="衛教資訊" id="collasible-nav-dropdown">
+                <NavDropdown
+                  title={
+                    <>
+                      衛教資訊
+                      <IoMdArrowDropdown />
+                    </>
+                  }
+                  id="collasible-nav-dropdown"
+                >
                   <LinkContainer to="/basic">
                     <NavDropdown.Item>基礎練習</NavDropdown.Item>
                   </LinkContainer>
@@ -64,8 +76,16 @@ export default function Header({ expand = "lg" }) {
               </Nav.Link>
 
               {/* 練習紀錄 */}
-              {user !== null ? (
-                <NavDropdown title="練習紀錄" id="collasible-nav-dropdown">
+              {user !== null && permission === "ylhClient" ? (
+                <NavDropdown
+                  title={
+                    <>
+                      練習紀錄
+                      <IoMdArrowDropdown />
+                    </>
+                  }
+                  id="collasible-nav-dropdown"
+                >
                   <LinkContainer to="/record/basic">
                     <NavDropdown.Item>基礎練習</NavDropdown.Item>
                   </LinkContainer>
@@ -105,39 +125,42 @@ export default function Header({ expand = "lg" }) {
               </NavDropdown>
             </Nav> */}
             <Nav>
-              <NavDropdown
-                title={
-                  <>
-                    設定
-                    <AiFillSetting />
-                  </>
-                }
-                id="collasible-nav-dropdown"
-                align={{ lg: "end" }}
-              >
-                {user !== null ? (
-                  <LinkContainer to="/setting">
-                    <NavDropdown.Item>使用者設定</NavDropdown.Item>
-                  </LinkContainer>
-                ) : null}
+              {user !== null && permission === "ylhClient" ? (
+                <NavDropdown
+                  title={
+                    <>
+                      設定
+                      <AiFillSetting />
+                      <IoMdArrowDropdown />
+                    </>
+                  }
+                  id="collasible-nav-dropdown"
+                  align={{ lg: "end" }}
+                >
+                  {user !== null ? (
+                    <LinkContainer to="/setting">
+                      <NavDropdown.Item>使用者設定</NavDropdown.Item>
+                    </LinkContainer>
+                  ) : null}
 
-                {user !== null ? (
-                  <NavDropdown.Item
-                    as={"button"}
-                    onClick={() => {
-                      clearUserSession();
-                      navigate("/");
-                    }}
-                  >
-                    登出
-                    <PiPersonSimpleWalkBold />
-                  </NavDropdown.Item>
-                ) : (
-                  <LinkContainer to="/">
-                    <NavDropdown.Item>登入</NavDropdown.Item>
-                  </LinkContainer>
-                )}
-              </NavDropdown>
+                  {user !== null ? (
+                    <NavDropdown.Item
+                      as={"button"}
+                      onClick={() => {
+                        clearUserSession();
+                        navigate("/");
+                      }}
+                    >
+                      登出
+                      <PiPersonSimpleWalkBold />
+                    </NavDropdown.Item>
+                  ) : (
+                    <LinkContainer to="/">
+                      <NavDropdown.Item>登入</NavDropdown.Item>
+                    </LinkContainer>
+                  )}
+                </NavDropdown>
+              ) : null}
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
