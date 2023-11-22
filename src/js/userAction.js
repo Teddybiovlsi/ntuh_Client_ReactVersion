@@ -19,12 +19,12 @@ export const getUserSession = () => {
   return null;
 };
 /**
- * 將用戶的個人資料儲存到瀏覽器的本地儲存或會話儲存中。
+ * 儲存用戶資料到瀏覽器的儲存空間。
  *
- * @param {Object} userProfile - 用戶登入的個人資料。
- * @param {boolean} isRember - 一個布林值，表示是否應該將用戶的個人資料存儲到本地存儲中。
- * 如果為 true，則將用戶的個人資料儲存到本地儲存中，這意味著即使關閉並重新打開瀏覽器，資料也會保留。
- * 如果為 false，則將用戶的個人資料存儲到會話儲存中，這意味著當瀏覽器標籤或視窗關閉時，資料將被清除。
+ * @param {Object} userProfile - 用戶的個人資料。
+ * @param {boolean} isRemember - 是否將資料儲存到本地：
+ *   - true：將資料儲存到本地儲存，即使關閉瀏覽器，資料也會保留。
+ *   - false：將資料儲存到會話儲存，當瀏覽器關閉時，資料將被清除。
  */
 export const setUserSession = (userProfile, isRember = false) => {
   if (typeof userProfile !== "object" || userProfile === null) {
