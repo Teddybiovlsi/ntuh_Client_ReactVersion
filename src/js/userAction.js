@@ -55,9 +55,9 @@ export const setUserSession = (userProfile, isRember = false) => {
  */
 export const clearUserSession = () => {
   if (localStorage.getItem("user")) {
-    localStorage.clear();
+    localStorage.removeItem("user");
   }
   if (sessionStorage.getItem("user")) {
-    sessionStorage.clear();
+    sessionStorage.removeItem("user");
   }
 };
