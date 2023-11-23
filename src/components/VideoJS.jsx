@@ -14,11 +14,10 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
 import { post } from "../client/axios";
+import { getUserSession } from "../js/userAction";
 
 export const VideoJS = (props) => {
-  const user = JSON.parse(
-    localStorage.getItem("user") || sessionStorage.getItem("user")
-  );
+  const user = getUserSession();
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
