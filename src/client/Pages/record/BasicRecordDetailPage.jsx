@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Accordion,
-  Button,
   Col,
   Container,
   Dropdown,
   DropdownButton,
   Modal,
   Row,
-  Stack,
 } from "react-bootstrap";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import PageTitleHeading from "../../../components/PageTitleHeading";
-import { convertTimestampToDateOrTime } from "../../../js/dateTimeFormat";
-import BtnBootstrap from "../../../components/BtnBootstrap";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { MdSort } from "react-icons/md";
+
+import PageTitleHeading from "../../../components/PageTitleHeading";
+import { compareDates, compareScores } from "../../../js/userRecordSort";
+import { convertTimestampToDateOrTime } from "../../../js/dateTimeFormat";
+
 import "../../../styles/pages/RecordDetailPage.css";
 
 export default function BasicRecordDetailPage() {
@@ -56,29 +56,20 @@ export default function BasicRecordDetailPage() {
 
   useEffect(() => {
     if (defaultSort === "latestDate") {
+      console.log("latestDate");
       setRecordData(
         filterCondition.sort((a, b) => {
-          if (defaultSortOrder === "dsc") {
-            return (
-              new Date(b.latestQuizDate).getTime() -
-              new Date(a.latestQuizDate).getTime()
-            );
-          } else {
-            return (
-              new Date(a.latestQuizDate).getTime() -
-              new Date(b.latestQuizDate).getTime()
-            );
-          }
+          return compareDates(
+            a.latestQuizDate,
+            b.latestQuizDate,
+            defaultSortOrder
+          );
         })
       );
     } else if (defaultSort === "sortScore") {
       setRecordData(
         filterCondition.sort((a, b) => {
-          if (defaultSortOrder === "asc") {
-            return a.accuracy - b.accuracy;
-          } else {
-            return b.accuracy - a.accuracy;
-          }
+          return compareScores(a.accuracy, b.accuracy, defaultSortOrder);
         })
       );
     }
