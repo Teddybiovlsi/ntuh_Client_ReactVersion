@@ -13,6 +13,7 @@ import { get } from "../axios";
 import useModal from "../../js/useModal";
 import { clearUserSession } from "../../js/userAction";
 import styles from "../../styles/pages/HomePage.module.scss";
+import { handleConvertTime } from "../../js/dateTimeFormat";
 
 export default function Home({ user }) {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function Home({ user }) {
     handleCloseChoseVideoModal,
     handleShowChoseVideoModal,
   ] = useModal();
+
   const [
     showChoseRecordModal,
     handleCloseChoseRecordModal,
@@ -82,13 +84,6 @@ export default function Home({ user }) {
       navigate("/");
     }
   }, []);
-
-  const handleConvertTime = (time) => {
-    const hour = Math.floor(time / 3600);
-    const minute = Math.floor((time % 3600) / 60);
-    const second = Math.floor((time % 3600) % 60);
-    return `${hour}小時${minute}分鐘${second}秒`;
-  };
 
   return (
     <>
