@@ -2,13 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import videojs from "video.js";
 import { post } from "../client/axios";
+import { getUserSession } from "../js/userAction";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
 
 export const BasicVideoJS = (props) => {
-  const user = JSON.parse(
-    localStorage.getItem("user") || sessionStorage.getItem("user")
-  );
+  const user = getUserSession();
 
   const navigate = useNavigate();
 
