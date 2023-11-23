@@ -5,6 +5,7 @@ import LoadingComponent from "../../components/LoadingComponent";
 import { post } from "../axios";
 import "video.js/dist/video-js.css";
 import "../../components/videoqa.css";
+import { postViewCount } from "../../js/api";
 
 export default function BasicVideoPlayer({ user }) {
   // 使用 React Router 的 useNavigate 鉤子來獲取 navigate 函數，用於在應用程式中導航
@@ -53,39 +54,19 @@ export default function BasicVideoPlayer({ user }) {
     playsinline: true,
   };
 
-  /**
-   * 透過 `axios` 套件，向後端發送上傳觀看次數請求。
-   *
-   * @param {string} permission - 使用者權限。
-   * @param {string} token - 使用者權杖。
-   * @returns {void} 這個函數不返回任何值，因為它只是發送一個請求並處理結果。
-   * @async
-   * @function fetchUploadWatchTime
-   */
-  const fetchUploadWatchTime = async (permission, token) => {
-    try {
-      const url =
-        permission === "ylhClient"
-          ? `client/addcount/video/${token}`
-          : `guest/view/video/${token}`;
-      const response = await post(url, { videoID: videoID });
-      console.log("已成功上傳觀看次數");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const permission = user.permission;
         const token = user.client_token || user.guestInfo;
-        await fetchUploadWatchTime(permission, token);
+        const reponse = await postViewCount(permission, token, videoID);
       } catch (error) {
         console.log(error);
+        alert("影片發生錯誤，請稍後再試");
+        navigate("/Home", { replace: true });
+      } finally {
+        setLoading(false);
       }
     };
 
