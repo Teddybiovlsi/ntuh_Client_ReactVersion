@@ -19,6 +19,8 @@ import { post } from "../axios";
 import { clearUserSession } from "../../js/userAction";
 
 export default function BasicVideoQuestionPage({ user }) {
+  const checkPermission = user.permission === "ylhClient";
+
   const location = useLocation();
 
   const { info, videoID } = location.state || {};
@@ -93,17 +95,21 @@ export default function BasicVideoQuestionPage({ user }) {
     setAnswerCount((preCount) => preCount + 1);
 
     const lengthOfQuestions = currentInfo.length;
-
-    currentInfo.forEach(({ basic_id, video_question_point }) => {
-      if (selectedOptions[basic_id].isCorrect === 1) {
-        setScore((preScore) => Number(preScore) + Number(video_question_point));
-      }
-    });
-
     // 列出錯誤的題目
     const wrongQuestions = currentInfo.filter(
       (info) => selectedOptions[info.basic_id].isCorrect === 0
     );
+    if (wrongQuestions.length === 0) {
+      setScore(100);
+    } else {
+      currentInfo.forEach(({ basic_id, video_question_point }) => {
+        if (selectedOptions[basic_id].isCorrect === 1) {
+          setScore((preScore) =>
+            Math.round(Number(preScore) + Number(video_question_point))
+          );
+        }
+      });
+    }
 
     // 將錯誤的題目的答案加入到錯誤題目的物件中
 
@@ -218,14 +224,18 @@ export default function BasicVideoQuestionPage({ user }) {
       <Modal
         show={scoreModal}
         onHide={() => {
-          uploadTheAnswer(
-            {
-              checkID: videoID,
-              accuracy: score,
-              answer: JSON.stringify(selectedOptions),
-            },
-            false
-          );
+          if (checkPermission) {
+            uploadTheAnswer(
+              {
+                checkID: videoID,
+                accuracy: score,
+                answer: JSON.stringify(selectedOptions),
+              },
+              false
+            );
+          } else {
+            handleCloseScoreModal();
+          }
         }}
       >
         <Modal.Header>
@@ -255,12 +265,16 @@ export default function BasicVideoQuestionPage({ user }) {
               <Button
                 variant="outline-primary"
                 onClick={() => {
-                  const data = {
-                    checkID: videoID,
-                    accuracy: score,
-                    answer: JSON.stringify(selectedOptions),
-                  };
-                  uploadTheAnswer(data, true);
+                  if (checkPermission) {
+                    const data = {
+                      checkID: videoID,
+                      accuracy: score,
+                      answer: JSON.stringify(selectedOptions),
+                    };
+                    uploadTheAnswer(data, true);
+                  } else {
+                    handleCloseScoreModal();
+                  }
                 }}
               >
                 再次練習
@@ -269,14 +283,18 @@ export default function BasicVideoQuestionPage({ user }) {
             <Button
               variant="outline-secondary"
               onClick={() => {
-                uploadTheAnswer(
-                  {
-                    checkID: videoID,
-                    accuracy: score,
-                    answer: JSON.stringify(selectedOptions),
-                  },
-                  false
-                );
+                if (checkPermission) {
+                  uploadTheAnswer(
+                    {
+                      checkID: videoID,
+                      accuracy: score,
+                      answer: JSON.stringify(selectedOptions),
+                    },
+                    false
+                  );
+                } else {
+                  navigate("/Home", { replace: true });
+                }
               }}
             >
               結束
