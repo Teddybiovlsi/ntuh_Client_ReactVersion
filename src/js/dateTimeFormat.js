@@ -6,6 +6,7 @@
    *                        如果為 "date"，則函數返回日期字串。
    *                        如果為 "time"，則函數返回時間字串。
    * @returns {string} 格式化的日期或時間字串。
+   * @version 1.0.0
    */
   export const convertTimestampToDateOrTime = (time, type) => {
     if (type === "date") {

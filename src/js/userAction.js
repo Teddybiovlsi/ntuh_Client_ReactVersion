@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
  * @returns {Object} 用戶的個人資料。
  * 如果用戶已登入，則會從瀏覽器的本地儲存或會話儲存中取得用戶的個人資料。
  * 如果用戶未登入，則會回傳 null。
+ * @version 1.0.0
  */
 export const getUserSession = () => {
   const user = sessionStorage.getItem("user") || localStorage.getItem("user");
@@ -25,6 +26,10 @@ export const getUserSession = () => {
  * @param {boolean} isRemember - 是否將資料儲存到本地：
  *   - true：將資料儲存到本地儲存，即使關閉瀏覽器，資料也會保留。
  *   - false：將資料儲存到會話儲存，當瀏覽器關閉時，資料將被清除。
+ * @returns {Object} 用戶的個人資料。
+ * @throws {Error} 如果 userProfile 不是一個物件或是 null，則會拋出例外。
+ * @throws {Error} 如果儲存失敗，則會拋出例外。
+ * @version 1.0.0
  */
 export const setUserSession = (userProfile, isRember = false) => {
   if (typeof userProfile !== "object" || userProfile === null) {
@@ -52,6 +57,7 @@ export const setUserSession = (userProfile, isRember = false) => {
  * 會從兩個地方清除用戶資料，分別是：
  * 1. 本地儲存 (localStorage)
  * 2. 會話儲存 (sessionStorage)
+ * @version 1.0.0
  */
 export const clearUserSession = () => {
   if (localStorage.getItem("user")) {
