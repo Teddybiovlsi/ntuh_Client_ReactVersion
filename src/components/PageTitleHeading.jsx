@@ -21,6 +21,7 @@ const styleOptionsMap = {
  * @param {number} styleOptions - 用於已定義樣式
  *
  * @returns {JSX.Element} 一個顯示具有樣式標題的 component。
+ * @version 1.0.0
  */
 
 export default function PageTitleHeading({
