@@ -11,6 +11,7 @@ import styles from "../styles/components/Common.module.scss";
  * @param {string} [props.text="Loading"] - 載入中的文字。
  *
  * @returns {JSX.Element} 一個顯示標題與載入中文字的動畫效果。
+ * @version 1.0.0
  */
 
 export default function LoadingComponent({
