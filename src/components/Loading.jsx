@@ -7,6 +7,7 @@ import styles from "../styles/components/Loading.module.scss";
  * @param {string} [props.text="載入中"] - 載入中的文字。
  *
  * @returns {JSX.Element} 一個顯示載入中的動畫效果。
+ * @version 1.0.0
  */
 
 export default function Loading({ text = "載入中" }) {
