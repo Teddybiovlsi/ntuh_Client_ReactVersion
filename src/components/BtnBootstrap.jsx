@@ -17,6 +17,7 @@ import Button from "react-bootstrap/Button";
  * @param {('primary'|'secondary'|'success'|'warning'|'danger'|'info'|'light'|'dark')} props.variant - 在此有八種樣式，可參考：https://react-bootstrap.github.io/components/buttons/
  *
  * @returns {JSX.Element} 一個 Bootstrap button 組件。
+ * @version 1.0.0
  */
 
 const BtnBootstrap = ({
