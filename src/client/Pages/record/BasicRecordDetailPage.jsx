@@ -23,20 +23,17 @@ export default function BasicRecordDetailPage() {
   const { videoName } = useParams();
   const location = useLocation();
 
+  const [recordData, setRecordData] = useState([]);
+  const [defaultSort, setDefaultSort] = useState("latestDate");
+  const [defaultSortOrder, setDefaultSortOrder] = useState("dsc"); // asc: 升序, dsc: 降序
+  const [recordProfile, setRecordProfile] = useState(null); // 紀錄作答情形
+
   const { videoData } = location.state;
 
   // filterCondition 為特定篩選條件的陣列，用於存放符合特定名稱的紀錄資料。
   const filterCondition = videoData.filter(
     (item) => item.clientVideoCheck === videoName
   );
-  // recordData 是一個特定紀錄的陣列，用於存放符合特定名稱的紀錄資料。
-  const [recordData, setRecordData] = useState([]);
-  // 依照使用者點選的排序方式，對紀錄資料進行排序。
-  const [defaultSort, setDefaultSort] = useState("latestDate");
-  // 預設為降序，當使用者點選同一個排序方式時，則改變排序方式。
-  const [defaultSortOrder, setDefaultSortOrder] = useState("dsc"); // asc: 升序, dsc: 降序
-
-  const [recordProfile, setRecordProfile] = useState(null); // 紀錄作答情形
 
   /**
    * 當組件掛載時，檢查 `videoData` 是否存在。
