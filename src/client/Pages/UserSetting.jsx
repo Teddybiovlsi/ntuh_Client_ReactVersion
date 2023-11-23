@@ -39,12 +39,9 @@ const userNewEmailSchema = yup.object().shape({
     .required("請輸入信箱"),
 });
 
-export default function UserSetting() {
+export default function UserSetting({ user }) {
   const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage?.getItem("user") || sessionStorage?.getItem("user")
-  );
   const [userNewPwd, setUserNewPwd] = useState({
     clientPWD: "",
     clientLatestPWD: "",

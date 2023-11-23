@@ -5,10 +5,8 @@ import LoadingComponent from "../../components/LoadingComponent";
 import { post } from "../axios";
 import "video.js/dist/video-js.css";
 import "../../components/videoqa.css";
-import { getUserSession } from "../../js/userAction";
 
-export default function BasicVideoPlayer() {
-  const user = getUserSession();
+export default function BasicVideoPlayer({ user }) {
   // 使用 React Router 的 useNavigate 鉤子來獲取 navigate 函數，用於在應用程式中導航
   const navigate = useNavigate();
 

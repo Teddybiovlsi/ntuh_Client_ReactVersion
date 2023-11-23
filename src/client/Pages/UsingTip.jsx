@@ -24,10 +24,8 @@ import PersonalSetting_Image_ForgotPassword from "../../assets/個人設定_忘�
 import PersonalSetting_Image_ForgotPassword_OTP from "../../assets/個人設定_忘記密碼_OTP.jpg";
 import { getUserSession } from "../../js/userAction";
 
-export default function UsingTip() {
+export default function UsingTip({ user }) {
   const [tutorial, setTutorial] = useState("衛教資訊");
-
-  const user = getUserSession();
 
   /**
    *

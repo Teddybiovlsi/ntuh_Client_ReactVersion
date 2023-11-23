@@ -6,11 +6,7 @@ import { post } from "../axios";
 import "video.js/dist/video-js.css";
 import "../../components/videoqa.css";
 
-export default function VideoOnlyPlayer() {
-  const user = JSON.parse(
-    localStorage.getItem("user") || sessionStorage.getItem("user")
-  );
-
+export default function VideoOnlyPlayer({ user }) {
   const location = useLocation();
 
   const [loading, setLoading] = useState(true);

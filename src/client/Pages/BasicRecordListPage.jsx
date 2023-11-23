@@ -8,8 +8,7 @@ import PageTitleHeading from "../../components/PageTitleHeading";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import { useNavigate } from "react-router-dom";
 
-export default function BasicRecordListPage() {
-  const user = getUserSession();
+export default function BasicRecordListPage({ user }) {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);

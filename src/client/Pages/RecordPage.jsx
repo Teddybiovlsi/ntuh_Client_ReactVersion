@@ -5,9 +5,8 @@ import LoadingComponent from "../../components/LoadingComponent";
 import DataSize from "../JSON/slectDataSize.json";
 import ReactPaginate from "react-paginate";
 import PageTitleHeading from "../../components/PageTitleHeading";
-import { getUserSession } from "../../js/userAction";
 
-export default function RecordPage({ recordType = 0 }) {
+export default function RecordPage({ user, recordType = 0 }) {
   // 取得當前時間
   // const isoDateInTaipei = GetCurrentDateTime();
   const recordTypeIsPraticeOrTest = recordType === 1 ? "測驗用" : "練習用";
@@ -80,7 +79,7 @@ export default function RecordPage({ recordType = 0 }) {
   );
 
   useEffect(() => {
-    const usrToken = getUserSession()?.client_token;
+    const usrToken = user?.client_token;
     setLoading(true);
     handelRecord({ api: `client/record/${usrToken}` });
   }, [recordType]);

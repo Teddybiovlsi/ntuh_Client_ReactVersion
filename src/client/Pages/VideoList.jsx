@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Collapse,
@@ -8,18 +8,21 @@ import {
   ProgressBar,
   Stack,
   Modal,
-} from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { get } from '../axios';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import LoadingComponent from '../../components/LoadingComponent';
-import { AiFillLock } from 'react-icons/ai';
-import styles from '../../styles/pages/VideoList.module.scss';
-import useModal from '../../js/useModal';
-import { getUserSession } from '../../js/userAction';
+} from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { get } from "../axios";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import LoadingComponent from "../../components/LoadingComponent";
+import { AiFillLock } from "react-icons/ai";
+import styles from "../../styles/pages/VideoList.module.scss";
+import useModal from "../../js/useModal";
 
-export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
-  const pageTitle = PageTitle ? '測驗用' : '練習用';
+export default function VideoList({
+  PageTitle = 0,
+  loadingText = "Loading",
+  user,
+}) {
+  const pageTitle = PageTitle ? "測驗用" : "練習用";
   const title = `${pageTitle}衛教資訊`;
 
   const [loading, setLoading] = useState(true);
@@ -29,7 +32,7 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
   const [originVideoData, setOriginVideoData] = useState([]);
   const [QuestionData, setQuestionData] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
   const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
@@ -40,12 +43,9 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
     handleShowConfirmToLatestTimeModal,
   ] = useModal();
 
-  
   const navigate = useNavigate();
 
-  const user = getUserSession();
-  
-  const checkIsClient = user?.permission === 'ylhClient';
+  const checkIsClient = user?.permission === "ylhClient";
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -98,15 +98,15 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
     } catch (error) {
       const errorMessage = error.response.data.message;
 
-      if (errorMessage === '發生錯誤，請重新登入') {
-        if (sessionStorage.getItem('user')) sessionStorage.clear();
-        if (localStorage.getItem('user')) localStorage.clear();
+      if (errorMessage === "發生錯誤，請重新登入") {
+        if (sessionStorage.getItem("user")) sessionStorage.clear();
+        if (localStorage.getItem("user")) localStorage.clear();
 
         alert(errorMessage);
-        navigate('/');
+        navigate("/");
       } else {
-        alert('發生不明錯誤，請重新嘗試');
-        navigate('/Home', { replace: true });
+        alert("發生不明錯誤，請重新嘗試");
+        navigate("/Home", { replace: true });
       }
     }
   };
@@ -158,24 +158,24 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
   if (arrayIsEmpty) {
     return (
       <Container>
-        <h1 className='text-center'>{title}</h1>
-        <h2 className='m-3 p-3 text-center'>{`沒有對應的${title}`}</h2>
+        <h1 className="text-center">{title}</h1>
+        <h2 className="m-3 p-3 text-center">{`沒有對應的${title}`}</h2>
       </Container>
     );
   }
   if (
-    !localStorage.getItem('iphoneAlertShown') &&
+    !localStorage.getItem("iphoneAlertShown") &&
     navigator.userAgent.match(/iPhone/i)
   ) {
     alert(
-      '目前使用iPhone，請留意在影片撥放全螢幕下無法正確顯示問題，請關閉全螢幕即可正確作答'
+      "目前使用iPhone，請留意在影片撥放全螢幕下無法正確顯示問題，請關閉全螢幕即可正確作答"
     );
-    localStorage.setItem('iphoneAlertShown', true);
+    localStorage.setItem("iphoneAlertShown", true);
   }
 
   return (
     <Container>
-      <h1 className='fw-bold text-center'>{title}</h1>
+      <h1 className="fw-bold text-center">{title}</h1>
       {originVideoData.map((video, eachQuestionIndex) => {
         return (
           <div key={video.videoCertainID}>
@@ -190,11 +190,11 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
               // }}
             >
               <Container>
-                <Row className='align-items-center'>
+                <Row className="align-items-center">
                   <Col>
                     <Row>
-                      <div className='fs-3 m-0'>
-                        {eachQuestionIndex + 1 + '. '}
+                      <div className="fs-3 m-0">
+                        {eachQuestionIndex + 1 + ". "}
                         {video.Title}
                       </div>
                     </Row>
@@ -207,11 +207,11 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                     </Row>
                   </Col>
 
-                  <Col className='align-items-center' md={4}>
+                  <Col className="align-items-center" md={4}>
                     <Stack gap={1}>
                       <BtnBootstrap
                         text={`開始`}
-                        variant={'outline-primary'}
+                        variant={"outline-primary"}
                         onClickEventName={() => {
                           // set current video into setOpen
                           setOpen(video);
@@ -303,10 +303,10 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                 {open !== null && checkIsClient && (
                   <p>
                     目前分數為：{open.accuracy}分，
-                    <b className='text-danger'>
+                    <b className="text-danger">
                       {open.accuracy === 1
-                        ? '可使用章節個別練習'
-                        : '請繼續努力'}
+                        ? "可使用章節個別練習"
+                        : "請繼續努力"}
                     </b>
                   </p>
                 )}
@@ -315,10 +315,10 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
             <Stack gap={3}>
               <BtnBootstrap
                 text={`瀏覽`}
-                variant={'outline-primary'}
+                variant={"outline-primary"}
                 onClickEventName={() => {
                   if (open.videoLastestTime === 0) {
-                    navigate('/video/only', {
+                    navigate("/video/only", {
                       state: {
                         info: open.QuestionData,
                         videoPath: open.video_url,
@@ -332,10 +332,10 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                 }}
               />
               <BtnBootstrap
-                text={`開始${PageTitle ? '測驗' : '練習'}`}
-                variant={'outline-primary'}
+                text={`開始${PageTitle ? "測驗" : "練習"}`}
+                variant={"outline-primary"}
                 onClickEventName={() => {
-                  navigate('/video', {
+                  navigate("/video", {
                     state: {
                       videoPath: open.video_url,
                       videoID: open.videoCertainID,
@@ -344,34 +344,32 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                   });
                 }}
               />
-              {
-                checkIsClient && (
-                  <BtnBootstrap
-                    text={
-                      open !== null &&
-                      (open.accuracy === 100 ? (
-                        `章節練習`
-                      ) : (
-                        <p className='text-danger m-0 p-0'>
-                          <AiFillLock />
-                          鎖定中
-                        </p>
-                      ))
-                    }
-                    variant={
-                      open !== null && open.accuracy === 100
-                        ? 'outline-primary'
-                        : 'outline-danger'
-                    }
-                    onClickEventName={() => {
-                      open !== null &&
-                        open.accuracy === 100 &&
-                        setOpenChapter(open);
-                    }}
-                    disabled={open !== null && open.accuracy !== 100}
-                  />
-                )
-              }
+              {checkIsClient && (
+                <BtnBootstrap
+                  text={
+                    open !== null &&
+                    (open.accuracy === 100 ? (
+                      `章節練習`
+                    ) : (
+                      <p className="text-danger m-0 p-0">
+                        <AiFillLock />
+                        鎖定中
+                      </p>
+                    ))
+                  }
+                  variant={
+                    open !== null && open.accuracy === 100
+                      ? "outline-primary"
+                      : "outline-danger"
+                  }
+                  onClickEventName={() => {
+                    open !== null &&
+                      open.accuracy === 100 &&
+                      setOpenChapter(open);
+                  }}
+                  disabled={open !== null && open.accuracy !== 100}
+                />
+              )}
             </Stack>
           </Container>
         </Modal.Body>
@@ -388,20 +386,20 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
         <Modal.Body>
           <p>
             您上次觀看影片的進度為
-            <b className='text-primary'>
+            <b className="text-primary">
               {open !== null && Math.round(open.videoLastestTime * 10) / 10}
             </b>
             秒，是否繼續觀看？
           </p>
-          <p className='text-danger'>若選擇取消，則觀看進度將會重置為0秒</p>
+          <p className="text-danger">若選擇取消，則觀看進度將會重置為0秒</p>
         </Modal.Body>
 
         <Modal.Footer>
           <BtnBootstrap
             text={`取消`}
-            variant={'outline-secondary'}
+            variant={"outline-secondary"}
             onClickEventName={() => {
-              navigate('/video/only', {
+              navigate("/video/only", {
                 state: {
                   info: open.QuestionData,
                   videoPath: open.video_url,
@@ -413,10 +411,10 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
           />
           <BtnBootstrap
             text={`確認`}
-            variant={'outline-primary'}
+            variant={"outline-primary"}
             onClickEventName={() => {
               handleCloseConfirmingToLatestTime();
-              navigate('/video/only', {
+              navigate("/video/only", {
                 state: {
                   info: open.QuestionData,
                   videoPath: open.video_url,
@@ -445,7 +443,7 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                 return (
                   <Link
                     key={index}
-                    to={'/video/chapter'}
+                    to={"/video/chapter"}
                     state={{
                       videoID: open.videoCertainID,
                       videoPath: open.video_url,
@@ -460,9 +458,9 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                     className={styles.videoListLink}
                   >
                     <div className={styles.videoListContainer}>
-                      <div className='m-0'>
+                      <div className="m-0">
                         <Container>
-                          <Row className='align-items-center'>
+                          <Row className="align-items-center">
                             <Col>
                               <Row>
                                 <Col md={6}>
@@ -470,8 +468,8 @@ export default function VideoList({ PageTitle = 0, loadingText = 'Loading' }) {
                                     index + 1
                                   } 章`}</h3>
                                 </Col>
-                                <Col md={6} className='my-auto'>
-                                  <div className='float-end '>
+                                <Col md={6} className="my-auto">
+                                  <div className="float-end ">
                                     {`時間長度 ${
                                       eachVideoChapterDuration[
                                         open.videoCertainID

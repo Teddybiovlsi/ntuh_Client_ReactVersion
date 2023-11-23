@@ -11,13 +11,11 @@ import { AiFillSetting, AiTwotoneReconciliation } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { get } from "../axios";
 import useModal from "../../js/useModal";
-import { clearUserSession, getUserSession } from "../../js/userAction";
+import { clearUserSession } from "../../js/userAction";
 import styles from "../../styles/pages/HomePage.module.scss";
 
-export default function Home() {
+export default function Home({ user }) {
   const navigate = useNavigate();
-
-  const user = getUserSession();
 
   const permission = user.permission;
 
@@ -41,8 +39,9 @@ export default function Home() {
 
   useEffect(() => {
     if (permission === "ylhClient") {
+      const token = user.client_token;
       getUserRecord({
-        api: `client/web/record/${user.client_token}`,
+        api: `client/web/record/${token}`,
       });
     }
   }, []);

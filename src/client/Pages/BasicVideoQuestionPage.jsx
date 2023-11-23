@@ -16,10 +16,9 @@ import PageTitleHeading from "../../components/PageTitleHeading";
 import ToastAlert from "../../components/ToastAlert";
 import useModal from "../../js/useModal";
 import { post } from "../axios";
-import { clearUserSession, getUserSession } from "../../js/userAction";
+import { clearUserSession } from "../../js/userAction";
 
-export default function BasicVideoQuestionPage() {
-  const user = getUserSession();
+export default function BasicVideoQuestionPage({ user }) {
   const location = useLocation();
 
   const { info, videoID } = location.state || {};
