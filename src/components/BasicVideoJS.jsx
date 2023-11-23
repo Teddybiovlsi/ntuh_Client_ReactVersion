@@ -5,9 +5,11 @@ import { post } from "../client/axios";
 import { getUserSession } from "../js/userAction";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
+import { postViewTime } from "../js/api";
 
 export const BasicVideoJS = (props) => {
   const user = getUserSession();
+  const permissionCheck = user?.permission === "ylhClient";
 
   const navigate = useNavigate();
 
@@ -24,18 +26,6 @@ export const BasicVideoJS = (props) => {
 
   const isIphoneCheck = navigator.userAgent.match(/iPhone/i);
 
-  const fetchVideoWatchTime = async ({ api, data }) => {
-    try {
-      // Get data from the API
-      const response = await post(api, data);
-
-      console.log(response.data.message);
-    } catch (error) {
-      const errorMessage = error.response.data.message;
-      console.log(errorMessage);
-    }
-  };
-
   // create an async function to post the data to the backend
   const uploadTheCurrentTime = (currentTime) => {
     setPastCurrentTime(currentTime);
@@ -48,39 +38,33 @@ export const BasicVideoJS = (props) => {
     document.cookie = `videoCurrentTime=${currentTime}`;
     document.cookie = `videoDurationTime=${currentTime - pastCurrentTime}`;
 
-    if (currentTime) {
-      fetchVideoWatchTime({
-        api: `client/updateTime/video/${user.client_token}`,
-        data: {
-          videoID: videoID,
-          watchTime: Number(currentTime),
-          durationTime: Number(currentTime) - Number(pastCurrentTime),
-        },
-      });
-      // console.log(currentTime);
-    } else {
-      // get the current time of the video from the cookie
-      const currentVideoTime = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith(`video${videoID}`))
-        .split("=")[1];
+    if (permissionCheck) {
+      if (currentTime) {
+        const token = user?.client_token;
+        const response = postViewTime({
+          token,
+          data: {
+            videoID: videoID,
+            watchTime: Number(currentTime),
+            durationTime: Number(currentTime) - Number(pastCurrentTime),
+          },
+        });
+        // console.log(currentTime);
+      } else {
+        // get the current time of the video from the cookie
+        const currentVideoTime = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith(`video${videoID}`))
+          .split("=")[1];
 
-      console.log("currentVideoTime", currentVideoTime);
-
-      // fetchVideoWatchTime({
-      //   api: `client/updateTime/video/${user.client_token}`,
-      //   data: {
-      //     videoID: videoID,
-      //     watchTime: currentVideoTime,
-      //     durationTime: currentVideoTime - pastCurrentTime,
-      //   },
-      // });
+        console.log("currentVideoTime", currentVideoTime);
+      }
     }
   };
 
   const uploadTheFinishTime = (currentTime) => {
-    fetchVideoWatchTime({
-      api: `client/updateTime/video/${user.client_token}`,
+    postViewTime({
+      token: user?.client_token,
       data: {
         videoID: videoID,
         watchTime: Number(currentTime),
