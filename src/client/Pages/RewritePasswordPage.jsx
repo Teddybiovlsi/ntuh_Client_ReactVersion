@@ -28,10 +28,6 @@ export default function RewritePasswordPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage?.getItem("user") || sessionStorage?.getItem("user")
-  );
-
   const [showPwd, { setShowPwd }] = useBoolean(false);
 
   const handleSessionTimeout = () => {
