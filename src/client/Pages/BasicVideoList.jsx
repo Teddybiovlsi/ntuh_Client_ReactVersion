@@ -34,23 +34,20 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
 
   const title = `基本練習衛教資訊`;
 
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(null);
-  const handleCloseStartModal = () => {
-    setOpen(null);
-  };
+  const [originVideoData, setOriginVideoData] = useState([]);
+  const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
+
+  const handleCloseStartModal = () => setOpen(null);
 
   const [
     isConfirmingToLatestTime,
     closeIsConfirmingToLatestTime,
     showConfirmToLatestTimeModal,
   ] = useModal();
-
-  const [originVideoData, setOriginVideoData] = useState([]);
-
-  const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
-
-  const navigate = useNavigate();
 
   const checkIsClient = user?.permission === "ylhClient";
 
@@ -103,21 +100,21 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
     } catch (error) {
       const errorMessage = error.response.data.message;
 
-      // if (errorMessage === '發生錯誤，請重新登入') {
-      //   clearUserSession();
+      if (errorMessage === "發生錯誤，請重新登入") {
+        clearUserSession();
 
-      //   alert(errorMessage);
-      //   navigate('/');
-      // }
-      // if (errorMessage === '影片Index錯誤，請重新嘗試') {
-      //   alert('影片有新版本，請重新登入');
-      //   clearUserSession();
-      //   navigate('/', { replace: true });
-      // } else {
-      //   alert('發生不明錯誤，請重新登入');
-      //   clearUserSession();
-      //   navigate('/Home', { replace: true });
-      // }
+        alert(errorMessage);
+        navigate("/");
+      }
+      if (errorMessage === "影片Index錯誤，請重新嘗試") {
+        alert("影片有新版本，請重新登入");
+        clearUserSession();
+        navigate("/", { replace: true });
+      } else {
+        alert("發生不明錯誤，請重新登入");
+        clearUserSession();
+        navigate("/Home", { replace: true });
+      }
     }
   };
   // 設定每個影片的總時長
@@ -262,20 +259,18 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                   }
                   onClickEventName={() => {
                     open !== null &&
-                      open.accuracy === 100 &&
-                      navigate(
-                        "/basic/videoQuestion",
+                      (open.accuracy === 100 ||
+                        (user?.permission === "ylhGuest" &&
+                          navigate(
+                            "/basic/videoQuestion",
 
-                        {
-                          state: {
-                            videoID: open.videoCertainID,
-                            info: open.QuestionData,
-                          },
-                        }
-                      );
-
-                    // open !== null &&
-                    //   open.accuracy === 100 &&
+                            {
+                              state: {
+                                videoID: open.videoCertainID,
+                                info: open.QuestionData,
+                              },
+                            }
+                          )));
                   }}
                   disabled={
                     checkIsClient && (open === null || open.accuracy !== 100)
