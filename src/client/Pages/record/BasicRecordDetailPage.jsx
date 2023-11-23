@@ -55,23 +55,15 @@ export default function BasicRecordDetailPage() {
   }, []);
 
   useEffect(() => {
-    if (defaultSort === "latestDate") {
-      console.log("latestDate");
-      setRecordData(
-        filterCondition.sort((a, b) => {
-          return compareDates(
-            a.latestQuizDate,
-            b.latestQuizDate,
-            defaultSortOrder
-          );
-        })
-      );
-    } else if (defaultSort === "sortScore") {
-      setRecordData(
-        filterCondition.sort((a, b) => {
-          return compareScores(a.accuracy, b.accuracy, defaultSortOrder);
-        })
-      );
+    const sortFunctions = {
+      latestDate: (a, b) =>
+        compareDates(a.latestQuizDate, b.latestQuizDate, defaultSortOrder),
+      sortScore: (a, b) =>
+        compareScores(a.accuracy, b.accuracy, defaultSortOrder),
+    };
+
+    if (sortFunctions[defaultSort]) {
+      setRecordData(filterCondition.sort(sortFunctions[defaultSort]));
     }
   }, [defaultSort, defaultSortOrder]);
 
