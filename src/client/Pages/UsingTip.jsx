@@ -22,11 +22,17 @@ import PersonalSetting_Image_ChangePassword from "../../assets/個人設定_密�
 import PersonalSetting_Image_ChangeEmail from "../../assets/個人設定_信箱.jpg";
 import PersonalSetting_Image_ForgotPassword from "../../assets/個人設定_忘記密碼.jpg";
 import PersonalSetting_Image_ForgotPassword_OTP from "../../assets/個人設定_忘記密碼_OTP.jpg";
+import { getUserSession } from "../../js/userAction";
 
 export default function UsingTip() {
   const [tutorial, setTutorial] = useState("衛教資訊");
 
-  // 衛教資訊使用說明
+  const user = getUserSession();
+
+  /**
+   *
+   * @returns 衛教資訊使用說明
+   */
   const healthEducationInfo = () => {
     return (
       <Container>
@@ -169,7 +175,10 @@ export default function UsingTip() {
     );
   };
 
-  // 個人紀錄使用說明
+  /**
+   *
+   * @returns 個人紀錄使用說明
+   */
   const personalRecord = () => {
     return (
       <Container>
@@ -244,7 +253,10 @@ export default function UsingTip() {
     );
   };
 
-  // 個人設定使用說明
+  /**
+   *
+   * @returns 個人設定使用說明
+   */
   const personalSetting = () => {
     return (
       <Container>
@@ -319,6 +331,10 @@ export default function UsingTip() {
     );
   };
 
+  /**
+   *
+   * @returns 忘記密碼使用說明
+   */
   const forgotPassword = () => {
     return (
       <Container>
@@ -394,34 +410,38 @@ export default function UsingTip() {
             >
               衛教資訊
             </ListGroup.Item>
-            <ListGroup.Item
-              action
-              onClick={() => {
-                setTutorial("個人紀錄");
-              }}
-              className="text-secondary"
-            >
-              個人紀錄
-            </ListGroup.Item>
+            {user.permission === "ylhClient" && (
+              <>
+                <ListGroup.Item
+                  action
+                  onClick={() => {
+                    setTutorial("個人紀錄");
+                  }}
+                  className="text-secondary"
+                >
+                  個人紀錄
+                </ListGroup.Item>
 
-            <ListGroup.Item
-              action
-              onClick={() => {
-                setTutorial("個人設定");
-              }}
-              className="text-danger"
-            >
-              個人設定
-            </ListGroup.Item>
-            <ListGroup.Item
-              action
-              className="text-success"
-              onClick={() => {
-                setTutorial("忘記密碼");
-              }}
-            >
-              忘記密碼
-            </ListGroup.Item>
+                <ListGroup.Item
+                  action
+                  onClick={() => {
+                    setTutorial("個人設定");
+                  }}
+                  className="text-danger"
+                >
+                  個人設定
+                </ListGroup.Item>
+                <ListGroup.Item
+                  action
+                  className="text-success"
+                  onClick={() => {
+                    setTutorial("忘記密碼");
+                  }}
+                >
+                  忘記密碼
+                </ListGroup.Item>
+              </>
+            )}
           </ListGroup>
         </Col>
         <Col>{tutorialSwitch(tutorial)}</Col>

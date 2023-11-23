@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Modal, Stack } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { MdOutlineVideoLibrary } from 'react-icons/md';
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Modal, Stack } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { MdOutlineVideoLibrary } from "react-icons/md";
 import {
   BsFillBookFill,
   BsTools,
   BsFillQuestionCircleFill,
-} from 'react-icons/bs';
-import { AiFillSetting, AiTwotoneReconciliation } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
-import { get } from '../axios';
-import useModal from '../../js/useModal';
-import { clearUserSession, getUserSession } from '../../js/userAction';
-import styles from '../../styles/pages/HomePage.module.scss';
+} from "react-icons/bs";
+import { AiFillSetting, AiTwotoneReconciliation } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { get } from "../axios";
+import useModal from "../../js/useModal";
+import { clearUserSession, getUserSession } from "../../js/userAction";
+import styles from "../../styles/pages/HomePage.module.scss";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ export default function Home() {
 
   const permission = user.permission;
 
-  const smSize = permission === 'ylhClient' ? 2 : 3;
-  const xsSize = permission === 'ylhClient' ? 4 : 6;
+  const smSize = permission === "ylhClient" ? 2 : 3;
+  const xsSize = permission === "ylhClient" ? 4 : 6;
 
   const [
     showChoseVideoModal,
@@ -40,7 +40,7 @@ export default function Home() {
   const [usrInfo, setUsrInfo] = useState();
 
   useEffect(() => {
-    if (permission === 'ylhClient') {
+    if (permission === "ylhClient") {
       getUserRecord({
         api: `client/web/record/${user.client_token}`,
       });
@@ -58,7 +58,7 @@ export default function Home() {
       if (err.response) {
         const { status, data } = err.response;
 
-        if (status === 404 && data.message === '請求錯誤') {
+        if (status === 404 && data.message === "請求錯誤") {
           handleSessionTimeout();
         } else {
           setError(data.message);
@@ -72,15 +72,15 @@ export default function Home() {
   };
 
   const handleSessionTimeout = () => {
-    alert('登入逾時，請重新登入');
+    alert("登入逾時，請重新登入");
     clearUserSession();
-    navigate('/');
+    navigate("/");
   };
 
   useEffect(() => {
     if (user === null) {
       clearUserSession();
-      navigate('/');
+      navigate("/");
     }
   }, []);
 
@@ -93,8 +93,8 @@ export default function Home() {
 
   return (
     <>
-      {permission === 'ylhClient' && (
-        <Col className='mb-3'>
+      {permission === "ylhClient" && (
+        <Col className="mb-3">
           <Row>
             <Card>
               <Card.Title>{user.client_name} 您好</Card.Title>
@@ -112,24 +112,24 @@ export default function Home() {
                         {handleConvertTime(usrInfo.TotalWatchTime)}
                       </Card.Text>
                       <Card.Text>完成觀看影片數量：</Card.Text>
-                      <Card.Text className='ms-3'>
+                      <Card.Text className="ms-3">
                         基礎練習用：
                         {usrInfo.TotalFinishBasicVideo}部
-                        <Link to={'/basic'} className='text-decoration-none'>
+                        <Link to={"/basic"} className="text-decoration-none">
                           [點擊繼續觀看]
                         </Link>
                       </Card.Text>
-                      <Card.Text className='ms-3'>
+                      <Card.Text className="ms-3">
                         練習用：
                         {usrInfo.TotalFinishPraticeVideo}部
-                        <Link to={'/pratice'} className='text-decoration-none'>
+                        <Link to={"/pratice"} className="text-decoration-none">
                           [點擊繼續觀看]
                         </Link>
                       </Card.Text>
-                      <Card.Text className='ms-3'>
+                      <Card.Text className="ms-3">
                         測驗用：
                         {usrInfo.TotalFinishTestVideo}部
-                        <Link to={'/test'} className='text-decoration-none'>
+                        <Link to={"/test"} className="text-decoration-none">
                           [點擊繼續觀看]
                         </Link>
                       </Card.Text>
@@ -159,65 +159,65 @@ export default function Home() {
       )} */}
       <Container>
         <Row>
-          <Col sm={smSize} xs={xsSize} className='my-auto mx-auto'>
+          <Col sm={smSize} xs={xsSize} className="my-auto mx-auto">
             <Link
-              type='button'
+              type="button"
               className={styles.videoContainer}
               onClick={handleShowChoseVideoModal}
             >
-              <Row className='mx-auto my-auto'>
-                <MdOutlineVideoLibrary className='fs-1' />
-                <p className='text-center fs-5 my-auto'>衛教資訊</p>
+              <Row className="mx-auto my-auto">
+                <MdOutlineVideoLibrary className="fs-1" />
+                <p className="text-center fs-5 my-auto">衛教資訊</p>
               </Row>
             </Link>
           </Col>
           <Col sm={smSize} xs={xsSize}>
             <Link
-              to={'https://www.ylh.gov.tw/?aid=612'}
+              to={"https://www.ylh.gov.tw/?aid=612"}
               className={styles.infoContainer}
             >
               <Row>
-                <BsFillBookFill className='fs-1' />
-                <p className='text-center fs-5 my-auto'>衛教天地</p>
+                <BsFillBookFill className="fs-1" />
+                <p className="text-center fs-5 my-auto">衛教天地</p>
               </Row>
             </Link>
           </Col>
-          {permission === 'ylhClient' && (
+          {permission === "ylhClient" && (
             <Col sm={smSize} xs={xsSize}>
               <Link
-                type='button'
+                type="button"
                 className={styles.recordContainer}
                 onClick={handleShowChoseRecordModal}
               >
                 <Row>
-                  <AiTwotoneReconciliation className='fs-1' />
-                  <p className='text-center fs-5 my-auto'>練習紀錄</p>
+                  <AiTwotoneReconciliation className="fs-1" />
+                  <p className="text-center fs-5 my-auto">練習紀錄</p>
                 </Row>
               </Link>
             </Col>
           )}
           <Col sm={smSize} xs={xsSize}>
-            <Link to='/usingTip' className={styles.tutorialContainer}>
+            <Link to="/usingTip" className={styles.tutorialContainer}>
               <Row>
-                <BsTools className='fs-1' />
-                <p className='text-center fs-5 my-auto'>使用教學</p>
+                <BsTools className="fs-1" />
+                <p className="text-center fs-5 my-auto">使用教學</p>
               </Row>
             </Link>
           </Col>
           <Col sm={smSize} xs={xsSize}>
-            <Link to='/comment' className={styles.suggestionContainer}>
+            <Link to="/comment" className={styles.suggestionContainer}>
               <Row>
-                <BsFillQuestionCircleFill className='fs-1' />
-                <p className='text-center fs-5 my-auto'>問題建議</p>
+                <BsFillQuestionCircleFill className="fs-1" />
+                <p className="text-center fs-5 my-auto">問題建議</p>
               </Row>
             </Link>
           </Col>
-          {permission === 'ylhClient' && (
+          {permission === "ylhClient" && (
             <Col sm={smSize} xs={xsSize}>
-              <Link to='/setting' className={styles.settingContainer}>
+              <Link to="/setting" className={styles.settingContainer}>
                 <Row>
-                  <AiFillSetting className='fs-1' />
-                  <p className='text-center fs-5'>使用者設定</p>
+                  <AiFillSetting className="fs-1" />
+                  <p className="text-center fs-5">使用者設定</p>
                 </Row>
               </Link>
             </Col>
@@ -234,29 +234,29 @@ export default function Home() {
             {/* 基礎練習用 */}
             <Link
               to={{
-                pathname: '/basic',
+                pathname: "/basic",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className='mt-1 mb-1'>基本練習</h3>
+              <h3 className="mt-1 mb-1">基本練習</h3>
             </Link>
             {/* 練習用 */}
             <Link
               to={{
-                pathname: '/pratice',
+                pathname: "/pratice",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className='mt-1 mb-1'>練習</h3>
+              <h3 className="mt-1 mb-1">練習</h3>
             </Link>
             {/* 測驗用 */}
             <Link
               to={{
-                pathname: '/test',
+                pathname: "/test",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className='mt-1 mb-1'>測驗</h3>
+              <h3 className="mt-1 mb-1">測驗</h3>
             </Link>
           </Stack>
         </Modal.Body>
@@ -270,20 +270,20 @@ export default function Home() {
           <div className={`d-flex flex-column justify-content-center`}>
             <Link
               to={{
-                pathname: '/record/pratice',
+                pathname: "/record/pratice",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className='mt-1 mb-1'>練習用衛教紀錄</h3>
+              <h3 className="mt-1 mb-1">練習用衛教紀錄</h3>
             </Link>
 
             <Link
               to={{
-                pathname: '/record/test',
+                pathname: "/record/test",
               }}
               className={styles.linkContainer_link}
             >
-              <h3 className='mt-1 mb-1'>測驗用衛教紀錄</h3>
+              <h3 className="mt-1 mb-1">測驗用衛教紀錄</h3>
             </Link>
           </div>
         </Modal.Body>
