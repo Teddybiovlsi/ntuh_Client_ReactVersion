@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 /**
  * 取得用戶當前所儲存的資料。
  *
