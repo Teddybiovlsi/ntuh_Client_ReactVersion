@@ -4,11 +4,10 @@ import videojs from "video.js";
 import { post } from "../client/axios";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
+import { getUserSession } from "../js/userAction";
 
 const VideoOnlyJS = (props) => {
-  const user = JSON.parse(
-    localStorage.getItem("user") || sessionStorage.getItem("user")
-  );
+  const user = getUserSession();
 
   const navigate = useNavigate();
 
