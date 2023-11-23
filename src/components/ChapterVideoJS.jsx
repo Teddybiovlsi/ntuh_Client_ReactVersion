@@ -9,11 +9,10 @@ import { useNavigate } from "react-router-dom";
 import ToastAlert from "./ToastAlert";
 import { toast } from "react-toastify";
 import { post } from "../client/axios";
+import { getUserSession } from "../js/userAction";
 
 export const ChapterVideoJS = (props) => {
-  const user = JSON.parse(
-    localStorage?.getItem("user") || sessionStorage?.getItem("user")
-  );
+  const user = getUserSession();
 
   const navigate = useNavigate();
 
