@@ -29,7 +29,7 @@ export const getUserSession = () => {
  * @throws {Error} 如果儲存失敗，則會拋出例外。
  * @version 1.0.0
  */
-export const setUserSession = (userProfile, isRember = false) => {
+export const setUserSession = (userProfile, isRemember = false) => {
   if (typeof userProfile !== "object" || userProfile === null) {
     throw new Error("userProfile must be a non-null object");
   }
@@ -37,7 +37,7 @@ export const setUserSession = (userProfile, isRember = false) => {
   const userProfileString = JSON.stringify(userProfile);
 
   try {
-    if (isRember) {
+    if (isRemember) {
       localStorage.setItem("user", userProfileString);
     } else {
       sessionStorage.setItem("user", userProfileString);
