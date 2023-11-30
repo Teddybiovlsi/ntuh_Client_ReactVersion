@@ -69,9 +69,9 @@ export default function BasicRecordDetailPage() {
       <PageTitleHeading text={`${videoName}練習紀錄`} styleOptions={2} />
       <Container>
         <Row>
-          <Col className="text-end fs-5 mb-2" role="button">
+          <Col className="fs-5 mb-2" role="button">
             <DropdownButton
-              align={{ lg: "end" }}
+              align={{ lg: "start" }}
               id={`dropdown-button-drop`}
               //   drop={"down-end"}
               variant="outline-primary rounded-5"
