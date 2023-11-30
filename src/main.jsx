@@ -9,5 +9,8 @@ ReactDOM.createRoot(document.getElementById("content")).render(
     <HashRouter>
       <App />
     </HashRouter>
+    {/* <BrowserRouter>
+      <App />
+    </BrowserRouter> */}
   </React.StrictMode>
 );
