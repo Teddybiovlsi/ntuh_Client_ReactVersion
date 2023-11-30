@@ -135,6 +135,26 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
     return [];
   }, [originVideoData]);
 
+  const checkHavePermissionToTest = () => {
+    if (open !== null) {
+      if (
+        (open.accuracy === 100 && user?.permission === "ylhClient") ||
+        user?.permission === "ylhGuest"
+      ) {
+        navigate("/basic/videoQuestion", {
+          state: {
+            videoID: open.videoCertainID,
+            info: open.QuestionData,
+          },
+        });
+      } else {
+        alert("請先觀看完影片再進行測驗");
+      }
+    } else {
+      alert("請先觀看完影片再進行測驗");
+    }
+  };
+
   if (loading) {
     return <LoadingComponent title={title} text={loadingText} />;
   }
@@ -257,21 +277,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                       ? "outline-primary"
                       : "outline-danger"
                   }
-                  onClickEventName={() => {
-                    open !== null &&
-                      (open.accuracy === 100 ||
-                        (user?.permission === "ylhGuest" &&
-                          navigate(
-                            "/basic/videoQuestion",
-
-                            {
-                              state: {
-                                videoID: open.videoCertainID,
-                                info: open.QuestionData,
-                              },
-                            }
-                          )));
-                  }}
+                  onClickEventName={checkHavePermissionToTest}
                   disabled={
                     checkIsClient && (open === null || open.accuracy !== 100)
                   }
