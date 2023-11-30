@@ -50,8 +50,7 @@ export default function BasicVideoPlayer({ user }) {
         type: "video/mp4",
       },
     ],
-
-    playsinline: true,
+    // playsinline: true,
   };
 
   useEffect(() => {
