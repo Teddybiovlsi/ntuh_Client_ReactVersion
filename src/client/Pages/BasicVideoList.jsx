@@ -1,6 +1,14 @@
 import React, { useMemo } from "react";
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Stack, Modal } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Stack,
+  Modal,
+  Card,
+  Image,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { get } from "../axios";
 import BtnBootstrap from "../../components/BtnBootstrap";
@@ -175,23 +183,43 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
             <div className={styles.videoListContainer}>
               <Container>
                 <Row className="align-items-center">
+                  <Row>
+                    <h3 className="text-center fw-bold">{video.Title}</h3>
+                  </Row>
+                  <Row className="mb-2">
+                    <Col xs={12} md={6} className="text-center">
+                      <Image src={video.image_url} fluid />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Stack gap={1}>
+                      <BtnBootstrap
+                        text={"開始"}
+                        variant={"outline-primary"}
+                        onClickEventName={() => {
+                          // set current video into setOpen
+                          setOpen(video);
+                        }}
+                      />
+                    </Stack>
+                  </Row>
                   <Col>
-                    <Row>
+                    {/* <Row>
                       <div className="fs-3 m-0">
                         {eachQuestionIndex + 1 + ". "}
                         {video.Title}
                       </div>
-                    </Row>
-                    <Row>
+                    </Row> */}
+                    {/* <Row>
                       {eachVideoDuration[eachQuestionIndex] ? (
                         <div className={`m-0 ${styles.eachVideoListDuration}`}>
                           總時長：{eachVideoDuration[eachQuestionIndex]}
                         </div>
                       ) : null}
-                    </Row>
+                    </Row> */}
                   </Col>
 
-                  <Col className="align-items-center" md={4}>
+                  {/* <Col className="align-items-center" md={4}>
                     <Stack gap={1}>
                       <BtnBootstrap
                         text={`開始`}
@@ -202,7 +230,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                         }}
                       />
                     </Stack>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Container>
             </div>
