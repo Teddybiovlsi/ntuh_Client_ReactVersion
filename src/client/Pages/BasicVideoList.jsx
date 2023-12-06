@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { useState, useEffect } from "react";
+import React, { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Row,
@@ -8,15 +8,22 @@ import {
   Modal,
   Card,
   Image,
-} from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import { get } from "../axios";
-import BtnBootstrap from "../../components/BtnBootstrap";
-import LoadingComponent from "../../components/LoadingComponent";
-import { AiFillLock } from "react-icons/ai";
-import styles from "../../styles/pages/VideoList.module.scss";
-import useModal from "../../js/useModal";
-import { ProgressBar } from "react-bootstrap";
+} from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { get } from '../axios';
+import BtnBootstrap from '../../components/BtnBootstrap';
+import LoadingComponent from '../../components/LoadingComponent';
+import { AiFillLock } from 'react-icons/ai';
+import styles from '../../styles/pages/VideoList.module.scss';
+import useModal from '../../js/useModal';
+import { ProgressBar } from 'react-bootstrap';
+import {
+  CircularProgressbar,
+  CircularProgressbarWithChildren,
+  buildStyles,
+} from 'react-circular-progressbar';
+import { FaLock } from 'react-icons/fa';
+import 'react-circular-progressbar/dist/styles.css';
 
 /**
  * 基本練習影片列表
@@ -25,7 +32,7 @@ import { ProgressBar } from "react-bootstrap";
  * @returns {JSX.Element} 顯示基本練習衛教資訊的頁面
  */
 
-export default function BasicVideoList({ loadingText = "資訊載入中", user }) {
+export default function BasicVideoList({ loadingText = '資訊載入中', user }) {
   const convertTheWatchTimePercentage = ({
     videoDuration,
     videoLastWatchTime,
@@ -57,7 +64,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
     showConfirmToLatestTimeModal,
   ] = useModal();
 
-  const checkIsClient = user?.permission === "ylhClient";
+  const checkIsClient = user?.permission === 'ylhClient';
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -108,20 +115,20 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
     } catch (error) {
       const errorMessage = error.response.data.message;
 
-      if (errorMessage === "發生錯誤，請重新登入") {
+      if (errorMessage === '發生錯誤，請重新登入') {
         clearUserSession();
 
         alert(errorMessage);
-        navigate("/");
+        navigate('/');
       }
-      if (errorMessage === "影片Index錯誤，請重新嘗試") {
-        alert("影片有新版本，請重新登入");
+      if (errorMessage === '影片Index錯誤，請重新嘗試') {
+        alert('影片有新版本，請重新登入');
         clearUserSession();
-        navigate("/", { replace: true });
+        navigate('/', { replace: true });
       } else {
-        alert("發生不明錯誤，請重新登入");
+        alert('發生不明錯誤，請重新登入');
         clearUserSession();
-        navigate("/Home", { replace: true });
+        navigate('/Home', { replace: true });
       }
     }
   };
@@ -146,20 +153,20 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
   const checkHavePermissionToTest = () => {
     if (open !== null) {
       if (
-        (open.accuracy === 100 && user?.permission === "ylhClient") ||
-        user?.permission === "ylhGuest"
+        (open.accuracy === 100 && user?.permission === 'ylhClient') ||
+        user?.permission === 'ylhGuest'
       ) {
-        navigate("/basic/videoQuestion", {
+        navigate('/basic/videoQuestion', {
           state: {
             videoID: open.videoCertainID,
             info: open.QuestionData,
           },
         });
       } else {
-        alert("請先觀看完影片再進行測驗");
+        alert('請先觀看完影片再進行測驗');
       }
     } else {
-      alert("請先觀看完影片再進行測驗");
+      alert('請先觀看完影片再進行測驗');
     }
   };
 
@@ -169,33 +176,94 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
   if (arrayIsEmpty) {
     return (
       <Container>
-        <h1 className="text-center">{title}</h1>
-        <h2 className="m-3 p-3 text-center">{`沒有對應的${title}`}</h2>
+        <h1 className='text-center'>{title}</h1>
+        <h2 className='m-3 p-3 text-center'>{`沒有對應的${title}`}</h2>
       </Container>
     );
   }
   return (
     <Container>
-      <h1 className="fw-bold text-center">{title}</h1>
+      <h1 className='fw-bold text-center'>{title}</h1>
       {originVideoData.map((video, eachQuestionIndex) => {
         return (
           <div key={video.videoCertainID}>
             <div className={styles.videoListContainer}>
               <Container>
-                <Row className="align-items-center">
+                <Row className='align-items-center'>
                   <Row>
-                    <h3 className="text-center fw-bold">{video.Title}</h3>
+                    <h3 className='text-center fw-bold'>{video.Title}</h3>
                   </Row>
-                  <Row className="mb-2">
-                    <Col xs={12} md={6} className="text-center">
+                  <Row className='mb-2'>
+                    <Col
+                      xs={7}
+                      md={6}
+                      className='d-flex align-items-center justify-content-center'
+                    >
                       <Image src={video.image_url} fluid />
                     </Col>
+                    {video.QuestionData.length !== 0 && checkIsClient && (
+                      <>
+                        <Col
+                          xs={{ span: 5 }}
+                          md={{ span: 3 }}
+                          className='text-center'
+                        >
+                          <CircularProgressbar
+                            value={video.accuracy}
+                            text={`${video.accuracy}%`}
+                          />
+                        </Col>
+                        <Col
+                          xs={{ span: 5 }}
+                          md={{ span: 3 }}
+                          className='text-center'
+                        >
+                          <CircularProgressbar
+                            value={video.basicVideoScoreAccuracy}
+                            text={`${video.basicVideoScoreAccuracy}分`}
+                            styles={buildStyles({
+                              textColor:
+                                video.basicVideoScoreAccuracy === 100
+                                  ? 'green'
+                                  : 'red',
+                              pathColor:
+                                video.basicVideoScoreAccuracy === 100
+                                  ? 'green'
+                                  : 'red',
+                              trailColor: 'gray',
+                            })}
+                          />
+                        </Col>
+                      </>
+                    )}
+                    {!checkIsClient && (
+                      <Col
+                        xs={{ span: 5 }}
+                        md={{ span: 3, offset: 2 }}
+                        className='text-center'
+                      >
+                        <CircularProgressbarWithChildren
+                          value={0}
+                          styles={buildStyles({
+                            pathColor: 'gray',
+                            trailColor: 'gray',
+                          })}
+                        >
+                          <h2>
+                            {' '}
+                            <FaLock />
+                            <br />
+                            無此權限
+                          </h2>
+                        </CircularProgressbarWithChildren>
+                      </Col>
+                    )}
                   </Row>
                   <Row>
                     <Stack gap={1}>
                       <BtnBootstrap
-                        text={"開始"}
-                        variant={"outline-primary"}
+                        text={'開始'}
+                        variant={'outline-primary'}
                         onClickEventName={() => {
                           // set current video into setOpen
                           setOpen(video);
@@ -248,7 +316,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                 <>
                   目前影片觀看進度：
                   {open !== null && open.videoLastestTime == 0 ? (
-                    <b className="text-danger">尚未有任何觀看紀錄</b>
+                    <b className='text-danger'>尚未有任何觀看紀錄</b>
                   ) : (
                     <ProgressBar
                       now={convertTheWatchTimePercentage({
@@ -273,7 +341,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                   }
                   // 若沒有保留觀看進度，則直接跳轉到影片播放頁面
                   else {
-                    navigate("/Basicvideo", {
+                    navigate('/Basicvideo', {
                       state: {
                         info: open.QuestionData,
                         videoPath: open.video_url,
@@ -284,17 +352,17 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                   }
                 }}
                 text={`開始基本練習`}
-                variant={"outline-primary"}
+                variant={'outline-primary'}
               />
               {open !== null && open.QuestionData.length !== 0 && (
                 <BtnBootstrap
                   text={
                     open !== null &&
                     (open.accuracy === 100 ||
-                    user?.permission === "ylhGuest" ? (
+                    user?.permission === 'ylhGuest' ? (
                       `題目測驗`
                     ) : (
-                      <p className="text-danger m-0 p-0">
+                      <p className='text-danger m-0 p-0'>
                         <AiFillLock />
                         鎖定中
                       </p>
@@ -302,8 +370,8 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                   }
                   variant={
                     open !== null && (open.accuracy === 100 || !checkIsClient)
-                      ? "outline-primary"
-                      : "outline-danger"
+                      ? 'outline-primary'
+                      : 'outline-danger'
                   }
                   onClickEventName={checkHavePermissionToTest}
                   disabled={
@@ -328,20 +396,20 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
           <Modal.Body>
             <p>
               您上次觀看影片的進度為
-              <b className="text-primary">
+              <b className='text-primary'>
                 {open !== null && Math.round(open.videoLastestTime * 10) / 10}
               </b>
               秒，是否繼續觀看？
             </p>
-            <p className="text-danger">若選擇取消，則觀看進度將會重置為0秒</p>
+            <p className='text-danger'>若選擇取消，則觀看進度將會重置為0秒</p>
           </Modal.Body>
 
           <Modal.Footer>
             <BtnBootstrap
               text={`取消`}
-              variant={"outline-secondary"}
+              variant={'outline-secondary'}
               onClickEventName={() => {
-                navigate("/Basicvideo", {
+                navigate('/Basicvideo', {
                   state: {
                     info: open.QuestionData,
                     videoPath: open.video_url,
@@ -353,10 +421,10 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
             />
             <BtnBootstrap
               text={`確認`}
-              variant={"outline-primary"}
+              variant={'outline-primary'}
               onClickEventName={() => {
                 closeIsConfirmingToLatestTime();
-                navigate("/Basicvideo", {
+                navigate('/Basicvideo', {
                   state: {
                     videoPath: open.video_url,
                     videoID: open.videoCertainID,
