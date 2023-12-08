@@ -5,8 +5,11 @@ import { get } from "../axios";
 import "video.js/dist/video-js.css";
 import Loading from "../../components/Loading";
 import "../../components/videoqa.css";
+import { getUserSession } from "../../js/userAction";
+import { postViewCount } from "../../js/api";
 
 export default function VideoPlayer() {
+  const user = getUserSession();
   const location = useLocation();
   const { videoID, videoPath, questionData, pageTitle } = location.state || {};
 
@@ -57,6 +60,25 @@ export default function VideoPlayer() {
     return () => {
       ignore = true;
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const permission = user.permission;
+        const token = user.client_token || user.guestInfo;
+        const reponse = await postViewCount(permission, token, videoID);
+      } catch (error) {
+        console.log(error);
+        alert("影片發生錯誤，請稍後再試");
+        navigate("/Home", { replace: true });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (loading) return <Loading />;
