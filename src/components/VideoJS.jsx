@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import React from 'react';
+import { useState, useEffect, useRef } from "react";
+import React from "react";
 import {
   Button,
   Col,
@@ -8,22 +8,26 @@ import {
   Modal,
   Row,
   Stack,
-} from 'react-bootstrap';
-import BtnBootstrap from './BtnBootstrap';
-import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
-import './videoqa.css';
-import { post } from '../client/axios';
-import { getUserSession } from '../js/userAction';
+} from "react-bootstrap";
+import BtnBootstrap from "./BtnBootstrap";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
+import "./videoqa.css";
+import { post } from "../client/axios";
+import { getUserSession } from "../js/userAction";
+import { useNavigate } from "react-router-dom";
 
 export const VideoJS = (props) => {
   const user = getUserSession();
+  const navigate = useNavigate();
+
+  const checkIsClient = user?.permission === "ylhClient";
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const { options, info, pageTitle, questionData, videoID } = props;
   const [sendstate, setSendstate] = useState(false);
-  const [optionChecked, setOptionChecked] = useState('');
+  const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [tempQuestionNum, setTempQuestionNum] = useState(1);
 
@@ -52,21 +56,23 @@ export const VideoJS = (props) => {
 
   const uploadTheAnswer = async (data) => {
     // let alertToastID = toast.loading("上傳中...");
-    try {
-      const response = await post(`client/record/${user.client_token}`, data);
+    if (checkIsClient) {
+      try {
+        const response = await post(`client/record/${user.client_token}`, data);
 
-      console.log('上傳成功');
-      console.log(response.data);
-    } catch (error) {
-      if (error.response.data.error === 'Token expired') {
-        alert('登入逾時，請重新登入！');
-        localStorage.getItem('user') && localStorage.removeItem('user');
-        sessionStorage.getItem('user') && sessionStorage.removeItem('user');
-        navigate('/', { replace: true });
-      } else {
-        console.log(error.response);
+        console.log("上傳成功");
+        console.log(response.data);
+      } catch (error) {
+        if (error.response.data.error === "Token expired") {
+          alert("登入逾時，請重新登入！");
+          localStorage.getItem("user") && localStorage.removeItem("user");
+          sessionStorage.getItem("user") && sessionStorage.removeItem("user");
+          navigate("/", { replace: true });
+        } else {
+          console.log(error.response);
 
-        console.log('上傳失敗');
+          console.log("上傳失敗");
+        }
       }
     }
   };
@@ -90,7 +96,7 @@ export const VideoJS = (props) => {
   const resetAndPlay = () => {
     clearInterval(countDownIntervalId.current);
     clearTimeout(timeoutId.current);
-    setOptionChecked('');
+    setOptionChecked("");
     setCorrectModal(false);
     setWrongModal(false);
     setShouldReset(false);
@@ -105,13 +111,13 @@ export const VideoJS = (props) => {
   };
 
   // 送出答案function
-  function handleSubmitAnswer(answer = '') {
+  function handleSubmitAnswer(answer = "") {
     clearInterval(countDownIntervalId.current);
     clearTimeout(timeoutId.current);
 
-    let chosenAnswer = answer || optionChecked || 'noAnswer';
+    let chosenAnswer = answer || optionChecked || "noAnswer";
 
-    console.log('chosenAnswer', chosenAnswer);
+    console.log("chosenAnswer", chosenAnswer);
 
     // console.log("chosenAnswer is", chosenAnswer);
 
@@ -144,14 +150,14 @@ export const VideoJS = (props) => {
         }
       }
 
-      if (chosenAnswer === 'noAnswer') {
+      if (chosenAnswer === "noAnswer") {
         if (wrongAnswerCount < 2) {
           const data = {
             token: user.client_token,
             videoID: videoID,
             quizID: [info[tempQuestionNum - 1].quiz_id],
             answerStatus: [2],
-            examType: 0,
+            examType: pageTitle,
             failCount: wrongAnswerCount + 1,
             already_watch_time: 0,
           };
@@ -163,7 +169,7 @@ export const VideoJS = (props) => {
             videoID: videoID,
             quizID: [info[tempQuestionNum - 1].quiz_id],
             answerStatus: [2],
-            examType: 0,
+            examType: pageTitle,
             failCount: wrongAnswerCount + 1,
             already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
           };
@@ -175,7 +181,7 @@ export const VideoJS = (props) => {
         setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
         setWrongModal(true);
       } else {
-        console.log('correctAnswer', correctAnswer);
+        console.log("correctAnswer", correctAnswer);
 
         if (optionChecked === correctAnswer) {
           setAnswerState([
@@ -183,7 +189,7 @@ export const VideoJS = (props) => {
             {
               tempQuestionNum: info[tempQuestionNum - 1].quiz_id,
               correctAnswer: true,
-              wrongAnswer: '',
+              wrongAnswer: "",
               timeOutNoAnswer: false,
             },
           ]);
@@ -192,14 +198,14 @@ export const VideoJS = (props) => {
             videoID: videoID,
             quizID: [info[tempQuestionNum - 1].quiz_id],
             answerStatus: [1],
-            examType: 0,
+            examType: pageTitle,
             failCount: 0,
             already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
           };
 
           uploadTheAnswer(data);
 
-          console.log('data', data);
+          console.log("data", data);
 
           setCorrectModal(true);
         } else {
@@ -209,7 +215,7 @@ export const VideoJS = (props) => {
               videoID: videoID,
               quizID: [info[tempQuestionNum - 1].quiz_id],
               answerStatus: [0],
-              examType: 0,
+              examType: pageTitle,
               failCount: wrongAnswerCount + 1,
               already_watch_time: 0,
             };
@@ -221,7 +227,7 @@ export const VideoJS = (props) => {
               videoID: videoID,
               quizID: [info[tempQuestionNum - 1].quiz_id],
               answerStatus: [0],
-              examType: 0,
+              examType: pageTitle,
               failCount: wrongAnswerCount + 1,
               already_watch_time:
                 info[tempQuestionNum - 1].video_interrupt_time,
@@ -230,7 +236,7 @@ export const VideoJS = (props) => {
             uploadTheAnswer(data);
           }
 
-          setOptionChecked('');
+          setOptionChecked("");
           setShouldReset(true);
           setAnswer(correctAnswer);
           setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
@@ -283,21 +289,21 @@ export const VideoJS = (props) => {
   let arrayNum = 0;
 
   const toggleFullScreen = () => {
-    const videoElement = document.getElementById('video-container');
+    const videoElement = document.getElementById("video-container");
     if (document.fullscreenElement) {
       // if fullscreen mode is active, exit by calling fullscreen API
       // 第一步驟，將icon轉換成進入全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
       document
-        .getElementById('fullscreenBtn')
+        .getElementById("fullscreenBtn")
         .classList.replace(
-          'vjs-icon-fullscreen-exit',
-          'vjs-icon-fullscreen-enter'
+          "vjs-icon-fullscreen-exit",
+          "vjs-icon-fullscreen-enter"
         );
 
       document
-        .getElementById('video-container_Container_player')
-        .classList.remove('fullscreen');
+        .getElementById("video-container_Container_player")
+        .classList.remove("fullscreen");
       // // if yes, exit fullscreen mode
       document.exitFullscreen();
 
@@ -307,15 +313,15 @@ export const VideoJS = (props) => {
       // 第一步驟，將icon轉換成離開全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
       document
-        .getElementById('fullscreenBtn')
+        .getElementById("fullscreenBtn")
         .classList.replace(
-          'vjs-icon-fullscreen-enter',
-          'vjs-icon-fullscreen-exit'
+          "vjs-icon-fullscreen-enter",
+          "vjs-icon-fullscreen-exit"
         );
       // add fullscreen className to the videoPlayer className
       document
-        .getElementById('video-container_Container_player')
-        .classList.add('fullscreen');
+        .getElementById("video-container_Container_player")
+        .classList.add("fullscreen");
 
       setIsFullscreen(true);
       // 依據不同的瀏覽器，進入全螢幕的方法不同
@@ -328,7 +334,7 @@ export const VideoJS = (props) => {
       } else if (videoElement.msRequestFullscreen) {
         videoElement.msRequestFullscreen();
       } else {
-        console.log('fullscreen error');
+        console.log("fullscreen error");
       }
     }
   };
@@ -337,10 +343,10 @@ export const VideoJS = (props) => {
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
-      const videoElement = document.createElement('video-js');
+      const videoElement = document.createElement("video-js");
 
       // if screen size is smaller than 768px, then add fullscreen button
-      videoElement.classList.add('vjs-big-play-centered');
+      videoElement.classList.add("vjs-big-play-centered");
       videoRef.current.appendChild(videoElement);
 
       const player = (playerRef.current = videojs(videoElement, options, () => {
@@ -350,7 +356,7 @@ export const VideoJS = (props) => {
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
       var fullScreenBtn = player.controlBar.addChild(
-        'button',
+        "button",
         {
           clickHandler: function (event) {
             toggleFullScreen();
@@ -360,32 +366,32 @@ export const VideoJS = (props) => {
       );
       var fullScreenBtnDom = fullScreenBtn.el();
       fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
-      fullScreenBtnDom.title = 'fullscreen';
+      fullScreenBtnDom.title = "fullscreen";
 
-      player.on('waiting', () => {
-        console.log('player is waiting');
+      player.on("waiting", () => {
+        console.log("player is waiting");
       });
-      player.on('play', () => {
-        console.log('sendState', sendstate);
+      player.on("play", () => {
+        console.log("sendState", sendstate);
         // console.log("player is play");
       });
-      player.on('pause', () => {
-        console.log('ArrayNum', arrayNum);
+      player.on("pause", () => {
+        console.log("ArrayNum", arrayNum);
 
         setTempQuestionNum(arrayNum);
       });
 
       // Add event listener for loadedmetadata
-      player.on('loadedmetadata', () => {
+      player.on("loadedmetadata", () => {
         const video = player;
         if (video.videoHeight() > video.videoWidth()) {
-          player.aspectRatio('16:7');
+          player.aspectRatio("16:7");
         } else {
           player.fluid(true);
         }
       });
 
-      player.on('timeupdate', () => {
+      player.on("timeupdate", () => {
         if (arrayNum < info.length) {
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
             player.pause();
@@ -409,8 +415,8 @@ export const VideoJS = (props) => {
         }
       });
 
-      player.on('ended', () => {
-        console.log('player is ended');
+      player.on("ended", () => {
+        console.log("player is ended");
       });
 
       // You could update an existing player in the `else` block here
@@ -466,10 +472,10 @@ export const VideoJS = (props) => {
     }
   }, [sendstate]);
 
-  document.addEventListener('fullscreenchange', exitHandler);
-  document.addEventListener('webkitfullscreenchange', exitHandler);
-  document.addEventListener('mozfullscreenchange', exitHandler);
-  document.addEventListener('MSFullscreenChange', exitHandler);
+  document.addEventListener("fullscreenchange", exitHandler);
+  document.addEventListener("webkitfullscreenchange", exitHandler);
+  document.addEventListener("mozfullscreenchange", exitHandler);
+  document.addEventListener("MSFullscreenChange", exitHandler);
   // 離開全螢幕時，將icon轉換成進入全螢幕的icon，透過classList的replace方法
   function exitHandler() {
     if (
@@ -479,38 +485,38 @@ export const VideoJS = (props) => {
       !document.msFullscreenElement
     ) {
       document
-        .getElementById('fullscreenBtn')
+        .getElementById("fullscreenBtn")
         .classList.replace(
-          'vjs-icon-fullscreen-exit',
-          'vjs-icon-fullscreen-enter'
+          "vjs-icon-fullscreen-exit",
+          "vjs-icon-fullscreen-enter"
         );
       document
-        .getElementById('video-container_Container_player')
-        .classList.remove('fullscreen');
+        .getElementById("video-container_Container_player")
+        .classList.remove("fullscreen");
     }
   }
 
   return (
-    <div id='video-container'>
-      <div className='video-container_Container'>
+    <div id="video-container">
+      <div className="video-container_Container">
         <div
           data-vjs-player
-          id='video-container_Container_player'
-          className='videoPlayer'
+          id="video-container_Container_player"
+          className="videoPlayer"
         >
-          <div ref={videoRef} className='video-js vjs-default-skin' />
+          <div ref={videoRef} className="video-js vjs-default-skin" />
         </div>
         {sendstate && (
-          <div id='video-container-textfield' className='text-overlay'>
+          <div id="video-container-textfield" className="text-overlay">
             {info[tempQuestionNum - 1].video_is_question === 1 ? (
               correctModal && !wrongModal ? (
-                <div id='video-container-textfield' className='text-overlay2'>
-                  <h1 className='text-overlay_title pt-2 pb-2'>
+                <div id="video-container-textfield" className="text-overlay2">
+                  <h1 className="text-overlay_title pt-2 pb-2">
                     <b>提示：</b>第{tempQuestionNum}題
                   </h1>
                   <Container>
-                    <Col className='fs-4 ms-2 mt-2 mb-2'>
-                      <p className='text-center text-success m-0'>
+                    <Col className="fs-4 ms-2 mt-2 mb-2">
+                      <p className="text-center text-success m-0">
                         恭喜答對了！
                       </p>
                     </Col>
@@ -520,28 +526,29 @@ export const VideoJS = (props) => {
                       onClickEventName={() => {
                         resetAndPlay();
                       }}
-                      text={'確定'}
-                      variant={'btn send'}
+                      text={"確定"}
+                      variant={"btn send"}
                     />
                   </Stack>
                 </div>
               ) : wrongModal && !correctModal ? (
-                <div id='video-container-textfield' className='text-overlay2'>
-                  <h1 className='text-overlay_title pt-2 pb-2'>
+                <div id="video-container-textfield" className="text-overlay2">
+                  <h1 className="text-overlay_title pt-2 pb-2">
                     <b>提示：</b>第{tempQuestionNum}題
                   </h1>
                   <Container>
                     {wrongAnswerCount > 1 ? (
-                      <Col className='fs-4 ms-2 mt-2 mb-2'>
+                      <Col className="fs-4 ms-2 mt-2 mb-2">
                         <p>
-                          <b className='text-danger'>回答錯誤達到上限</b>
-                          ，正確答案為
-                          <b className='text-success'>{answer}</b>
+                          <b className="text-danger">回答錯誤達到上限</b>，
+                          {pageTitle === 0
+                            ? `正確答案為${answer}`
+                            : "請重新觀看"}
                         </p>
                       </Col>
                     ) : (
-                      <Col className='ms-2 mt-2 mb-2'>
-                        <p className='fs-3 text-center text-danger m-0'>
+                      <Col className="ms-2 mt-2 mb-2">
+                        <p className="fs-3 text-center text-danger m-0">
                           這是錯誤答案喔
                         </p>
                       </Col>
@@ -559,21 +566,21 @@ export const VideoJS = (props) => {
                           if (pageTitle === 0) {
                             resetAndPlay();
                           } else {
-                            // navi
+                            navigate("/test", { replace: true });
                           }
                         }
                       }}
-                      text={'確定'}
-                      variant={'btn send'}
+                      text={"確定"}
+                      variant={"btn send"}
                     />
                   </Stack>
                 </div>
               ) : (
                 <Form>
-                  <h1 className='text-overlay_title pt-2 pb-2'>
+                  <h1 className="text-overlay_title pt-2 pb-2">
                     第{tempQuestionNum}題
                   </h1>
-                  <Col className='fs-4 ms-2 mt-2 mb-2'>
+                  <Col className="fs-4 ms-2 mt-2 mb-2">
                     {info[tempQuestionNum - 1].video_question}
                   </Col>
                   <Row>
@@ -616,25 +623,25 @@ export const VideoJS = (props) => {
                   </Row>
 
                   <Stack gap={2}>
-                    <p className='m-0'>
+                    <p className="m-0">
                       剩餘時間：<b>{remainingTime}</b>
                     </p>
-                    <Col className='sendBtn'>
+                    <Col className="sendBtn">
                       <BtnBootstrap
-                        id='resetBtn'
-                        btnName='ResetBtn'
-                        btnPosition='btn-start'
-                        text={'重置'}
-                        variant={'btn reset me-3'}
+                        id="resetBtn"
+                        btnName="ResetBtn"
+                        btnPosition="btn-start"
+                        text={"重置"}
+                        variant={"btn reset me-3"}
                         onClickEventName={() => {
-                          setOptionChecked('');
+                          setOptionChecked("");
                         }}
                       />
                       <BtnBootstrap
-                        id='sendBtn'
-                        btnName='ConfirmBtn'
-                        text={'送出'}
-                        variant={'btn send'}
+                        id="sendBtn"
+                        btnName="ConfirmBtn"
+                        text={"送出"}
+                        variant={"btn send"}
                         onClickEventName={() => {
                           handleSubmitAnswer();
                         }}
@@ -645,25 +652,25 @@ export const VideoJS = (props) => {
               )
             ) : (
               <Form>
-                <h1 className='text-overlay_title pt-2 pb-2'>
+                <h1 className="text-overlay_title pt-2 pb-2">
                   第{tempQuestionNum}題
                 </h1>
-                <Col className='fs-4 ms-2 mt-2 mb-2'>
+                <Col className="fs-4 ms-2 mt-2 mb-2">
                   {info[tempQuestionNum - 1].video_question}
                 </Col>
-                <Col className='ms-2 mt-2 mb-2'>
+                <Col className="ms-2 mt-2 mb-2">
                   請按下OK或等待時間結束後，即可接續播放影片
                 </Col>
 
                 <Stack gap={2}>
-                  <p className='m-0'>
+                  <p className="m-0">
                     剩餘時間：<b>{remainingTime}</b>
                   </p>
                   <BtnBootstrap
-                    id='sendBtn'
-                    btnName='ConfirmBtn'
-                    text={'送出'}
-                    variant={'btn send'}
+                    id="sendBtn"
+                    btnName="ConfirmBtn"
+                    text={"送出"}
+                    variant={"btn send"}
                     onClickEventName={() => {
                       handleSubmitAnswer();
                     }}
@@ -681,14 +688,14 @@ export const VideoJS = (props) => {
 export default VideoJS;
 
 const Option = ({ option, optionChecked, handleCheckedAnswer }) => (
-  <Col className='fs-4' md={6} xs={6}>
+  <Col className="fs-4" md={6} xs={6}>
     <Form.Check
-      type='radio'
+      type="radio"
       label={option[0]}
       value={option[0]}
       name={`option_${option[0]}`}
       id={`formHorizontalRadios${option[0]}`}
-      className='selectOption'
+      className="selectOption"
       checked={optionChecked === option[0]}
       onChange={handleCheckedAnswer}
     />
