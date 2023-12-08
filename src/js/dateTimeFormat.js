@@ -27,5 +27,5 @@ export const handleConvertTime = (time) => {
   const hour = Math.floor(time / 3600);
   const minute = Math.floor((time % 3600) / 60);
   const second = Math.floor((time % 3600) % 60);
-  return `${hour}小時${minute}分鐘${second}秒`;
+  return `${hour}小時${minute}分鐘`;
 };
