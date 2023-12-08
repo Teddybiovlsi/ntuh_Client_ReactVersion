@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Modal, Stack } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Stack,
+  Button,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { MdOutlineVideoLibrary } from "react-icons/md";
+import { FaLock } from "react-icons/fa6";
 import {
   BsFillBookFill,
   BsTools,
@@ -14,11 +23,80 @@ import useModal from "../../js/useModal";
 import { clearUserSession } from "../../js/userAction";
 import styles from "../../styles/pages/HomePage.module.scss";
 import { handleConvertTime } from "../../js/dateTimeFormat";
+/**
+ * @param {String} styleOfHeaderBlock 輸入樣式
+ * @param {String} styleOfHeaderText 輸入樣式
+ * @param {String} text 輸入文字
+ * @returns Card.Header
+ */
+export const CardHeader = ({ styleOfHeaderBlock, styleOfHeaderText, text }) => {
+  return (
+    <Card.Header className={styleOfHeaderBlock}>
+      <h3 className={styleOfHeaderText}>{text}</h3>
+    </Card.Header>
+  );
+};
+/**
+ *
+ * @param {String} text 輸入文字
+ * @returns Card.Body
+ * @description 用於個人資訊頁面，僅限有帳號的用戶
+ */
+export const CheckIsClientCardNormalBody = ({ text }) => {
+  return (
+    <Card.Body>
+      <Card.Text>
+        <h1 className="text-end py-2">{text}</h1>
+      </Card.Text>
+    </Card.Body>
+  );
+};
+
+/**
+ * @param {String} text 輸入文字
+ * @param {String} dirLink 輸入連結
+ * @returns Card.Body
+ * @description 用於個人資訊頁面，僅限有帳號的用戶
+ */
+export const CheckIsClientCardLinkBody = ({ text, dirLink }) => {
+  return (
+    <Card.Body>
+      <Card.Text>
+        <h1 className="text-end py-2">
+          {text}
+          <Link to={dirLink} className={styles.linkCountinuousWatch}>
+            繼續觀看
+          </Link>
+        </h1>
+      </Card.Text>
+    </Card.Body>
+  );
+};
+
+/**
+ * @returns Card.Body
+ * @description 用於個人資訊頁面，訪客顯示用
+ */
+export const CheckIsGuestCardBody = () => {
+  return (
+    <Card.Body className={styles.checkIsGuestCardBodyBlock}>
+      <Card.Text>
+        <h3 className="text-center py-2">
+          <FaLock />
+          <br />
+          權限不足，無法查看
+        </h3>
+      </Card.Text>
+    </Card.Body>
+  );
+};
 
 export default function Home({ user }) {
   const navigate = useNavigate();
 
   const permission = user.permission;
+
+  const checkIsClient = permission === "ylhClient" ? true : false;
 
   const smSize = permission === "ylhClient" ? 2 : 3;
   const xsSize = permission === "ylhClient" ? 4 : 6;
@@ -35,7 +113,7 @@ export default function Home({ user }) {
     handleShowChoseRecordModal,
   ] = useModal();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(checkIsClient ? true : false);
   const [error, setError] = useState(null);
   const [usrInfo, setUsrInfo] = useState();
 
@@ -87,71 +165,104 @@ export default function Home({ user }) {
 
   return (
     <>
-      {permission === "ylhClient" && (
-        <Col className="mb-3">
+      <Container className="mt-3">
+        <Row>
+          <h3 className="text-primary">個人資訊</h3>
+        </Row>
+        {loading === false ? (
           <Row>
-            <Card>
-              <Card.Title>{user.client_name} 您好</Card.Title>
-              {loading === false ? (
-                <Card.Body>
-                  {error ? (
-                    <Card.Text>查無用戶當前練習紀錄</Card.Text>
-                  ) : (
-                    <>
-                      <Card.Text>
-                        總瀏覽影片次數：{usrInfo.TotalWatchCount}次
-                      </Card.Text>
-                      <Card.Text>
-                        影片總觀看時間：
-                        {handleConvertTime(usrInfo.TotalWatchTime)}
-                      </Card.Text>
-                      <Card.Text>完成觀看影片數量：</Card.Text>
-                      <Card.Text className="ms-3">
-                        基礎練習用：
-                        {usrInfo.TotalFinishBasicVideo}部
-                        <Link to={"/basic"} className="text-decoration-none">
-                          [點擊繼續觀看]
-                        </Link>
-                      </Card.Text>
-                      <Card.Text className="ms-3">
-                        練習用：
-                        {usrInfo.TotalFinishPraticeVideo}部
-                        <Link to={"/pratice"} className="text-decoration-none">
-                          [點擊繼續觀看]
-                        </Link>
-                      </Card.Text>
-                      <Card.Text className="ms-3">
-                        測驗用：
-                        {usrInfo.TotalFinishTestVideo}部
-                        <Link to={"/test"} className="text-decoration-none">
-                          [點擊繼續觀看]
-                        </Link>
-                      </Card.Text>
-                    </>
-                  )}
-                </Card.Body>
-              ) : (
-                <Card.Body>
-                  <Card.Text>用戶資訊載入中</Card.Text>
-                </Card.Body>
-              )}
-            </Card>
+            <Col sm={6} md={6} lg={4}>
+              <Card border="primary" className="mb-2">
+                <CardHeader
+                  styleOfHeaderBlock={styles.cardHeaderOfWatchTimesColor}
+                  styleOfHeaderText={styles.cardHeaderText}
+                  text="瀏覽影片次數"
+                />
+                {checkIsClient ? (
+                  <CheckIsClientCardNormalBody
+                    text={`${usrInfo.TotalWatchCount}次`}
+                  />
+                ) : (
+                  <CheckIsGuestCardBody />
+                )}
+              </Card>
+            </Col>
+
+            <Col sm={6} md={6} lg={4}>
+              <Card border="secondary" className="mb-2">
+                <CardHeader
+                  styleOfHeaderBlock={styles.cardHeaderOfWatchDurationColor}
+                  styleOfHeaderText={styles.cardHeaderText}
+                  text="瀏覽影片時間"
+                />
+                {checkIsClient ? (
+                  <CheckIsClientCardNormalBody
+                    text={handleConvertTime(usrInfo.TotalWatchTime)}
+                  />
+                ) : (
+                  <CheckIsGuestCardBody />
+                )}
+              </Card>
+            </Col>
+            <Col sm={7} md={6} lg={4}>
+              <Card border="danger" className="mb-2">
+                <CardHeader
+                  styleOfHeaderBlock={styles.cardHeaderOfFinishColor}
+                  styleOfHeaderText={styles.cardHeaderText}
+                  text="完成基礎練習"
+                />
+                {checkIsClient ? (
+                  <CheckIsClientCardLinkBody
+                    text={`${usrInfo.TotalFinishBasicVideo}部`}
+                    dirLink={"/basic"}
+                  />
+                ) : (
+                  <CheckIsGuestCardBody />
+                )}
+              </Card>
+            </Col>
+            <Col sm={7} md={6} lg={4}>
+              <Card border="warning" className="mb-2">
+                <CardHeader
+                  styleOfHeaderBlock={styles.cardHeaderOfFinishPraticeColor}
+                  styleOfHeaderText={styles.cardHeaderText}
+                  text="完成練習"
+                />
+                {checkIsClient ? (
+                  <CheckIsClientCardLinkBody
+                    text={`${usrInfo.TotalFinishPraticeVideo}部`}
+                    dirLink={"/pratice"}
+                  />
+                ) : (
+                  <CheckIsGuestCardBody />
+                )}
+              </Card>
+            </Col>
+            <Col sm={7} md={6} lg={4}>
+              <Card border="success" className="mb-2">
+                <CardHeader
+                  styleOfHeaderBlock={styles.cardHeaderOfFinishTestColor}
+                  styleOfHeaderText={styles.cardHeaderText}
+                  text="完成測驗"
+                />
+                {checkIsClient ? (
+                  <CheckIsClientCardLinkBody
+                    text={`${usrInfo.TotalFinishTestVideo}部`}
+                    dirLink={"/test"}
+                  />
+                ) : (
+                  <CheckIsGuestCardBody />
+                )}
+              </Card>
+            </Col>
           </Row>
-        </Col>
-      )}
-      {/* {permission === 'ylhGuest' && (
-        <Col>
-          <Row>
-            <Card className={`${styles.personalRecordContainer} mb-3`}>
-              <Card.Title>您好</Card.Title>
-              <Card.Body>
-                <Card.Text>歡迎使用臺大醫院雲林分院系統</Card.Text>
-              </Card.Body>
-            </Card>
-          </Row>
-        </Col>
-      )} */}
-      <Container>
+        ) : (
+          <Card.Body>
+            <Card.Text>用戶資訊載入中</Card.Text>
+          </Card.Body>
+        )}
+      </Container>
+      <Container className="mt-4">
         <Row>
           <Col sm={smSize} xs={xsSize} className="my-auto mx-auto">
             <Link

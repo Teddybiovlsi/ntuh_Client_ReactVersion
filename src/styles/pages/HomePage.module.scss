@@ -3,48 +3,125 @@
 .recordContainer,
 .tutorialContainer,
 .suggestionContainer,
-.settingContainer{
+.settingContainer {
   text-decoration: none;
   color: black;
 }
-.videoContainer{
-  :hover{
-    color: #A9ABD1;
+.videoContainer {
+  :hover {
+    color: #a9abd1;
   }
 }
-.infoContainer{
-  :hover{
-    color: #F1BBCA;
+.infoContainer {
+  :hover {
+    color: #f1bbca;
   }
 }
-.recordContainer{
-  :hover{
-    color: #BAE7B3;
-  }
-}
-
-.tutorialContainer{
-  :hover{
-    color: #D3A4CC;
-  }
-}
-.suggestionContainer{
-  :hover{
-    color: #FFC6C6;
+.recordContainer {
+  :hover {
+    color: #bae7b3;
   }
 }
 
-.linkContainer_link{
+.tutorialContainer {
+  :hover {
+    color: #d3a4cc;
+  }
+}
+.suggestionContainer {
+  :hover {
+    color: #ffc6c6;
+  }
+}
+
+.cardHeaderOfWatchTimesColor {
+  background-color: rgba(
+    var(--bs-primary-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+  border-bottom: none;
+}
+
+.cardHeaderOfWatchDurationColor {
+  background-color: rgba(
+    var(--bs-secondary-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+  border-bottom: none;
+}
+
+.cardHeaderOfFinishColor{
+  background-color: rgba(
+    var(--bs-danger-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+  border-bottom: none;
+}
+
+.cardHeaderOfFinishPraticeColor{
+  background-color: rgba(
+    var(--bs-warning-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+
+  border-bottom: none;
+}
+.cardHeaderOfFinishTestColor{
+  background-color: rgba(
+    var(--bs-success-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+
+  border-bottom: none;
+}
+
+.cardHeaderText {
+  color: white;
+}
+
+.linkContainer_link {
   text-align: center;
   text-decoration: none;
-  border:  1px solid #772670;;
+  border: 1px solid #772670;
   border-radius: 5px;
-  color: #9870AA;
+  color: #9870aa;
   font-weight: bold;
   margin-bottom: 1rem;
-  &:hover{
+  &:hover {
     text-decoration: none;
-    color: #AE6FA9;
-    background-color: #E2D2E9;
+    color: #ae6fa9;
+    background-color: #e2d2e9;
   }
+}
+.linkCountinuousWatch {
+  color: rgba($color:  #0000D6, $alpha: 0.8);
+  font-weight: bold;
+  margin-bottom: 1rem;
+  padding-right: 30px;
+  text-decoration: none;
+  position: relative; // 讓箭頭元素可以相對於連結定位
+
+  // 箭頭元素
+  &::after {
+    content: ">"; // 箭頭符號
+    position: absolute;
+    right: 0;
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out; // 設定動畫效果
+    opacity: 1;
+  }
+
+  &:hover {
+    text-decoration: none;
+    color: #0000D6;
+    border-radius: 5%;
+
+    // 當滑鼠懸停時，移動箭頭元素
+    &::after {
+      transform: translateX(10px); // 將箭頭元素向右移動 10px
+      opacity: 0;
+    }
+  }
+}
+.checkIsGuestCardBodyBlock{
+  background-color: rgba($color: gray, $alpha: 0.4);
 }
