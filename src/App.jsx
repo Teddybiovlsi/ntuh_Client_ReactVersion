@@ -26,11 +26,16 @@ import BasicRecordListPage from "./client/Pages/BasicRecordListPage";
 import BasicRecordDetailPage from "./client/Pages/record/BasicRecordDetailPage";
 import { getUserSession } from "./js/userAction";
 import PermissionProtected from "./PermissionProtected";
+import { Modal, Stack } from "react-bootstrap";
+import useModal from "./js/useModal";
+import BtnBootstrap from "./components/BtnBootstrap";
 
 export default function App() {
   const location = useLocation();
 
   const user = getUserSession();
+
+  const [PWDModal, handleClosePWDModal, handleOpenPWDModal] = useModal();
 
   useEffect(() => {
     var allCookies = document.cookie.split(";");
@@ -39,6 +44,20 @@ export default function App() {
         allCookies[i] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   }, [location]);
+
+  useEffect(() => {
+    if (user === null) return;
+    const lastChangedDate = new Date(user.client_password_last_changed_date);
+    const now = new Date();
+
+    const diffInMilliseconds = now.getTime() - lastChangedDate.getTime();
+    const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
+
+    if (diffInDays > 90 && !sessionStorage.getItem("passwordAlertShown")) {
+      handleOpenPWDModal();
+      sessionStorage.setItem("passwordAlertShown", true);
+    }
+  }, [user]);
 
   return (
     <div className="app">
@@ -139,6 +158,33 @@ export default function App() {
           </Route>
         </Routes>
       </main>
+      <Modal show={PWDModal} onHide={handleClosePWDModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>變更密碼</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            配合資訊安全管理要求，並依照系統規則設定，使用者需定期更換密碼(每90天)，並限制必須採強式密碼設定。
+          </p>
+          <p className="text-primary fs-4 m-0">是否要前往更改密碼呢?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Stack gap={2}>
+            <BtnBootstrap
+              btnSize="md"
+              variant="outline-primary"
+              onClickEventName={() => {}}
+              text="前往更改密碼"
+            />
+            <BtnBootstrap
+              btnSize="md"
+              variant="outline-secondary"
+              onClickEventName={handleClosePWDModal}
+              text="暫不更改"
+            />
+          </Stack>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
