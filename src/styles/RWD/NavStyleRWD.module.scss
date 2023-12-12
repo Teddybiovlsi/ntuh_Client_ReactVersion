@@ -1,0 +1,25 @@
+@media only screen and (max-width: 576px) {
+    .logo {
+      width: 65vw;
+    }
+  }
+  @media (min-width: 576px) {
+    .logo {
+      width: 45vw;
+    }
+  }
+  @media (min-width: 768px) {
+    .logo {
+      width: 35vw;
+    }
+  }
+  @media (min-width: 992px) {
+    .logo {
+      width: 25vw;
+    }
+  }
+  @media (min-width: 1200px) {
+    .logo {
+      width: 20vw;
+    }
+  }
