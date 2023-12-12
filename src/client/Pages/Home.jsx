@@ -45,9 +45,7 @@ export const CardHeader = ({ styleOfHeaderBlock, styleOfHeaderText, text }) => {
 export const CheckIsClientCardNormalBody = ({ text }) => {
   return (
     <Card.Body>
-      <Card.Text>
-        <h1 className="text-end py-2">{text}</h1>
-      </Card.Text>
+      <h1 className="text-end py-2">{text}</h1>
     </Card.Body>
   );
 };
@@ -61,14 +59,12 @@ export const CheckIsClientCardNormalBody = ({ text }) => {
 export const CheckIsClientCardLinkBody = ({ text, dirLink }) => {
   return (
     <Card.Body>
-      <Card.Text>
-        <h1 className="text-end py-2">
-          {text}
-          <Link to={dirLink} className={styles.linkCountinuousWatch}>
-            繼續觀看
-          </Link>
-        </h1>
-      </Card.Text>
+      <h1 className="text-end py-2">
+        {text}
+        <Link to={dirLink} className={styles.linkCountinuousWatch}>
+          繼續觀看
+        </Link>
+      </h1>
     </Card.Body>
   );
 };
@@ -80,13 +76,11 @@ export const CheckIsClientCardLinkBody = ({ text, dirLink }) => {
 export const CheckIsGuestCardBody = () => {
   return (
     <Card.Body className={styles.checkIsGuestCardBodyBlock}>
-      <Card.Text>
-        <h3 className="text-center py-2">
-          <FaLock />
-          <br />
-          權限不足，無法查看
-        </h3>
-      </Card.Text>
+      <h3 className="text-center py-2">
+        <FaLock />
+        <br />
+        權限不足，無法查看
+      </h3>
     </Card.Body>
   );
 };
