@@ -1,37 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Modal, Stack } from "react-bootstrap";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Header from "./client/Header";
-import UserComment from "./client/Pages/UserComment";
-import Home from "./client/Pages/Home";
-import LogIn from "./client/Pages/LogIn";
-import VideoList from "./client/Pages/VideoList";
-import VideoPlayer from "./client/Pages/VideoPlayer";
 import AuthProtected from "./AuthProtected";
-import VideoChapterPlayer from "./client/Pages/VideoChapterPlayer";
-import RecordPage from "./client/Pages/RecordPage";
-import UserSetting from "./client/Pages/UserSetting";
-import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
-import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
-import RewritePasswordProtected from "./RewritePasswordProtected";
-import UsingTip from "./client/Pages/UsingTip";
+import BasicRecordDetailPage from "./client/Pages/record/BasicRecordDetailPage";
+import BasicRecordListPage from "./client/Pages/BasicRecordListPage";
 import BasicVideoList from "./client/Pages/BasicVideoList";
 import BasicVideoPlayer from "./client/Pages/BasicVideoPlayer";
 import BasicVideoQuestionPage from "./client/Pages/BasicVideoQuestionPage";
-import VideoOnlyPlayer from "./client/Pages/VideoOnlyPlayer";
-// import BasicRecordPage from "./client/Pages/BasicRecordPage";
-import BasicRecordListPage from "./client/Pages/BasicRecordListPage";
-import BasicRecordDetailPage from "./client/Pages/record/BasicRecordDetailPage";
-import { getUserSession } from "./js/userAction";
-import PermissionProtected from "./PermissionProtected";
-import { Modal, Stack } from "react-bootstrap";
-import useModal from "./js/useModal";
 import BtnBootstrap from "./components/BtnBootstrap";
+import ChangePWDPage from "./client/Pages/ChangePWDPage";
+import ForgotPasswordForm from "./client/Pages/ForgotPasswordForm";
+import Header from "./client/Header";
+import Home from "./client/Pages/Home";
+import LogIn from "./client/Pages/LogIn";
+import PermissionProtected from "./PermissionProtected";
+import RecordPage from "./client/Pages/RecordPage";
+import RewritePasswordPage from "./client/Pages/RewritePasswordPage";
+import RewritePasswordProtected from "./RewritePasswordProtected";
+import UserComment from "./client/Pages/UserComment";
+import UserSetting from "./client/Pages/UserSetting";
+import UsingTip from "./client/Pages/UsingTip";
+import VideoChapterPlayer from "./client/Pages/VideoChapterPlayer";
+import VideoList from "./client/Pages/VideoList";
+import VideoOnlyPlayer from "./client/Pages/VideoOnlyPlayer";
+import VideoPlayer from "./client/Pages/VideoPlayer";
+import { getUserSession } from "./js/userAction";
+import useModal from "./js/useModal";
 
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const user = getUserSession();
 
@@ -154,6 +155,10 @@ export default function App() {
               />
 
               <Route path="/setting" element={<UserSetting user={user} />} />
+              <Route
+                path="/changePassword"
+                element={<ChangePWDPage user={user} />}
+              />
             </Route>
           </Route>
         </Routes>
@@ -173,7 +178,10 @@ export default function App() {
             <BtnBootstrap
               btnSize="md"
               variant="outline-primary"
-              onClickEventName={() => {}}
+              onClickEventName={() => {
+                navigate("/changePassword");
+                handleClosePWDModal();
+              }}
               text="前往更改密碼"
             />
             <BtnBootstrap
