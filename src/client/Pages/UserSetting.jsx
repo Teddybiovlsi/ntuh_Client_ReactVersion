@@ -12,6 +12,7 @@ import { post } from "../axios";
 import { toast } from "react-toastify";
 import ToastAlert from "../../components/ToastAlert";
 import { Link, useNavigate } from "react-router-dom";
+import { clearUserSession } from "../../js/userAction";
 
 const { Formik } = formik;
 
@@ -76,8 +77,7 @@ export default function UserSetting({ user }) {
         });
         setPassWordConfirmModalShow(false);
         setTimeout(() => {
-          if (sessionStorage.getItem("user")) sessionStorage.clear();
-          if (localStorage.getItem("user")) localStorage.clear();
+          clearUserSession();
           navigate("/");
         }, 2000);
       } else {
@@ -114,8 +114,7 @@ export default function UserSetting({ user }) {
 
   const handleSessionTimeout = () => {
     alert("登入逾時，請重新登入");
-    if (sessionStorage.getItem("user")) sessionStorage.clear();
-    if (localStorage.getItem("user")) localStorage.clear();
+    clearUserSession();
     navigate("/");
   };
 
@@ -343,7 +342,7 @@ export default function UserSetting({ user }) {
                       btnSize="md"
                       btnType={"submit"}
                       text={"送出"}
-                      disabled={values.userNewEmail === user.client_email}
+                      disabled={values.oldPwd === user.newPwd}
                     />
                   </Col>
                 </div>
