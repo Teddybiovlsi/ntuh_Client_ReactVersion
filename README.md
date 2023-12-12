@@ -50,8 +50,12 @@
       - **[VideoList.jsx](./src/client/Pages/VideoList.jsx):** 客戶端影片列表頁面
       - **[VideoPlayer.jsx](./src/client/Pages/VideoPlayer.jsx):** 客戶端影片播放元件
   - **[components](./src/components/):** 整個專案頻繁調用的元件庫
+  - **[js](./src/js/):** 整個專案頻繁調用功能如:轉換時間、API調用、Modal視窗Hook
   - **[styles](./src/styles/):** 整個專案的樣式庫
-  - **[App.jsx](./src/App.jsx):** 路由功能
+  - **[App.jsx](./src/App.jsx):** 路由、未更改密碼提醒功能
+  - **[AuthProtected.jsx](./src/AuthProtected.jsx)** 路由保護，用於確認使用者LocalStorage或SessionStorage當中是否存在用戶資料
+  - **[‎PermissionProtected.jsx](./src/‎PermissionProtected.jsx)** 權限保護，避免訪客模式惡意嘗試無訪問權限路由
+  - **[‎RewritePasswordProtected.jsx](./src/‎RewritePasswordProtected.jsx)** OTP更改密碼保護，避免使用者在未輸入OTP認證碼情況下，惡意轉向修改密碼路由
   - **[main.jsx](./src/main.jsx):** [主頁](./index.html)所調用的 React 檔案，**此專案底下使用嚴謹模式**
 
 ## 專案注意事項：
