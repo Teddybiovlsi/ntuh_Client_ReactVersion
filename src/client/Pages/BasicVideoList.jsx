@@ -155,7 +155,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
   const checkHavePermissionToTest = () => {
     if (open !== null) {
       if (
-        (open.accuracy === 100 && user?.permission === "ylhClient") ||
+        (open.learningProgress === 100 && user?.permission === "ylhClient") ||
         user?.permission === "ylhGuest"
       ) {
         navigate("/basic/videoQuestion", {
@@ -301,7 +301,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                   <BtnBootstrap
                     text={
                       open !== null &&
-                      (open.accuracy === 100 ||
+                      (open.learningProgress === 100 ||
                       user?.permission === "ylhGuest" ? (
                         `題目測驗`
                       ) : (
@@ -312,13 +312,15 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
                       ))
                     }
                     variant={
-                      open !== null && (open.accuracy === 100 || !checkIsClient)
+                      open !== null &&
+                      (open.learningProgress === 100 || !checkIsClient)
                         ? "outline-primary"
                         : "outline-danger"
                     }
                     onClickEventName={checkHavePermissionToTest}
                     disabled={
-                      checkIsClient && (open === null || open.accuracy !== 100)
+                      checkIsClient &&
+                      (open === null || open.learningProgress !== 100)
                     }
                   />
                 )}
