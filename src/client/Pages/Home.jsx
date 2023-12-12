@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { FaLock } from "react-icons/fa6";
+import { MdOutlineSentimentSatisfiedAlt } from "react-icons/md";
 import {
   BsFillBookFill,
   BsTools,
@@ -160,10 +161,12 @@ export default function Home({ user }) {
   return (
     <>
       <Container className="mt-3">
-        <Row>
-          <h3 className="text-primary">個人資訊</h3>
-        </Row>
-        {loading === false ? (
+        {checkIsClient && (
+          <Row>
+            <h3 className="text-primary">個人資訊</h3>
+          </Row>
+        )}
+        {loading === false && checkIsClient ? (
           <Row>
             <Col sm={6} md={6} lg={4}>
               <Card border="primary" className="mb-2">
@@ -172,13 +175,10 @@ export default function Home({ user }) {
                   styleOfHeaderText={styles.cardHeaderText}
                   text="瀏覽影片次數"
                 />
-                {checkIsClient ? (
-                  <CheckIsClientCardNormalBody
-                    text={`${usrInfo.TotalWatchCount}次`}
-                  />
-                ) : (
-                  <CheckIsGuestCardBody />
-                )}
+
+                <CheckIsClientCardNormalBody
+                  text={`${usrInfo.TotalWatchCount}次`}
+                />
               </Card>
             </Col>
 
@@ -189,13 +189,9 @@ export default function Home({ user }) {
                   styleOfHeaderText={styles.cardHeaderText}
                   text="瀏覽影片時間"
                 />
-                {checkIsClient ? (
-                  <CheckIsClientCardNormalBody
-                    text={handleConvertTime(usrInfo.TotalWatchTime)}
-                  />
-                ) : (
-                  <CheckIsGuestCardBody />
-                )}
+                <CheckIsClientCardNormalBody
+                  text={handleConvertTime(usrInfo.TotalWatchTime)}
+                />
               </Card>
             </Col>
             <Col sm={7} md={6} lg={4}>
@@ -205,14 +201,11 @@ export default function Home({ user }) {
                   styleOfHeaderText={styles.cardHeaderText}
                   text="完成基礎練習"
                 />
-                {checkIsClient ? (
-                  <CheckIsClientCardLinkBody
-                    text={`${usrInfo.TotalFinishBasicVideo}部`}
-                    dirLink={"/basic"}
-                  />
-                ) : (
-                  <CheckIsGuestCardBody />
-                )}
+
+                <CheckIsClientCardLinkBody
+                  text={`${usrInfo.TotalFinishBasicVideo}部`}
+                  dirLink={"/basic"}
+                />
               </Card>
             </Col>
             <Col sm={7} md={6} lg={4}>
@@ -222,14 +215,11 @@ export default function Home({ user }) {
                   styleOfHeaderText={styles.cardHeaderText}
                   text="完成練習"
                 />
-                {checkIsClient ? (
-                  <CheckIsClientCardLinkBody
-                    text={`${usrInfo.TotalFinishPraticeVideo}部`}
-                    dirLink={"/pratice"}
-                  />
-                ) : (
-                  <CheckIsGuestCardBody />
-                )}
+
+                <CheckIsClientCardLinkBody
+                  text={`${usrInfo.TotalFinishPraticeVideo}部`}
+                  dirLink={"/pratice"}
+                />
               </Card>
             </Col>
             <Col sm={7} md={6} lg={4}>
@@ -239,21 +229,20 @@ export default function Home({ user }) {
                   styleOfHeaderText={styles.cardHeaderText}
                   text="完成測驗"
                 />
-                {checkIsClient ? (
-                  <CheckIsClientCardLinkBody
-                    text={`${usrInfo.TotalFinishTestVideo}部`}
-                    dirLink={"/test"}
-                  />
-                ) : (
-                  <CheckIsGuestCardBody />
-                )}
+
+                <CheckIsClientCardLinkBody
+                  text={`${usrInfo.TotalFinishTestVideo}部`}
+                  dirLink={"/test"}
+                />
               </Card>
             </Col>
           </Row>
         ) : (
-          <Card.Body>
-            <Card.Text>用戶資訊載入中</Card.Text>
-          </Card.Body>
+          checkIsClient && (
+            <Card.Body>
+              <Card.Text>用戶資訊載入中</Card.Text>
+            </Card.Body>
+          )
         )}
       </Container>
       <Container className="mt-4">
@@ -306,8 +295,8 @@ export default function Home({ user }) {
           <Col sm={smSize} xs={xsSize}>
             <Link to="/comment" className={styles.suggestionContainer}>
               <Row>
-                <BsFillQuestionCircleFill className="fs-1" />
-                <p className="text-center fs-5 my-auto">問題建議</p>
+                <MdOutlineSentimentSatisfiedAlt className="fs-1" />
+                <p className="text-center fs-5 my-auto">滿意度調查</p>
               </Row>
             </Link>
           </Col>
