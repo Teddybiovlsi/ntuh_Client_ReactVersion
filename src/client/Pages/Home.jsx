@@ -93,8 +93,9 @@ export default function Home({ user }) {
 
   const checkIsClient = permission === "ylhClient" ? true : false;
 
-  const smSize = permission === "ylhClient" ? 2 : 3;
-  const xsSize = permission === "ylhClient" ? 4 : 6;
+  const mdSize = permission === "ylhClient" ? 4 : 3;
+  const smSize = permission === "ylhClient" ? 4 : 6;
+  const xsSize = permission === "ylhClient" ? 12 : 12;
 
   const [
     showChoseVideoModal,
@@ -247,7 +248,7 @@ export default function Home({ user }) {
       </Container>
       <Container className="mt-4">
         <Row>
-          <Col sm={smSize} xs={xsSize} className="my-auto mx-auto">
+          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
             <Link
               type="button"
               className={styles.videoContainer}
@@ -259,7 +260,7 @@ export default function Home({ user }) {
               </Row>
             </Link>
           </Col>
-          <Col sm={smSize} xs={xsSize}>
+          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
             <Link
               to={"https://www.ylh.gov.tw/?aid=612"}
               className={styles.infoContainer}
@@ -271,7 +272,12 @@ export default function Home({ user }) {
             </Link>
           </Col>
           {permission === "ylhClient" && (
-            <Col sm={smSize} xs={xsSize}>
+            <Col
+              md={mdSize}
+              sm={smSize}
+              xs={xsSize}
+              className="text-center mb-3"
+            >
               <Link
                 type="button"
                 className={styles.recordContainer}
@@ -284,7 +290,7 @@ export default function Home({ user }) {
               </Link>
             </Col>
           )}
-          <Col sm={smSize} xs={xsSize}>
+          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
             <Link to="/usingTip" className={styles.tutorialContainer}>
               <Row>
                 <BsTools className="fs-1" />
@@ -292,7 +298,7 @@ export default function Home({ user }) {
               </Row>
             </Link>
           </Col>
-          <Col sm={smSize} xs={xsSize}>
+          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
             <Link to="/comment" className={styles.suggestionContainer}>
               <Row>
                 <MdOutlineSentimentSatisfiedAlt className="fs-1" />
@@ -301,7 +307,12 @@ export default function Home({ user }) {
             </Link>
           </Col>
           {permission === "ylhClient" && (
-            <Col sm={smSize} xs={xsSize}>
+            <Col
+              md={mdSize}
+              sm={smSize}
+              xs={xsSize}
+              className="text-center mb-3"
+            >
               <Link to="/setting" className={styles.settingContainer}>
                 <Row>
                   <AiFillSetting className="fs-1" />
