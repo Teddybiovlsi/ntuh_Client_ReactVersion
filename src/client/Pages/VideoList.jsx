@@ -196,9 +196,7 @@ export default function VideoList({
     !localStorage.getItem("iphoneAlertShown") &&
     navigator.userAgent.match(/iPhone/i)
   ) {
-    alert(
-      "目前使用iPhone，請留意在影片撥放全螢幕下無法正確顯示問題，請關閉全螢幕即可正確作答"
-    );
+    alert("目前使用iPhone，請留意在影片撥放中無法全螢幕");
     localStorage.setItem("iphoneAlertShown", true);
   }
 
@@ -300,22 +298,24 @@ export default function VideoList({
           <Modal.Body>
             <Container>
               <Row>
-                <Col>
+                {/* <Col>
                   {open !== null && checkIsClient && (
                     <p>
-                      目前分數為：{open.accuracy}分，
+                      目前分數為：{open.learningProgress}分，
                       <b
                         className={
-                          open.accuracy === 100 ? "text-success" : "text-danger"
+                          open.learningProgress === 100
+                            ? "text-success"
+                            : "text-danger"
                         }
                       >
-                        {open.accuracy === 100
+                        {open.learningProgress === 100
                           ? "可使用章節個別練習"
                           : "請繼續努力"}
                       </b>
                     </p>
                   )}
-                </Col>
+                </Col> */}
               </Row>
               <Stack gap={3}>
                 <BtnBootstrap
@@ -354,7 +354,7 @@ export default function VideoList({
                   <BtnBootstrap
                     text={
                       open !== null &&
-                      (open.accuracy === 100 ? (
+                      (open.learningProgress === 100 ? (
                         `章節練習`
                       ) : (
                         <p className="text-danger m-0 p-0">
@@ -364,16 +364,16 @@ export default function VideoList({
                       ))
                     }
                     variant={
-                      open !== null && open.accuracy === 100
+                      open !== null && open.learningProgress === 100
                         ? "outline-primary"
                         : "outline-danger"
                     }
                     onClickEventName={() => {
                       open !== null &&
-                        open.accuracy === 100 &&
+                        open.learningProgress === 100 &&
                         setOpenChapter(open);
                     }}
-                    disabled={open !== null && open.accuracy !== 100}
+                    disabled={open !== null && open.learningProgress !== 100}
                   />
                 )}
               </Stack>

@@ -355,18 +355,20 @@ export const VideoJS = (props) => {
 
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
-      var fullScreenBtn = player.controlBar.addChild(
-        "button",
-        {
-          clickHandler: function (event) {
-            toggleFullScreen();
+      if (!navigator.userAgent.match(/iPhone/i)) {
+        var fullScreenBtn = player.controlBar.addChild(
+          "button",
+          {
+            clickHandler: function (event) {
+              toggleFullScreen();
+            },
           },
-        },
-        19
-      );
-      var fullScreenBtnDom = fullScreenBtn.el();
-      fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
-      fullScreenBtnDom.title = "fullscreen";
+          19
+        );
+        var fullScreenBtnDom = fullScreenBtn.el();
+        fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
+        fullScreenBtnDom.title = "fullscreen";
+      }
 
       player.on("waiting", () => {
         console.log("player is waiting");

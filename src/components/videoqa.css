@@ -27,9 +27,9 @@
   width: 100%;
   height: auto;
 }
-/* .video-js .vjs-fullscreen-control {
+.video-js .vjs-fullscreen-control {
   display: none;
-} */
+}
 
 .vjs-icon-fullscreen-enter {
   font-size: 2em;

@@ -1,38 +1,37 @@
-import React from 'react';
-import { Container, Form, Col, Row, Stack } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { get, post } from '../axios';
-import BtnBootstrap from '../../components/BtnBootstrap';
-import ToastAlert from '../../components/ToastAlert';
-import { toast } from 'react-toastify';
-import { getUserSession, setUserSession } from '../../js/userAction';
-import { MdEmojiPeople } from 'react-icons/md';
+import React from "react";
+import { Container, Form, Col, Row, Stack } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { get, post } from "../axios";
+import BtnBootstrap from "../../components/BtnBootstrap";
+import ToastAlert from "../../components/ToastAlert";
+import { toast } from "react-toastify";
+import { getUserSession, setUserSession } from "../../js/userAction";
+import { MdEmojiPeople } from "react-icons/md";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LogIn() {
   const [checkuserInfo, setCheckuserInfo] = useState(
-    !localStorage.getItem('user') && !sessionStorage.getItem('user')
+    !localStorage.getItem("user") && !sessionStorage.getItem("user")
   );
 
   const user = getUserSession();
 
   const [userInfo, setUserInfo] = useState({
-    user_account: '',
-    user_password: '',
+    user_account: "",
+    user_password: "",
     isRemember: false,
   });
 
   const [tempuser, setTempUser] = useState(null);
   let navigate = useNavigate();
   const [validated, setValidated] = useState(false);
-  const [ErrorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (!checkuserInfo) {
-      if (user.permission === 'ylhClient') {
-        navigate('/Home');
+      if (user.permission === "ylhClient") {
+        navigate("/Home");
       } else {
       }
     }
@@ -62,40 +61,41 @@ export default function LogIn() {
    * @returns {Object} userInfo - 後端回傳的使用者資料。
    */
   const fetchaLoginData = async (data) => {
-    let clientSubmit = toast.loading('登入中...');
+    let clientSubmit = toast.loading("登入中...");
     try {
       // console.log(data);
-      const response = await post('client/login', data);
+      const response = await post("client/login", data);
 
       const userInfo = response.data;
-
+      console.log(userInfo);
       setTempUser(userInfo);
       // console.log(userInfo);
 
       toast.update(clientSubmit, {
-        render: '登入成功，3秒後將回到當前頁面',
-        type: 'success',
+        render: "登入成功，3秒後將回到當前頁面",
+        type: "success",
         isLoading: false,
         autoClose: 3000,
       });
 
       setTimeout(() => {
-        navigate('/Home');
+        navigate("/Home");
       }, 3000);
     } catch (error) {
       // console.log(error.response.data);
       // console.log(error.code);
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === "ECONNABORTED") {
         toast.update(clientSubmit, {
-          render: '連線逾時，請稍後再試',
-          type: 'error',
+          render: "連線逾時，請稍後再試",
+          type: "error",
           isLoading: false,
           autoClose: 3000,
         });
       } else {
+        console.log(error.response.data);
         toast.update(clientSubmit, {
           render: `${error.response.data.message}`,
-          type: 'error',
+          type: "error",
           isLoading: false,
           autoClose: 3000,
         });
@@ -113,11 +113,11 @@ export default function LogIn() {
    */
   const fetchGuestLoginData = async () => {
     try {
-      const response = await get('guest/temporaryToken');
+      const response = await get("guest/temporaryToken");
       const guestInfo = response.data;
 
       setUserSession(guestInfo, false);
-      navigate('/Home');
+      navigate("/Home");
     } catch (error) {
       console.error(error);
       throw error;
@@ -131,48 +131,48 @@ export default function LogIn() {
     }
   }, [tempuser]);
 
-  if (!localStorage.getItem('user') || !sessionStorage.getItem('user')) {
+  if (!localStorage.getItem("user") || !sessionStorage.getItem("user")) {
     return (
       <Container>
-        <h1 className='text-center'>歡迎光臨台大醫院雲林分院衛教系統</h1>
+        <h1 className="text-center">歡迎光臨台大醫院雲林分院衛教系統</h1>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Col>
-            <Form.Group as={Row} md='4' controlId='validationCustom01'>
+            <Form.Group as={Row} md="4" controlId="validationCustom01">
               <Form.Label>帳號</Form.Label>
               <Form.Control
                 required
-                type='text'
-                placeholder='請輸入帳號'
+                type="text"
+                placeholder="請輸入帳號"
+                maxLength={7}
                 onChange={(e) => {
                   setUserInfo({ ...userInfo, user_account: e.target.value });
                 }}
               />
-              <Form.Control.Feedback type='invalid'>
+              <Form.Control.Feedback type="invalid">
                 請輸入帳號
               </Form.Control.Feedback>
             </Form.Group>
-            <Form.Group as={Row} controlId='formPwd'>
+            <Form.Group as={Row} controlId="formPwd">
               <Form.Label>密碼</Form.Label>
               <Form.Control
                 required
-                type='password'
-                placeholder='請輸入密碼'
+                type="password"
+                placeholder="請輸入密碼"
                 onChange={(e) => {
                   setUserInfo({ ...userInfo, user_password: e.target.value });
                 }}
-                isInvalid={ErrorMessage.passwordErrorMessage}
               />
-              <Form.Control.Feedback type='invalid'>
+              <Form.Control.Feedback type="invalid">
                 請輸入密碼
               </Form.Control.Feedback>
             </Form.Group>
             <Row>
               <Col>
                 <Form.Check
-                  type='checkbox'
-                  label='記住我'
-                  className='mt-2'
-                  id='remember'
+                  type="checkbox"
+                  label="記住我"
+                  className="mt-2"
+                  id="remember"
                   value={userInfo.isRemember}
                   onClick={() => {
                     setUserInfo({
@@ -182,23 +182,23 @@ export default function LogIn() {
                   }}
                 />
               </Col>
-              <Col className='mt-2 text-end'>
-                <Link to='/forgetPassword' className='text-decoration-none'>
+              <Col className="mt-2 text-end">
+                <Link to="/forgetPassword" className="text-decoration-none">
                   忘記密碼
                 </Link>
               </Col>
             </Row>
             <Stack gap={1}>
               <BtnBootstrap
-                btnSize='md'
-                variant='outline-primary'
-                btnType='submit'
-                text='登入'
+                btnSize="md"
+                variant="outline-primary"
+                btnType="submit"
+                text="登入"
               />
               <BtnBootstrap
-                btnSize='md'
-                variant='outline-secondary'
-                btnType='button'
+                btnSize="md"
+                variant="outline-secondary"
+                btnType="button"
                 onClickEventName={() => {
                   fetchGuestLoginData();
                 }}
