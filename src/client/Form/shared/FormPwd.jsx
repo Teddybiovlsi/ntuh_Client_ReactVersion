@@ -2,9 +2,11 @@ import React from "react";
 import { Form, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import PwdStrengthMeter from "./PwdStrengthMeter";
 
 function FormPwd({
-  PwdMaxLength = 20,
+  SetStrengthMeter = false,
+  StrengthMeterPwdScore = 0,
   GroupClassName = "mb-2",
   LabelClassName = "fs-3",
   InputGroupClassName = "mb-1",
@@ -39,7 +41,6 @@ function FormPwd({
           type={ShowPwdCondition ? "Text" : "Password"}
           name={ControlName}
           id={LabelForName}
-          maxLength={PwdMaxLength}
           aria-describedby="passwordHelpBlock"
           placeholder={FormControlPlaceHolder}
           onChange={ChangeEvent}
@@ -64,6 +65,9 @@ function FormPwd({
           {ErrorMessage}
         </Form.Control.Feedback>
       </InputGroup>
+      {SetStrengthMeter ? (
+        <PwdStrengthMeter pwdScore={StrengthMeterPwdScore} />
+      ) : null}
     </Form.Group>
   );
 }
