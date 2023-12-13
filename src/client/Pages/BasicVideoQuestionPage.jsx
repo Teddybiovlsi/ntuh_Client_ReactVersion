@@ -1,7 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
+  Card,
+  CardBody,
+  Col,
   Container,
   Form,
   Image,
@@ -10,6 +13,9 @@ import {
   Stack,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { RiAlertFill } from "react-icons/ri";
+import { GoCheckCircleFill } from "react-icons/go";
+import { RxCrossCircled } from "react-icons/rx";
 import jsSHA from "jssha";
 
 import PageTitleHeading from "../../components/PageTitleHeading";
@@ -17,15 +23,23 @@ import ToastAlert from "../../components/ToastAlert";
 import useModal from "../../js/useModal";
 import { post } from "../axios";
 import { clearUserSession } from "../../js/userAction";
+import styles from "../../styles/Form/ClientBasicVideoQuestionPage.module.scss";
 
 export default function BasicVideoQuestionPage({ user }) {
   const checkPermission = user.permission === "ylhClient";
 
   const location = useLocation();
 
+  // 建立一個ref來存儲每個問題的卡片元素
+  const questionRefs = useRef([]);
+
   const { info, videoID } = location.state || {};
 
+  const [needShuffle, setNeedShuffle] = useState(true);
+
   const [currentInfo, setCurrentInfo] = useState(info);
+
+  const [haveFirstSubmit, setHaveFirstSubmit] = useState(false);
 
   const [shuffledInfo, setShuffledInfo] = useState([]);
 
@@ -35,11 +49,14 @@ export default function BasicVideoQuestionPage({ user }) {
 
   const [answerCount, setAnswerCount] = useState(0);
 
-  const [scoreModal, handleCloseScoreModal, handleShowScoreModal] = useModal();
-
   const [score, setScore] = useState(0);
 
   const navigate = useNavigate();
+
+  const [notFinishModal, handleCloseNotFinishModal, handleShowNotFinishModal] =
+    useModal();
+
+  const [scoreModal, handleCloseScoreModal, handleShowScoreModal] = useModal();
 
   const uploadTheAnswer = async (data, isReloadingPage = false) => {
     // let alertToastID = toast.loading("上傳中...");
@@ -57,7 +74,7 @@ export default function BasicVideoQuestionPage({ user }) {
         });
 
         setTimeout(() => {
-          navigate("/", { replace: true });
+          navigate("/basic", { replace: true });
         }, 3000);
       }
     } catch (error) {
@@ -86,19 +103,48 @@ export default function BasicVideoQuestionPage({ user }) {
           answer: selectedOptionAnswer,
         },
       }));
+      setCurrentInfo((prevInfo) =>
+        prevInfo.map((info) => {
+          if (info.basic_id === questionId) {
+            return {
+              ...info,
+              haveAnswered: true,
+            };
+          } else {
+            return info;
+          }
+        })
+      );
     },
     []
   );
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // 檢查哪些問題沒有被回答
+    const unansweredQuestions = currentInfo.filter(
+      (info) => !selectedOptions[info.basic_id]
+    );
+
+    if (unansweredQuestions.length > 0) {
+      handleShowNotFinishModal();
+      return;
+    }
+
+    setHaveFirstSubmit(true);
+
+    // console.log("unansweredQuestions", unansweredQuestions);
+
     setAnswerCount((preCount) => preCount + 1);
 
     const lengthOfQuestions = currentInfo.length;
+
     // 列出錯誤的題目
     const wrongQuestions = currentInfo.filter(
       (info) => selectedOptions[info.basic_id].isCorrect === 0
     );
+
     if (wrongQuestions.length === 0) {
       setScore(100);
     } else {
@@ -114,8 +160,18 @@ export default function BasicVideoQuestionPage({ user }) {
     // 將錯誤的題目的答案加入到錯誤題目的物件中
 
     // 滿分為100分，若題目無法整除，則以四捨五入計算
-
-    setCurrentInfo(wrongQuestions);
+    // 將已經正確的答案設定為不可再次選擇
+    const updatedInfo = currentInfo.map((info) => {
+      if (selectedOptions[info.basic_id].isCorrect === 1) {
+        return {
+          ...info,
+          isDisableTheOption: true,
+        };
+      } else {
+        return info;
+      }
+    });
+    setCurrentInfo(updatedInfo);
     handleShowScoreModal();
     setDisabledRepeatSubmit(true);
   };
@@ -152,72 +208,114 @@ export default function BasicVideoQuestionPage({ user }) {
   };
 
   useEffect(() => {
-    const shuffledInfos = currentInfo.map((info) => handleShuffle(info));
-    setShuffledInfo(shuffledInfos);
-  }, [currentInfo]);
+    const updatedInfo = currentInfo.map((item) => ({
+      ...item,
+      haveAnswered: false,
+      isDisableTheOption: false, // 新增一個變數用來判斷是否已經正確
+    }));
+    setCurrentInfo(updatedInfo);
+  }, [info]);
+
+  useEffect(() => {
+    if (needShuffle) {
+      const shuffledInfos = currentInfo.map((info) => handleShuffle(info));
+      setShuffledInfo(shuffledInfos);
+      setNeedShuffle(false);
+    }
+  }, [needShuffle, currentInfo]);
 
   return (
     <>
       <PageTitleHeading text="基礎練習題目測驗" styleOptions={4} />
-      <Container>
-        <Form onSubmit={handleSubmit}>
+      <Container className="pb-5">
+        <Form noValidate onSubmit={handleSubmit}>
           {shuffledInfo.map((question, index) => {
             return (
-              <div key={question.basic_id}>
-                <p className="fs-4 m-0">
-                  {`第${index + 1}題.`}
-                  {question.video_question}
-                </p>
+              <Card
+                className="mb-2"
+                border={
+                  currentInfo[index].isDisableTheOption ? "success" : "danger"
+                }
+              >
+                <Card.Header>
+                  <Card.Title className="m-0">
+                    {currentInfo[index].haveAnswered === false && (
+                      <RiAlertFill className="text-warning m-0 me-2 h3" />
+                    )}
+                    {currentInfo[index].isDisableTheOption && (
+                      <GoCheckCircleFill className="text-success m-0 me-2 h3" />
+                    )}
+                    {currentInfo[index].isDisableTheOption === false &&
+                      haveFirstSubmit === true && (
+                        <RxCrossCircled className="text-danger m-0 me-2 h3" />
+                      )}
 
-                {Object.keys(question.choice).map((key, index) => {
-                  // console.log("question", question.video_question);
-                  return (
-                    <Row key={`row-${key}`}>
-                      <label
-                        key={`label-${key}`}
-                        htmlFor={`basic${question.basic_id}${index}`}
-                      >
-                        <Form.Check
-                          type="radio"
-                          label={question.choice[key][0]}
-                          name={`basic${question.basic_id}`}
-                          key={question.choice[key][0]}
-                          id={`basic${question.basic_id}${index}`}
-                          onChange={() =>
-                            handleOptionChange(
-                              question.basic_id,
-                              question.choice[key][1],
-                              question.choice[key][0]
-                            )
-                          }
-                          required
-                        />
-                        {question.choice[key][2] && (
-                          <Image
-                            src={`${question.choice[key][2]}`}
-                            alt={`basic${question.basic_id}${index}`}
-                            rounded
-                            fluid
-                            className="mt-3"
-                            style={{ maxHeight: "200px", cursor: "pointer" }}
+                    <b className="me-2">({index + 1})</b>
+                    {question.video_question}
+                  </Card.Title>
+                </Card.Header>
+                <CardBody>
+                  <Row key={`row-option`}>
+                    {Object.keys(question.choice).map((key, index2) => {
+                      // console.log("question", question.video_question);
+                      return (
+                        <Col
+                          md={6}
+                          as="label"
+                          key={`label-${key}`}
+                          htmlFor={`basic${question.basic_id}${index2}`}
+                          style={{ cursor: "pointer" }}
+                          className={styles.labelOption}
+                        >
+                          <Form.Check
+                            type="radio"
+                            label={question.choice[key][0]}
+                            name={`basic${question.basic_id}`}
+                            key={question.choice[key][0]}
+                            id={`basic${question.basic_id}${index2}`}
+                            onChange={() =>
+                              handleOptionChange(
+                                question.basic_id,
+                                question.choice[key][1],
+                                question.choice[key][0]
+                              )
+                            }
+                            disabled={currentInfo[index].isDisableTheOption}
+                            required
                           />
-                        )}
-                      </label>
-                    </Row>
-                  );
-                })}
-              </div>
+                          {question.choice[key][2] && (
+                            <div className="d-flex justify-content-center">
+                              <Image
+                                src={`${question.choice[key][2]}`}
+                                alt={`basic${question.basic_id}${index2}`}
+                                rounded
+                                fluid
+                                className="mt-3"
+                                style={{
+                                  maxHeight: "200px",
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </div>
+                          )}
+                        </Col>
+                      );
+                    })}
+                  </Row>
+                </CardBody>
+              </Card>
             );
           })}
-          <Button
-            variant="outline-primary"
-            type="submit"
-            className="mt-3 float-end"
-            // disabled={disabledRepeatSubmit}
-            size="md"
-          >
-            送出
-          </Button>
+          <Stack gap={1}>
+            <Button
+              variant="danger"
+              type="submit"
+              size="md"
+              className="fixed-bottom"
+            >
+              送出答案
+            </Button>
+          </Stack>
         </Form>
       </Container>
       <ToastAlert />
@@ -293,11 +391,32 @@ export default function BasicVideoQuestionPage({ user }) {
                     false
                   );
                 } else {
-                  navigate("/Home", { replace: true });
+                  navigate("/basic", { replace: true });
                 }
               }}
             >
               結束
+            </Button>
+          </Stack>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={notFinishModal} onHide={handleCloseNotFinishModal}>
+        <Modal.Header>
+          <Modal.Title>尚有未完成的題目</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="h3 text-center text-danger">
+            請確認題目欄位是否有警告標誌
+          </p>
+          <p className="h4">請依照出現警告標誌進行作答</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Stack gap={1}>
+            <Button
+              variant="outline-secondary"
+              onClick={handleCloseNotFinishModal}
+            >
+              確認
             </Button>
           </Stack>
         </Modal.Footer>
