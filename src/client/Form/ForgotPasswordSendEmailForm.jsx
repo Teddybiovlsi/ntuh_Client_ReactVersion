@@ -1,7 +1,9 @@
 import React from "react";
-import { Col, Form } from "react-bootstrap";
+import { Col, Form, Stack } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
+
 import BtnBootstrap from "../../components/BtnBootstrap";
 
 const userSendOTPMailSchema = yup.object().shape({
@@ -17,6 +19,8 @@ export default function ForgotPasswordSendEmailForm({
   initialValues,
   onSubmit,
 }) {
+  let navigate = useNavigate();
+
   return (
     <Col>
       <Formik
@@ -57,7 +61,7 @@ export default function ForgotPasswordSendEmailForm({
                 {errors.userSendOTPMail}
               </Form.Control.Feedback>
             </Form.Group>
-            <div className="d-grid gap-2">
+            <Stack gap={2}>
               <BtnBootstrap
                 btnPosition=""
                 variant="outline-primary"
@@ -65,7 +69,15 @@ export default function ForgotPasswordSendEmailForm({
                 btnType={"submit"}
                 text={"下一步"}
               />
-            </div>
+              <BtnBootstrap
+                variant="outline-danger"
+                btnSize="md"
+                text={"取消"}
+                onClickEventName={() => {
+                  navigate(-1);
+                }}
+              />
+            </Stack>
           </Form>
         )}
       </Formik>
