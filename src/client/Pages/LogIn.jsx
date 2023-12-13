@@ -1,22 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Form, Col, Row, Stack } from "react-bootstrap";
-import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { get, post } from "../axios";
-import BtnBootstrap from "../../components/BtnBootstrap";
-import ToastAlert from "../../components/ToastAlert";
 import { toast } from "react-toastify";
-import { getUserSession, setUserSession } from "../../js/userAction";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { MdEmojiPeople } from "react-icons/md";
-
 import "react-toastify/dist/ReactToastify.css";
 
+import BtnBootstrap from "../../components/BtnBootstrap";
+import ToastAlert from "../../components/ToastAlert";
+import { get, post } from "../axios";
+import { getUserSession, setUserSession } from "../../js/userAction";
+
 export default function LogIn() {
+  let navigate = useNavigate();
+
   const [checkuserInfo, setCheckuserInfo] = useState(
     !localStorage.getItem("user") && !sessionStorage.getItem("user")
   );
-
-  const user = getUserSession();
 
   const [userInfo, setUserInfo] = useState({
     user_account: "",
@@ -25,14 +25,14 @@ export default function LogIn() {
   });
 
   const [tempuser, setTempUser] = useState(null);
-  let navigate = useNavigate();
   const [validated, setValidated] = useState(false);
+
+  const user = getUserSession();
 
   useEffect(() => {
     if (!checkuserInfo) {
       if (user.permission === "ylhClient") {
         navigate("/Home");
-      } else {
       }
     }
   }, [checkuserInfo]);
@@ -134,60 +134,60 @@ export default function LogIn() {
   if (!localStorage.getItem("user") || !sessionStorage.getItem("user")) {
     return (
       <Container>
-        <h1 className="text-center">歡迎光臨台大醫院雲林分院衛教系統</h1>
+        <h1 className="text-center">歡迎光臨衛教系統</h1>
+        <p className="text-primary text-center fs-3">請登入</p>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Col>
-            <Form.Group as={Row} md="4" controlId="validationCustom01">
-              <Form.Label>帳號</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                placeholder="請輸入帳號"
-                maxLength={7}
-                onChange={(e) => {
-                  setUserInfo({ ...userInfo, user_account: e.target.value });
-                }}
-              />
-              <Form.Control.Feedback type="invalid">
-                請輸入帳號
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group as={Row} controlId="formPwd">
-              <Form.Label>密碼</Form.Label>
-              <Form.Control
-                required
-                type="password"
-                placeholder="請輸入密碼"
-                onChange={(e) => {
-                  setUserInfo({ ...userInfo, user_password: e.target.value });
-                }}
-              />
-              <Form.Control.Feedback type="invalid">
-                請輸入密碼
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Row>
-              <Col>
-                <Form.Check
-                  type="checkbox"
-                  label="記住我"
-                  className="mt-2"
-                  id="remember"
-                  value={userInfo.isRemember}
-                  onClick={() => {
-                    setUserInfo({
-                      ...userInfo,
-                      isRemember: !userInfo.isRemember,
-                    });
+          <Row>
+            <Col xs={12} className="mb-2">
+              <Form.Group md="4" controlId="validationCustom01">
+                <Form.Label style={{ cursor: "pointer" }}>帳號</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="請輸入帳號"
+                  maxLength={7}
+                  onChange={(e) => {
+                    setUserInfo({ ...userInfo, user_account: e.target.value });
                   }}
                 />
-              </Col>
-              <Col className="mt-2 text-end">
-                <Link to="/forgetPassword" className="text-decoration-none">
-                  忘記密碼
-                </Link>
-              </Col>
-            </Row>
+                <Form.Control.Feedback type="invalid">
+                  請輸入帳號
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+            <Col xs={12} className="mb-2">
+              <Form.Group controlId="formPwd" className="mb-2">
+                <Form.Label style={{ cursor: "pointer" }}>密碼</Form.Label>
+                <Form.Control
+                  required
+                  type="password"
+                  placeholder="請輸入密碼"
+                  onChange={(e) => {
+                    setUserInfo({ ...userInfo, user_password: e.target.value });
+                  }}
+                />
+                <Form.Control.Feedback type="invalid">
+                  請輸入密碼
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Link to="/forgetPassword" className="text-decoration-none">
+                忘記密碼嗎?
+              </Link>
+            </Col>
+            <Col md={6} xs={12}>
+              <Form.Check
+                type="checkbox"
+                label="記住我"
+                id="remember"
+                value={userInfo.isRemember}
+                onClick={() => {
+                  setUserInfo({
+                    ...userInfo,
+                    isRemember: !userInfo.isRemember,
+                  });
+                }}
+              />
+            </Col>
             <Stack gap={1}>
               <BtnBootstrap
                 btnSize="md"
@@ -210,7 +210,7 @@ export default function LogIn() {
                 }
               />
             </Stack>
-          </Col>
+          </Row>
         </Form>
         <ToastAlert />
       </Container>
