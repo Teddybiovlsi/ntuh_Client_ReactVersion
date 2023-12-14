@@ -4,8 +4,11 @@ import BasicVideoJS from "../../components/BasicVideoJS";
 import LoadingComponent from "../../components/LoadingComponent";
 import { post } from "../axios";
 import "video.js/dist/video-js.css";
+
+import PageTitleHeading from "../../components/PageTitleHeading";
 import "../../components/videoqa.css";
 import { postViewCount } from "../../js/api";
+import { Container } from "react-bootstrap";
 
 export default function BasicVideoPlayer({ user }) {
   // 使用 React Router 的 useNavigate 鉤子來獲取 navigate 函數，用於在應用程式中導航
@@ -19,6 +22,7 @@ export default function BasicVideoPlayer({ user }) {
     info = {},
     videoPath = "",
     videoID = "",
+    duration = 0,
     latestWatchTime = 0,
   } = location?.state || {};
 
@@ -42,7 +46,7 @@ export default function BasicVideoPlayer({ user }) {
     // autoplay: true,
     // playbackRates: [0.5, 1, 1.5, 2],
     responsive: true,
-    fluid: true,
+    // fluid: true,
     muted: true,
     sources: [
       {
@@ -76,13 +80,15 @@ export default function BasicVideoPlayer({ user }) {
     return <LoadingComponent text="載入中..." title="基礎練習用衛教資訊" />;
 
   return (
-    <>
+    <Container>
+      <PageTitleHeading text="基礎練習影片觀賞" styleOptions={4} />
       <BasicVideoJS
         options={videoJsOptions}
         videoID={videoID}
+        duration={duration}
         latestWatchTime={latestWatchTime}
         questionData={info}
       />
-    </>
+    </Container>
   );
 }
