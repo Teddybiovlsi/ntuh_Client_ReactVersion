@@ -22,6 +22,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { FaLock } from "react-icons/fa";
 import "react-circular-progressbar/dist/styles.css";
 import PageTitleHeading from "../../components/PageTitleHeading";
+import defaultImg from "../../assets/NotFoundImg.png";
 
 export default function VideoList({
   PageTitle = 0,
@@ -42,6 +43,7 @@ export default function VideoList({
   const [arrayIsEmpty, setArrayIsEmpty] = useState(false);
   const [eachVideoDuration, setEachVideoDuration] = useState([]);
   const [eachVideoChapterDuration, setEachVideoChapterDuration] = useState([]);
+  const [totalLearningProgress, setTotalLearningProgress] = useState(0);
 
   const [
     ConfirmingToLatestTimeModal,
@@ -87,6 +89,16 @@ export default function VideoList({
       // Filter videoData with videoType equal to PageTitle
       const filterVideoData = data.filter(
         (video) => video.videoType === Number(PageTitle)
+      );
+
+      const totalProgress = filterVideoData.reduce((sum, video) => {
+        return sum + video.learningProgress;
+      }, 0);
+
+      // 計算總進度
+
+      setTotalLearningProgress(
+        Math.round(totalProgress / filterVideoData.length)
       );
 
       // Set setOpenArray to an array of false values with the same length as filterVideoData
@@ -203,303 +215,314 @@ export default function VideoList({
   return (
     <>
       <PageTitleHeading text="衛教資訊" styleOptions={4} />
-      <Container>
+      <Container className="pb-5">
         {originVideoData.map((video, eachQuestionIndex) => {
           return (
             <>
-              <p className="fs-4 ps-0 m-0">{video.Title}</p>
-              <Row className={styles.videoListContainer}>
-                <Col xs={10} md={11} lg={11}>
-                  <Row>
-                    <ImageComponent src={video.image_url} />
-                    {/* <Image src={video.image_url} className="p-0" rounded /> */}
-                  </Row>
-                  {checkIsClient && (
-                    <Row className={styles.learningProgressCol}>
-                      <Col
-                        xs={3}
-                        md={2}
-                        lg={2}
-                        className="d-flex align-items-center justify-content-center"
-                      >
-                        <CircularProgressbar
-                          value={video.learningProgress}
-                          text={`${video.learningProgress}%`}
-                          styles={buildStyles({
-                            textColor:
-                              video.learningProgress === 100
-                                ? "#00A3A3"
-                                : "#FFD4D4",
-                            pathColor:
-                              video.learningProgress === 100
-                                ? "#00A3A3"
-                                : "#940000",
-                            trailColor:
-                              video.learningProgress === 100
-                                ? "#F2FFFF"
-                                : "#FFD4D4",
-                          })}
-                        />
-                      </Col>
-                      <Col xs={9} md={10} lg={10} className={`fs-3 `}>
-                        <p className={`m-0 ${styles.learningProgressFont}`}>
-                          學習進度：
-                        </p>
-                        <p
-                          className={`m-0 ${
-                            video.learningProgress === 100
-                              ? styles.learningProgressProgressSuccess
-                              : "text-danger"
-                          }`}
+              <Row
+                xs={12}
+                key={Math.random()}
+                onClick={() => {
+                  setOpen(video);
+                }}
+              >
+                <Col xs={12} lg={{ span: 8, offset: 3 }}>
+                  <p className="fs-4 ps-0 m-0">{video.Title}</p>
+                </Col>
+              </Row>
+              <Row
+                role="button"
+                onClick={() => {
+                  setOpen(video);
+                }}
+                className="mb-3"
+              >
+                <Row className={styles.videoListContainer}>
+                  <Col xs={10} md={11} lg={{ span: 6, offset: 3 }}>
+                    <Row>
+                      <Image
+                        src={video.image_url || defaultImg}
+                        className="p-0"
+                        rounded
+                      />
+                    </Row>
+                    {checkIsClient && (
+                      <Row className={styles.learningProgressCol}>
+                        <Col
+                          xs={3}
+                          md={2}
+                          lg={2}
+                          className="d-flex align-items-center justify-content-center"
                         >
-                          {video.learningProgress}%
-                        </p>
-                      </Col>
-                    </Row>
-                  )}
-                  {!checkIsClient && (
-                    <Row className={styles.guestLearningProgressCol}>
-                      <p className="m-0 fs-4">
-                        <FaLock />
-                        <br />
-                        權限不足無法訪問
-                      </p>
-                    </Row>
-                  )}
-                </Col>
-                <Col
-                  xs={2}
-                  md={1}
-                  lg={1}
-                  className={styles.linkToStartLearning}
-                  as="button"
-                  onClick={() => {
-                    setOpen(video);
-                  }}
-                >
-                  <h1>
-                    <IoIosArrowForward />
-                  </h1>
-                </Col>
+                          <CircularProgressbar
+                            value={video.learningProgress}
+                            text={`${video.learningProgress}%`}
+                            styles={buildStyles({
+                              textColor:
+                                video.learningProgress === 100
+                                  ? "#00A3A3"
+                                  : "#FFD4D4",
+                              pathColor:
+                                video.learningProgress === 100
+                                  ? "#00A3A3"
+                                  : "#940000",
+                              trailColor:
+                                video.learningProgress === 100
+                                  ? "#F2FFFF"
+                                  : "#FFD4D4",
+                            })}
+                          />
+                        </Col>
+                        <Col xs={9} md={10} lg={10} className={`fs-3 `}>
+                          <p className={`m-0 ${styles.learningProgressFont}`}>
+                            學習進度：
+                          </p>
+                          <p
+                            className={`m-0 ${
+                              video.learningProgress === 100
+                                ? styles.learningProgressProgressSuccess
+                                : "text-danger"
+                            }`}
+                          >
+                            {video.learningProgress}%
+                          </p>
+                        </Col>
+                      </Row>
+                    )}
+                  </Col>
+                  <Col
+                    xs={2}
+                    md={1}
+                    lg={1}
+                    className={styles.linkToStartLearning}
+                    as="button"
+                    onClick={() => {
+                      setOpen(video);
+                    }}
+                  >
+                    <h1>
+                      <IoIosArrowForward />
+                    </h1>
+                  </Col>
+                </Row>
               </Row>
             </>
           );
         })}
-        {/* 練習／測驗打開開始後顯示Modal視窗 */}
-        <Modal
-          show={open !== null}
-          onHide={() => {
-            setOpen(null);
-          }}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>請選擇欲觀看的類型</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Container>
-              <Row>
-                {/* <Col>
-                  {open !== null && checkIsClient && (
-                    <p>
-                      目前分數為：{open.learningProgress}分，
-                      <b
-                        className={
-                          open.learningProgress === 100
-                            ? "text-success"
-                            : "text-danger"
-                        }
-                      >
-                        {open.learningProgress === 100
-                          ? "可使用章節個別練習"
-                          : "請繼續努力"}
-                      </b>
-                    </p>
-                  )}
-                </Col> */}
-              </Row>
-              <Stack gap={3}>
-                <BtnBootstrap
-                  text={`瀏覽`}
-                  variant={"outline-primary"}
-                  onClickEventName={() => {
-                    if (open.videoLastestTime === 0) {
-                      navigate("/video/only", {
-                        state: {
-                          info: open.QuestionData,
-                          videoPath: open.video_url,
-                          videoID: open.videoCertainID,
-                          latestWatchTime: 0,
-                        },
-                      });
-                    } else {
-                      handleShowConfirmToLatestTimeModal();
-                    }
-                  }}
+      </Container>
+
+      {checkIsClient && (
+        <div className={`fixed-bottom ${styles.learningProgressContainer}`}>
+          <Container className={`my-2`}>
+            <Row>
+              <Col xs={12} sm={5} md={4}>
+                <p className="m-0 fs-5">影片完成進度：</p>
+              </Col>
+              <Col xs={12} sm={7} md={8} className="my-auto">
+                <ProgressBar
+                  variant="learningProgressContainer_progressBar"
+                  now={totalLearningProgress}
+                  label={`${totalLearningProgress}%`}
                 />
-                <BtnBootstrap
-                  text={`開始${PageTitle ? "測驗" : "練習"}`}
-                  variant={"outline-primary"}
-                  onClickEventName={() => {
-                    navigate("/video", {
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      )}
+      {/* 練習／測驗打開開始後顯示Modal視窗 */}
+      <Modal
+        show={open !== null}
+        onHide={() => {
+          setOpen(null);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇欲觀看的類型</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Stack gap={3}>
+              <BtnBootstrap
+                text={`瀏覽`}
+                variant={"outline-primary"}
+                onClickEventName={() => {
+                  if (open.videoLastestTime === 0) {
+                    navigate("/video/only", {
                       state: {
+                        info: open.QuestionData,
                         videoPath: open.video_url,
                         videoID: open.videoCertainID,
-                        questionData: open.QuestionData,
-                        pageTitle: PageTitle,
+                        latestWatchTime: 0,
                       },
                     });
+                  } else {
+                    handleShowConfirmToLatestTimeModal();
+                  }
+                }}
+              />
+              <BtnBootstrap
+                text={`開始${PageTitle ? "測驗" : "練習"}`}
+                variant={"outline-primary"}
+                onClickEventName={() => {
+                  navigate("/video", {
+                    state: {
+                      videoPath: open.video_url,
+                      videoID: open.videoCertainID,
+                      questionData: open.QuestionData,
+                      pageTitle: PageTitle,
+                    },
+                  });
+                }}
+              />
+              {checkIsClient && (
+                <BtnBootstrap
+                  text={
+                    open !== null &&
+                    (open.learningProgress === 100 ? (
+                      `章節練習`
+                    ) : (
+                      <p className="text-danger m-0 p-0">
+                        <AiFillLock />
+                        鎖定中
+                      </p>
+                    ))
+                  }
+                  variant={
+                    open !== null && open.learningProgress === 100
+                      ? "outline-primary"
+                      : "outline-danger"
+                  }
+                  onClickEventName={() => {
+                    open !== null &&
+                      open.learningProgress === 100 &&
+                      setOpenChapter(open);
                   }}
+                  disabled={open !== null && open.learningProgress !== 100}
                 />
-                {checkIsClient && (
-                  <BtnBootstrap
-                    text={
-                      open !== null &&
-                      (open.learningProgress === 100 ? (
-                        `章節練習`
-                      ) : (
-                        <p className="text-danger m-0 p-0">
-                          <AiFillLock />
-                          鎖定中
-                        </p>
-                      ))
-                    }
-                    variant={
-                      open !== null && open.learningProgress === 100
-                        ? "outline-primary"
-                        : "outline-danger"
-                    }
-                    onClickEventName={() => {
-                      open !== null &&
-                        open.learningProgress === 100 &&
-                        setOpenChapter(open);
+              )}
+            </Stack>
+          </Container>
+        </Modal.Body>
+      </Modal>
+      {/* 若有保留觀看紀錄，Modal */}
+      <Modal
+        show={ConfirmingToLatestTimeModal}
+        onHide={handleCloseConfirmingToLatestTime}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>請確認</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>
+            您上次觀看影片的進度為
+            <b className="text-primary">
+              {open !== null && Math.round(open.videoLastestTime * 10) / 10}
+            </b>
+            秒，是否繼續觀看？
+          </p>
+          <p className="text-danger">若選擇取消，則觀看進度將會重置為0秒</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <BtnBootstrap
+            text={`取消`}
+            variant={"outline-secondary"}
+            onClickEventName={() => {
+              navigate("/video/only", {
+                state: {
+                  info: open.QuestionData,
+                  videoPath: open.video_url,
+                  videoID: open.videoCertainID,
+                  latestWatchTime: 0,
+                },
+              });
+            }}
+          />
+          <BtnBootstrap
+            text={`確認`}
+            variant={"outline-primary"}
+            onClickEventName={() => {
+              handleCloseConfirmingToLatestTime();
+              navigate("/video/only", {
+                state: {
+                  info: open.QuestionData,
+                  videoPath: open.video_url,
+                  videoID: open.videoCertainID,
+                  latestWatchTime: open.videoLastestTime,
+                },
+              });
+            }}
+          />
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={openChapter}
+        onHide={() => {
+          setOpenChapter(null);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>請選擇欲觀看的章節</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {openChapter !== null && (
+            <Stack gap={1}>
+              {openChapter.QuestionData.map((question, index) => {
+                return (
+                  <Link
+                    key={index}
+                    to={"/video/chapter"}
+                    state={{
+                      videoID: open.videoCertainID,
+                      videoPath: open.video_url,
+                      videoCurrentTime:
+                        index === 0
+                          ? 0
+                          : openChapter.QuestionData[index - 1]
+                              .video_interrupt_time,
+                      videoInterruptTime: question.video_interrupt_time,
+                      info: question,
                     }}
-                    disabled={open !== null && open.learningProgress !== 100}
-                  />
-                )}
-              </Stack>
-            </Container>
-          </Modal.Body>
-        </Modal>
-        {/* 若有保留觀看紀錄，Modal */}
-        <Modal
-          show={ConfirmingToLatestTimeModal}
-          onHide={handleCloseConfirmingToLatestTime}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>請確認</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <p>
-              您上次觀看影片的進度為
-              <b className="text-primary">
-                {open !== null && Math.round(open.videoLastestTime * 10) / 10}
-              </b>
-              秒，是否繼續觀看？
-            </p>
-            <p className="text-danger">若選擇取消，則觀看進度將會重置為0秒</p>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <BtnBootstrap
-              text={`取消`}
-              variant={"outline-secondary"}
-              onClickEventName={() => {
-                navigate("/video/only", {
-                  state: {
-                    info: open.QuestionData,
-                    videoPath: open.video_url,
-                    videoID: open.videoCertainID,
-                    latestWatchTime: 0,
-                  },
-                });
-              }}
-            />
-            <BtnBootstrap
-              text={`確認`}
-              variant={"outline-primary"}
-              onClickEventName={() => {
-                handleCloseConfirmingToLatestTime();
-                navigate("/video/only", {
-                  state: {
-                    info: open.QuestionData,
-                    videoPath: open.video_url,
-                    videoID: open.videoCertainID,
-                    latestWatchTime: open.videoLastestTime,
-                  },
-                });
-              }}
-            />
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={openChapter}
-          onHide={() => {
-            setOpenChapter(null);
-          }}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>請選擇欲觀看的章節</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {openChapter !== null && (
-              <Stack gap={1}>
-                {openChapter.QuestionData.map((question, index) => {
-                  return (
-                    <Link
-                      key={index}
-                      to={"/video/chapter"}
-                      state={{
-                        videoID: open.videoCertainID,
-                        videoPath: open.video_url,
-                        videoCurrentTime:
-                          index === 0
-                            ? 0
-                            : openChapter.QuestionData[index - 1]
-                                .video_interrupt_time,
-                        videoInterruptTime: question.video_interrupt_time,
-                        info: question,
-                      }}
-                      className={styles.videoListLink}
-                    >
-                      <div className={styles.videoListContainer}>
-                        <div className="m-0">
-                          <Container>
-                            <Row className="align-items-center">
-                              <Col>
-                                <Row>
-                                  <Col md={6}>
-                                    <h3 className={styles.titleChapter}>{`第 ${
-                                      index + 1
-                                    } 章`}</h3>
-                                  </Col>
-                                  <Col md={6} className="my-auto">
-                                    <div className="float-end ">
-                                      {`時間長度 ${
-                                        eachVideoChapterDuration[
-                                          open.videoCertainID
-                                        ][index]
-                                      }`}
-                                    </div>
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col>{question.video_question}</Col>
-                                </Row>
-                              </Col>
-                            </Row>
-                          </Container>
-                        </div>
+                    className={styles.videoListLink}
+                  >
+                    <div className={styles.videoListContainer}>
+                      <div className="m-0">
+                        <Container>
+                          <Row className="align-items-center">
+                            <Col>
+                              <Row>
+                                <Col md={6}>
+                                  <h3 className={styles.titleChapter}>{`第 ${
+                                    index + 1
+                                  } 章`}</h3>
+                                </Col>
+                                <Col md={6} className="my-auto">
+                                  <div className="float-end ">
+                                    {`時間長度 ${
+                                      eachVideoChapterDuration[
+                                        open.videoCertainID
+                                      ][index]
+                                    }`}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col>{question.video_question}</Col>
+                              </Row>
+                            </Col>
+                          </Row>
+                        </Container>
                       </div>
-                    </Link>
-                  );
-                })}
-              </Stack>
-            )}
-          </Modal.Body>
-        </Modal>
-      </Container>
+                    </div>
+                  </Link>
+                );
+              })}
+            </Stack>
+          )}
+        </Modal.Body>
+      </Modal>
     </>
   );
 }
