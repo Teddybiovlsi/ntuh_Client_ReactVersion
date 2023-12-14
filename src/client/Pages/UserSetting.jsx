@@ -6,6 +6,8 @@ import FormPwd from "../Form/shared/FormPwd";
 import useBoolean from "../Form/shared/useBoolean";
 import * as formik from "formik";
 import * as yup from "yup";
+import zxcvbn from "zxcvbn";
+
 import ConvertNameToHide from "../Form/shared/func/ConvertNameToHide";
 import styles from "../../styles/pages/UserSetting.module.scss";
 import { post } from "../axios";
@@ -18,19 +20,6 @@ const { Formik } = formik;
 
 const userNewNameSchema = yup.object().shape({
   userNewName: yup.string().required("請輸入姓名"),
-});
-
-const userNewPwdSchema = yup.object().shape({
-  oldPwd: yup.string().required("請輸入原始密碼"),
-  newPwd: yup
-    .string()
-    .required("請輸入新密碼")
-    .test("", "新密碼不得與舊密碼相符", function (value) {
-      return this.parent.oldPwd !== value;
-    }),
-  newPwdCheck: yup.string().test("密碼相符", "密碼必須相符", function (value) {
-    return this.parent.newPwd === value;
-  }),
 });
 
 const userNewEmailSchema = yup.object().shape({
@@ -48,7 +37,26 @@ export default function UserSetting({ user }) {
     clientLatestPWD: "",
   });
 
+  const userNewPwdSchema = yup.object().shape({
+    oldPwd: yup.string().required("請輸入原始密碼"),
+    newPwd: yup
+      .string()
+      .required("請輸入新密碼")
+      .test("", "新密碼不得與舊密碼相符", function (value) {
+        return this.parent.oldPwd !== value;
+      })
+      .test("是否為高等強度密碼", "密碼強度不足，請試著加上特殊符號", () => {
+        return pwdScore > 2;
+      }),
+    newPwdCheck: yup
+      .string()
+      .test("密碼相符", "密碼必須相符", function (value) {
+        return this.parent.newPwd === value;
+      }),
+  });
+
   const [showPwd, { setShowPwd }] = useBoolean(false);
+  const [pwdScore, setPwdScore] = useState(0);
 
   const [nameModalShow, setNameModalShow] = useState(false);
   const [passwordModalShow, setPasswordModalShow] = useState(false);
@@ -297,7 +305,8 @@ export default function UserSetting({ user }) {
                 />
                 <FormPwd
                   ControlName="newPwd"
-                  SetStrengthMeter={false}
+                  SetStrengthMeter={true}
+                  StrengthMeterPwdScore={pwdScore}
                   LabelForName="formNewPassword"
                   LabelClassName="fs-6"
                   FeedBackClassName="fs-6"
@@ -305,6 +314,9 @@ export default function UserSetting({ user }) {
                   FormControlPlaceHolder="請於這裡輸入新密碼"
                   PwdValue={values.newPwd}
                   ChangeEvent={handleChange}
+                  InputEvent={(e) => {
+                    setPwdScore(zxcvbn(e.target.value).score);
+                  }}
                   InValidCheck={touched.newPwd && errors.newPwd}
                   SetShowPwdCondition={setShowPwd}
                   ShowPwdCondition={showPwd}
@@ -449,7 +461,7 @@ export default function UserSetting({ user }) {
                 updateType: "password",
               });
             }}
-          ></BtnBootstrap>
+          />
         </Modal.Footer>
       </Modal>
 
