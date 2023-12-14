@@ -13,7 +13,7 @@ export const BasicVideoJS = (props) => {
 
   const navigate = useNavigate();
 
-  const { videoID, latestWatchTime, options, questionData } = props;
+  const { videoID, duration, latestWatchTime, options, questionData } = props;
 
   document.cookie = `videoID=${videoID}`;
 
@@ -40,6 +40,8 @@ export const BasicVideoJS = (props) => {
 
     if (permissionCheck) {
       if (currentTime) {
+        const progress = Math.floor((currentTime / duration) * 100);
+
         const token = user?.client_token;
         const response = postViewTime({
           token,
@@ -47,6 +49,7 @@ export const BasicVideoJS = (props) => {
             videoID: videoID,
             watchTime: Number(currentTime),
             durationTime: Number(currentTime) - Number(pastCurrentTime),
+            haveWatchAll: progress,
           },
         });
         // console.log(currentTime);
@@ -80,16 +83,16 @@ export const BasicVideoJS = (props) => {
       // if fullscreen mode is active, exit by calling fullscreen API
       // 第一步驟，將icon轉換成進入全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
-      // document
-      //   .getElementById("fullscreenBtn")
-      //   .classList.replace(
-      //     "vjs-icon-fullscreen-exit",
-      //     "vjs-icon-fullscreen-enter"
-      //   );
+      document
+        .getElementById("fullscreenBtn")
+        .classList.replace(
+          "vjs-icon-fullscreen-exit",
+          "vjs-icon-fullscreen-enter"
+        );
 
-      // document
-      //   .getElementById("video-container_Container_player")
-      //   .classList.remove("fullscreen");
+      document
+        .getElementById("video-container_Container_player")
+        .classList.remove("fullscreen");
       // // if yes, exit fullscreen mode
       document.exitFullscreen();
 
@@ -98,16 +101,16 @@ export const BasicVideoJS = (props) => {
       // 若fullscreen mode不是active，則進入fullscreen mode
       // 第一步驟，將icon轉換成離開全螢幕的icon，透過classList的replace方法
       // replace("要被替換的className", "替換後的className")
-      // document
-      //   .getElementById("fullscreenBtn")
-      //   .classList.replace(
-      //     "vjs-icon-fullscreen-enter",
-      //     "vjs-icon-fullscreen-exit"
-      //   );
+      document
+        .getElementById("fullscreenBtn")
+        .classList.replace(
+          "vjs-icon-fullscreen-enter",
+          "vjs-icon-fullscreen-exit"
+        );
       // add fullscreen className to the videoPlayer className
-      // document
-      //   .getElementById("video-container_Container_player")
-      //   .classList.add("fullscreen");
+      document
+        .getElementById("video-container_Container_player")
+        .classList.add("fullscreen");
 
       setIsFullscreen(true);
       // 依據不同的瀏覽器，進入全螢幕的方法不同
@@ -145,18 +148,18 @@ export const BasicVideoJS = (props) => {
 
       // addChild("componentName", {componentProps}, componentIndex)
       // 其中componentIndex為可選參數，若不指定則預設為0，代表在controlBar的第一個位置
-      // var fullScreenBtn = player.controlBar.addChild(
-      //   "button",
-      //   {
-      //     clickHandler: function (event) {
-      //       toggleFullScreen();
-      //     },
-      //   },
-      //   19
-      // );
-      // var fullScreenBtnDom = fullScreenBtn.el();
-      // fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
-      // fullScreenBtnDom.title = "fullscreen";
+      var fullScreenBtn = player.controlBar.addChild(
+        "button",
+        {
+          clickHandler: function (event) {
+            toggleFullScreen();
+          },
+        },
+        19
+      );
+      var fullScreenBtnDom = fullScreenBtn.el();
+      fullScreenBtnDom.innerHTML = `<span class="vjs-icon-fullscreen-enter" id="fullscreenBtn"></span>`;
+      fullScreenBtnDom.title = "fullscreen";
 
       player.on("waiting", () => {
         console.log("player is waiting");
@@ -267,6 +270,7 @@ export const BasicVideoJS = (props) => {
           data-vjs-player
           id="video-container_Container_player"
           className="videoPlayer"
+          style={{ margin: "auto", display: "block" }}
         >
           <div ref={videoRef} className="video-js vjs-default-skin" />
         </div>
