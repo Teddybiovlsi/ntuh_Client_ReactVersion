@@ -6,6 +6,13 @@ import DataSize from "../JSON/slectDataSize.json";
 import ReactPaginate from "react-paginate";
 import PageTitleHeading from "../../components/PageTitleHeading";
 
+const answerStateArray = [
+  { id: 0, name: "回答正確" },
+  { id: 1, name: "回答錯誤" },
+  { id: 2, name: "未回答" },
+  { id: 3, name: "前題錯誤未作答" },
+];
+
 export default function RecordPage({ user, recordType = 0 }) {
   // 取得當前時間
   // const isoDateInTaipei = GetCurrentDateTime();
@@ -179,13 +186,16 @@ export default function RecordPage({ user, recordType = 0 }) {
           const { clientVideoCheck, chapter, answerState, praticeDate } = item;
 
           const formattedDate = new Date(praticeDate).toLocaleString();
+          const answerStatus = answerStateArray.find(
+            (obj) => obj.id === answerState
+          );
 
           return (
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{clientVideoCheck}</td>
               <td>{chapter}</td>
-              <td>{answerState ? "是" : "否"}</td>
+              <td>{answerStatus.name}</td>
               <td>{formattedDate}</td>
             </tr>
           );
@@ -233,8 +243,10 @@ export default function RecordPage({ user, recordType = 0 }) {
                 }}
               >
                 <option value="">請選擇完成進度</option>
-                <option value="true">已完成</option>
-                <option value="false">未完成</option>
+                <option value="0">回答正確</option>
+                <option value="1">回答錯誤</option>
+                <option value="2">未回答</option>
+                <option value="3">前題錯誤未作答</option>
               </Form.Select>
             </Form.Group>
           </Col>
