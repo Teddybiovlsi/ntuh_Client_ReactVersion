@@ -29,6 +29,7 @@ import VideoOnlyPlayer from "./client/Pages/VideoOnlyPlayer";
 import VideoPlayer from "./client/Pages/VideoPlayer";
 import { getUserSession } from "./js/userAction";
 import useModal from "./js/useModal";
+import AboutUs from "./client/Pages/AboutUs";
 
 export default function App() {
   const location = useLocation();
@@ -79,6 +80,7 @@ export default function App() {
               element={<RewritePasswordPage />}
             />
           </Route>
+          <Route path="/about" element={<AboutUs />} />
 
           <Route element={<AuthProtected user={user} />}>
             <Route path="/Home" element={<Home user={user} />} />

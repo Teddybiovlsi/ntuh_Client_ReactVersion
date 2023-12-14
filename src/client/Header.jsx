@@ -115,9 +115,12 @@ export default function Header({ expand = "lg" }) {
               {/* 問題建議Nav */}
               {user !== null ? (
                 <LinkContainer to="/comment">
-                  <Nav.Link>問題建議</Nav.Link>
+                  <Nav.Link>滿意度調查</Nav.Link>
                 </LinkContainer>
               ) : null}
+              <LinkContainer to="/about">
+                <Nav.Link>關於我們</Nav.Link>
+              </LinkContainer>
             </Nav>
             {/* 語系選擇 不一定會做 */}
             {/* <Nav>
