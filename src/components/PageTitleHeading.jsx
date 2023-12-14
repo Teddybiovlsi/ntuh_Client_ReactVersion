@@ -11,6 +11,7 @@ const styleOptionsMap = {
   6: styles.defaultPageHeadingStyle6,
   7: styles.defaultPageHeadingStyle7,
   8: styles.defaultPageHeadingStyle8,
+  9: styles.aboutUsPageHeadingStyle,
 };
 
 /**

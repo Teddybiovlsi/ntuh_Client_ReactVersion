@@ -145,5 +145,26 @@
     background-repeat: no-repeat;
     background-position: center bottom;
   }
+
+  .aboutUsPageHeadingStyle{
+    text-align: center;
+    padding-bottom: 29px;
+    margin-bottom: 2.5rem;
+    background-image: linear-gradient(
+        90deg,
+        whitesmoke 0%,
+        whitesmoke 20%,
+        #0064b4 43%,
+        #34DBBF 55%,
+        #00cdff 61%,
+        #644bff 67%,
+        whitesmoke 78%,
+        whitesmoke 100%
+      ),
+      url(none);
+    background-size: 100% 5px;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+  }
   
   
