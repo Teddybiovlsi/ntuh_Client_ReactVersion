@@ -95,7 +95,7 @@ export default function Home({ user }) {
 
   const mdSize = permission === "ylhClient" ? 4 : 3;
   const smSize = permission === "ylhClient" ? 4 : 6;
-  const xsSize = permission === "ylhClient" ? 12 : 12;
+  const xsSize = permission === "ylhClient" ? 4 : 4;
 
   const [
     showChoseVideoModal,
@@ -246,82 +246,104 @@ export default function Home({ user }) {
           )
         )}
       </Container>
-      <Container className="mt-4">
-        <Row>
-          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
-            <Link
-              type="button"
-              className={styles.videoContainer}
-              onClick={handleShowChoseVideoModal}
-            >
-              <Row className="mx-auto my-auto">
-                <MdOutlineVideoLibrary className="fs-1" />
-                <p className="text-center fs-5 my-auto">衛教資訊</p>
-              </Row>
-            </Link>
-          </Col>
-          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
-            <Link
-              to={"https://www.ylh.gov.tw/?aid=612"}
-              className={styles.infoContainer}
-            >
-              <Row>
-                <BsFillBookFill className="fs-1" />
-                <p className="text-center fs-5 my-auto">衛教天地</p>
-              </Row>
-            </Link>
-          </Col>
-          {permission === "ylhClient" && (
+      <Container className="pb-4 my-4">
+        <Card className="py-4">
+          <Row>
             <Col
               md={mdSize}
               sm={smSize}
               xs={xsSize}
-              className="text-center mb-3"
+              className="text-center my-3"
             >
               <Link
                 type="button"
-                className={styles.recordContainer}
-                onClick={handleShowChoseRecordModal}
+                className={styles.videoContainer}
+                onClick={handleShowChoseVideoModal}
               >
-                <Row>
-                  <AiTwotoneReconciliation className="fs-1" />
-                  <p className="text-center fs-5 my-auto">練習紀錄</p>
+                <Row className="mx-auto my-auto">
+                  <MdOutlineVideoLibrary className="fs-1" />
+                  <p className="text-center fs-5 my-auto">衛教資訊</p>
                 </Row>
               </Link>
             </Col>
-          )}
-          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
-            <Link to="/usingTip" className={styles.tutorialContainer}>
-              <Row>
-                <BsTools className="fs-1" />
-                <p className="text-center fs-5 my-auto">使用教學</p>
-              </Row>
-            </Link>
-          </Col>
-          <Col md={mdSize} sm={smSize} xs={xsSize} className="text-center mb-3">
-            <Link to="/comment" className={styles.suggestionContainer}>
-              <Row>
-                <MdOutlineSentimentSatisfiedAlt className="fs-1" />
-                <p className="text-center fs-5 my-auto">滿意度調查</p>
-              </Row>
-            </Link>
-          </Col>
-          {permission === "ylhClient" && (
             <Col
               md={mdSize}
               sm={smSize}
               xs={xsSize}
-              className="text-center mb-3"
+              className="text-center  my-3"
             >
-              <Link to="/setting" className={styles.settingContainer}>
+              <Link
+                to={"https://www.ylh.gov.tw/?aid=612"}
+                className={styles.infoContainer}
+              >
                 <Row>
-                  <AiFillSetting className="fs-1" />
-                  <p className="text-center fs-5">使用者設定</p>
+                  <BsFillBookFill className="fs-1" />
+                  <p className="text-center fs-5 my-auto">衛教天地</p>
                 </Row>
               </Link>
             </Col>
-          )}
-        </Row>
+            {permission === "ylhClient" && (
+              <Col
+                md={mdSize}
+                sm={smSize}
+                xs={xsSize}
+                className="text-center  my-3"
+              >
+                <Link
+                  type="button"
+                  className={styles.recordContainer}
+                  onClick={handleShowChoseRecordModal}
+                >
+                  <Row>
+                    <AiTwotoneReconciliation className="fs-1" />
+                    <p className="text-center fs-5 my-auto">練習紀錄</p>
+                  </Row>
+                </Link>
+              </Col>
+            )}
+            <Col
+              md={mdSize}
+              sm={smSize}
+              xs={xsSize}
+              className="text-center  my-3"
+            >
+              <Link to="/usingTip" className={styles.tutorialContainer}>
+                <Row>
+                  <BsTools className="fs-1" />
+                  <p className="text-center fs-5 my-auto">使用教學</p>
+                </Row>
+              </Link>
+            </Col>
+            <Col
+              md={mdSize}
+              sm={smSize}
+              xs={xsSize}
+              className="text-center  my-3"
+            >
+              <Link to="/comment" className={styles.suggestionContainer}>
+                <Row>
+                  <MdOutlineSentimentSatisfiedAlt className="fs-1" />
+                  <p className="text-center fs-5 my-auto">滿意度調查</p>
+                </Row>
+              </Link>
+            </Col>
+            {permission === "ylhClient" && (
+              <Col
+                md={mdSize}
+                sm={smSize}
+                xs={xsSize}
+                className="text-center  my-3"
+              >
+                <Link to="/setting" className={styles.settingContainer}>
+                  <Row>
+                    <AiFillSetting className="fs-1" />
+                    <p className="text-center fs-5">設定</p>
+                  </Row>
+                </Link>
+              </Col>
+            )}
+          </Row>
+        </Card>
       </Container>
       {/*  */}
       <Modal show={showChoseVideoModal} onHide={handleCloseChoseVideoModal}>
