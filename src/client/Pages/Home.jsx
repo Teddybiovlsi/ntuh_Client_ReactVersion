@@ -247,7 +247,7 @@ export default function Home({ user }) {
         )}
       </Container>
       <Container className="pb-4 my-4">
-        <Card className="py-4">
+        <Card className={`py-4 ${styles.container_CardContainer}`}>
           <Row>
             <Col
               md={mdSize}
