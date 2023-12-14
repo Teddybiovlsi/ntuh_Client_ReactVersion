@@ -11,7 +11,8 @@ import { postViewCount } from "../../js/api";
 export default function VideoPlayer() {
   const user = getUserSession();
   const location = useLocation();
-  const { videoID, videoPath, questionData, pageTitle } = location.state || {};
+  const { videoID, videoPath, questionData, pageTitle, examType } =
+    location.state || {};
 
   useEffect(() => {
     if (!location.state) {
@@ -90,6 +91,7 @@ export default function VideoPlayer() {
       pageTitle={pageTitle}
       questionData={questionData}
       videoID={videoID}
+      examType={examType}
     />
   );
 }
