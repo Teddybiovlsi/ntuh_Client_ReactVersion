@@ -370,6 +370,7 @@ export default function VideoList({
                       videoID: open.videoCertainID,
                       questionData: open.QuestionData,
                       pageTitle: PageTitle,
+                      examType: 0,
                     },
                   });
                 }}
@@ -484,6 +485,7 @@ export default function VideoList({
                               .video_interrupt_time,
                       videoInterruptTime: question.video_interrupt_time,
                       info: question,
+                      examType: 1,
                     }}
                     className={styles.videoListLink}
                   >
