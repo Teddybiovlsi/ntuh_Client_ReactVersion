@@ -32,22 +32,23 @@ const AboutUs = () => {
       </Row>
       <Row>
         <Col>
-          <h2>我們的團隊</h2>
+          <h2>開發團隊</h2>
           <p>
-            我們是來自國立雲林科技大學的學生，我們的團隊由兩位學生組成，分別是
-            <b className="text-primary">電子所</b>的
-            <b className="text-primary">顏O德</b>與
-            <b className="text-primary">電子所</b>的
-            <b className="text-primary">高O軒</b>。
+            我們是來自國立雲林科技大學跨領域系統暨生醫應用設計實驗室的團隊，由
+            <br />
+            智慧數據所&nbsp;薛雅馨&nbsp;所長
+            <br />
+            智慧數據所&nbsp;柯明達&nbsp;助理教授
+          </p>
+          <h2>合作開發</h2>
+          <p>
+            國立臺灣大學醫學院附設醫院雲林分院
+            <br />
+            護理部&nbsp;林芳如&nbsp;督導長
           </p>
         </Col>
       </Row>
-      <Row>
-        <Col>
-          <h2>我們的產品</h2>
-          <p>我們的產品是一個專為醫療人員設計的系統...</p>
-        </Col>
-      </Row>
+
       <Row>
         <Col>
           <h2>與我們聯絡</h2>
