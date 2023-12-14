@@ -10,7 +10,7 @@
   color: rgba($color: black, $alpha: 0.5);
 }
 
-.guestLearningProgressCol{
+.guestLearningProgressCol {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,24 +19,28 @@
   color: white;
 }
 
-.learningProgressCol{
-  background-color: rgba($color: #e08fac, $alpha: 0.1)
+.learningProgressCol {
+  background-color: rgba($color: #e08fac, $alpha: 0.1);
 }
-.learningProgressFont{
+.learningProgressFont {
   color: rgba($color: black, $alpha: 0.5);
 }
-.learningProgressProgressSuccess{
-  color: rgba($color: #00A3A3, $alpha: 0.8);
+.learningProgressProgressSuccess {
+  color: rgba($color: #00a3a3, $alpha: 0.8);
 }
-.linkToStartLearning{
+.linkToStartLearning {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba($color: #e08fac, $alpha: 0.1);
   border: none;
   outline: none;
-  :hover::after{
+  :hover::after {
     border: none;
     text-decoration: none;
   }
+}
+
+.learningProgressContainer {
+  background-color: #FFBDB3;
 }
