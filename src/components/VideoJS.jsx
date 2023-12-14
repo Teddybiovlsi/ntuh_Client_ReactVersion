@@ -25,7 +25,7 @@ export const VideoJS = (props) => {
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  const { options, info, pageTitle, questionData, videoID } = props;
+  const { options, info, pageTitle, questionData, videoID, examType } = props;
   const [sendstate, setSendstate] = useState(false);
   const [optionChecked, setOptionChecked] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -131,7 +131,7 @@ export const VideoJS = (props) => {
         videoID: videoID,
         quizID: [info[tempQuestionNum - 1].quiz_id],
         answerStatus: [true],
-        examType: 0,
+        examType: examType,
         failCount: 0,
         already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
       };
@@ -157,7 +157,7 @@ export const VideoJS = (props) => {
             videoID: videoID,
             quizID: [info[tempQuestionNum - 1].quiz_id],
             answerStatus: [2],
-            examType: pageTitle,
+            examType: examType,
             failCount: wrongAnswerCount + 1,
             already_watch_time: 0,
           };
@@ -169,7 +169,7 @@ export const VideoJS = (props) => {
             videoID: videoID,
             quizID: [info[tempQuestionNum - 1].quiz_id],
             answerStatus: [2],
-            examType: pageTitle,
+            examType: examType,
             failCount: wrongAnswerCount + 1,
             already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
           };
@@ -198,7 +198,7 @@ export const VideoJS = (props) => {
             videoID: videoID,
             quizID: [info[tempQuestionNum - 1].quiz_id],
             answerStatus: [1],
-            examType: pageTitle,
+            examType: examType,
             failCount: 0,
             already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
           };
@@ -210,24 +210,29 @@ export const VideoJS = (props) => {
           setCorrectModal(true);
         } else {
           if (wrongAnswerCount < 2) {
+            console.log("wrongAnswerCount", wrongAnswerCount);
+            console.log("[info[tempQuestionNum - 1].quiz_id]", [
+              info[tempQuestionNum - 1].quiz_id,
+            ]);
             const data = {
               token: user.client_token,
               videoID: videoID,
               quizID: [info[tempQuestionNum - 1].quiz_id],
               answerStatus: [0],
-              examType: pageTitle,
+              examType: examType,
               failCount: wrongAnswerCount + 1,
               already_watch_time: 0,
             };
 
             uploadTheAnswer(data);
           } else {
+            console.log("wrongAnswerCount", wrongAnswerCount);
             const data = {
               token: user.client_token,
               videoID: videoID,
               quizID: [info[tempQuestionNum - 1].quiz_id],
               answerStatus: [0],
-              examType: pageTitle,
+              examType: examType,
               failCount: wrongAnswerCount + 1,
               already_watch_time:
                 info[tempQuestionNum - 1].video_interrupt_time,
@@ -394,7 +399,14 @@ export const VideoJS = (props) => {
       });
 
       player.on("timeupdate", () => {
+        // console.log(arrayNum);
+        // console.log(info.length);
         if (arrayNum < info.length) {
+          // console.log("player.currentTime()", player.currentTime());
+          // console.log(
+          //   "info[arrayNum].video_interrupt_time",
+          //   info[arrayNum].video_interrupt_time
+          // );
           if (player.currentTime() >= info[arrayNum].video_interrupt_time) {
             player.pause();
             // handleShuffle(info.choice);
