@@ -7,8 +7,8 @@ import ReactPaginate from "react-paginate";
 import PageTitleHeading from "../../components/PageTitleHeading";
 
 const answerStateArray = [
-  { id: 0, name: "回答正確" },
-  { id: 1, name: "回答錯誤" },
+  { id: 0, name: "回答錯誤" },
+  { id: 1, name: "回答正確" },
   { id: 2, name: "未回答" },
   { id: 3, name: "前題錯誤未作答" },
 ];
