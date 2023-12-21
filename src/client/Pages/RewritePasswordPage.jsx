@@ -1,7 +1,9 @@
 import React from "react";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import * as formik from "formik";
 import * as yup from "yup";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import zxcvbn from "zxcvbn";
+
 import PageTitleHeading from "../../components/PageTitleHeading";
 import FormPwd from "../Form/shared/FormPwd";
 import BtnBootstrap from "../../components/BtnBootstrap";
@@ -10,19 +12,9 @@ import useBoolean from "../Form/shared/useBoolean";
 import ToastAlert from "../../components/ToastAlert";
 import { post } from "../axios";
 import { toast } from "react-toastify";
+import { clearUserSession } from "../../js/userAction";
 
 const { Formik } = formik;
-const userNewPwdSchema = yup.object().shape({
-  newPwd: yup
-    .string()
-    .required("請輸入新密碼")
-    .test("", "新密碼不得與舊密碼相符", function (value) {
-      return this.parent.oldPwd !== value;
-    }),
-  newPwdCheck: yup.string().test("密碼相符", "密碼必須相符", function (value) {
-    return this.parent.newPwd === value;
-  }),
-});
 
 export default function RewritePasswordPage() {
   const location = useLocation();
@@ -30,12 +22,24 @@ export default function RewritePasswordPage() {
 
   const [showPwd, { setShowPwd }] = useBoolean(false);
 
-  const handleSessionTimeout = () => {
-    // alert("登入逾時，請重新登入");
-    // if (sessionStorage.getItem("user")) sessionStorage.clear();
-    // if (localStorage.getItem("user")) localStorage.clear();
-    // navigate("/");
-  };
+  const [pwdScore, setPwdScore] = useState(0);
+
+  const userNewPwdSchema = yup.object().shape({
+    newPwd: yup
+      .string()
+      .required("請輸入新密碼")
+      .test("", "新密碼不得與舊密碼相符", function (value) {
+        return this.parent.oldPwd !== value;
+      })
+      .test("是否為高等強度密碼", "密碼強度不足，請試著加上特殊符號", () => {
+        return pwdScore > 2;
+      }),
+    newPwdCheck: yup
+      .string()
+      .test("密碼相符", "密碼必須相符", function (value) {
+        return this.parent.newPwd === value;
+      }),
+  });
 
   const rewritePasswordSubmit = async (userToRewrite) => {
     let clientSubmit = toast.loading("上傳資料中...");
@@ -49,15 +53,16 @@ export default function RewritePasswordPage() {
         autoClose: 3000,
       });
       setTimeout(() => {
-        if (sessionStorage.getItem("user")) sessionStorage.clear();
-        if (localStorage.getItem("user")) localStorage.clear();
+        clearUserSession();
         navigate("/");
       }, 2000);
     } catch (error) {
       const { status, data } = error.response;
       console.log(data.error);
       if (status === 404 && data.message === "請求錯誤") {
-        handleSessionTimeout();
+        alert("登入逾時，請重新登入");
+        clearUserSession();
+        navigate("/");
       } else {
         toast.update(clientSubmit, {
           render: data.message,
@@ -100,7 +105,8 @@ export default function RewritePasswordPage() {
                 <Form noValidate onSubmit={handleSubmit}>
                   <FormPwd
                     ControlName="newPwd"
-                    SetStrengthMeter={false}
+                    SetStrengthMeter={true}
+                    StrengthMeterPwdScore={pwdScore}
                     LabelForName="formNewPassword"
                     LabelClassName="fs-6"
                     FeedBackClassName="fs-6"
@@ -108,6 +114,9 @@ export default function RewritePasswordPage() {
                     FormControlPlaceHolder="請於這裡輸入新密碼"
                     PwdValue={values.newPwd}
                     ChangeEvent={handleChange}
+                    InputEvent={(e) => {
+                      setPwdScore(zxcvbn(e.target.value).score);
+                    }}
                     InValidCheck={touched.newPwd && errors.newPwd}
                     SetShowPwdCondition={setShowPwd}
                     ShowPwdCondition={showPwd}
