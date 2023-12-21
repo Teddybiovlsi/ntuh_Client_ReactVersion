@@ -181,7 +181,7 @@ export const VideoJS = (props) => {
         setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
         setWrongModal(true);
       } else {
-        // console.log("correctAnswer", correctAnswer);
+        console.log("correctAnswer", correctAnswer);
 
         if (optionChecked === correctAnswer) {
           setAnswerState([
