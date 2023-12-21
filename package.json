@@ -1,4 +1,5 @@
 {
+  "homepage": "https://Teddybiovlsi.github.io/ntuh_Client_ReactVersion",
   "name": "ntuh_proj",
   "private": true,
   "version": "0.0.7",
@@ -6,6 +7,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "vite build",
+    "deploy": "gh-pages -d build",
     "preview": "vite preview",
     "watch": "npm-watch",
     "test": "vitest",
