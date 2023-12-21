@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import OTPInput from "react-otp-input";
 import BtnBootstrap from "../../components/BtnBootstrap";
-import styles from "../../styles/form/ForgotPasswordSendVerifyCodeForm.module.scss";
+import styles from "../../styles/Form/ForgotPasswordSendVerifyCodeForm.module.scss";
 
 export default function ForgotPasswordSendVerifyCodeForm({
   onSubmit,
