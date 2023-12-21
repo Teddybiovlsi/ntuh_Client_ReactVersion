@@ -16,6 +16,7 @@ import "./videoqa.css";
 import { post } from "../client/axios";
 import { getUserSession } from "../js/userAction";
 import { useNavigate } from "react-router-dom";
+import { clearUserSession } from "../js/userAction";
 
 export const VideoJS = (props) => {
   const user = getUserSession();
@@ -65,8 +66,7 @@ export const VideoJS = (props) => {
       } catch (error) {
         if (error.response.data.error === "Token expired") {
           alert("登入逾時，請重新登入！");
-          localStorage.getItem("user") && localStorage.removeItem("user");
-          sessionStorage.getItem("user") && sessionStorage.removeItem("user");
+          clearUserSession();
           navigate("/", { replace: true });
         } else {
           console.log(error.response);
@@ -130,7 +130,7 @@ export const VideoJS = (props) => {
         token: user.client_token,
         videoID: videoID,
         quizID: [info[tempQuestionNum - 1].quiz_id],
-        answerStatus: [true],
+        answerStatus: [1],
         examType: examType,
         failCount: 0,
         already_watch_time: info[tempQuestionNum - 1].video_interrupt_time,
@@ -181,7 +181,7 @@ export const VideoJS = (props) => {
         setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
         setWrongModal(true);
       } else {
-        console.log("correctAnswer", correctAnswer);
+        // console.log("correctAnswer", correctAnswer);
 
         if (optionChecked === correctAnswer) {
           setAnswerState([
@@ -210,10 +210,10 @@ export const VideoJS = (props) => {
           setCorrectModal(true);
         } else {
           if (wrongAnswerCount < 2) {
-            console.log("wrongAnswerCount", wrongAnswerCount);
-            console.log("[info[tempQuestionNum - 1].quiz_id]", [
-              info[tempQuestionNum - 1].quiz_id,
-            ]);
+            // console.log("wrongAnswerCount", wrongAnswerCount);
+            // console.log("[info[tempQuestionNum - 1].quiz_id]", [
+            //   info[tempQuestionNum - 1].quiz_id,
+            // ]);
             const data = {
               token: user.client_token,
               videoID: videoID,
@@ -226,7 +226,7 @@ export const VideoJS = (props) => {
 
             uploadTheAnswer(data);
           } else {
-            console.log("wrongAnswerCount", wrongAnswerCount);
+            // console.log("wrongAnswerCount", wrongAnswerCount);
             const data = {
               token: user.client_token,
               videoID: videoID,
