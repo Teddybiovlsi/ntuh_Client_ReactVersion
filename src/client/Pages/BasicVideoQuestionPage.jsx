@@ -141,19 +141,21 @@ export default function BasicVideoQuestionPage({ user }) {
       (info) => selectedOptions[info.basic_id].isCorrect === 0
     );
 
-    if (wrongQuestions.length === 0) {
-      setScore(100);
-    } else {
-      setScore(0);
+    let newScore = 0;
 
+    if (wrongQuestions.length === 0) {
+      newScore = 100;
+    } else {
       currentInfo.forEach(({ basic_id, video_question_point }) => {
         if (selectedOptions[basic_id].isCorrect === 1) {
-          setScore((preScore) =>
-            Math.round(Number(preScore) + Number(video_question_point))
+          newScore = Math.round(
+            Number(newScore) + Number(video_question_point)
           );
         }
       });
     }
+
+    setScore(newScore);
 
     // 將錯誤的題目的答案加入到錯誤題目的物件中
 
