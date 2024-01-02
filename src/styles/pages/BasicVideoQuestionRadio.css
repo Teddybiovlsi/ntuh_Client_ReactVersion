@@ -1,0 +1,8 @@
+input[type='radio'] {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    outline: none;
+    border: 3px solid black;
+}

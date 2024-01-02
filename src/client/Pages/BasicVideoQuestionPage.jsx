@@ -24,6 +24,7 @@ import useModal from "../../js/useModal";
 import { post } from "../axios";
 import { clearUserSession } from "../../js/userAction";
 import styles from "../../styles/Form/ClientBasicVideoQuestionPage.module.scss";
+import "../../styles/pages/BasicVideoQuestionRadio.css";
 
 export default function BasicVideoQuestionPage({ user }) {
   const checkPermission = user.permission === "ylhClient";
