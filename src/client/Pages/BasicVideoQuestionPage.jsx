@@ -144,6 +144,8 @@ export default function BasicVideoQuestionPage({ user }) {
     if (wrongQuestions.length === 0) {
       setScore(100);
     } else {
+      setScore(0);
+
       currentInfo.forEach(({ basic_id, video_question_point }) => {
         if (selectedOptions[basic_id].isCorrect === 1) {
           setScore((preScore) =>
@@ -204,6 +206,20 @@ export default function BasicVideoQuestionPage({ user }) {
     return { ...info, choice: newChoice };
   };
 
+  const renderBorder = (index) => {
+    const info = currentInfo[index];
+    let borderColor;
+
+    if (info.isDisableTheOption) {
+      borderColor = "success";
+    } else if (info.haveAnswered) {
+      borderColor = "";
+    } else {
+      borderColor = "danger";
+    }
+    return borderColor;
+  };
+
   const renderIcon = (index) => {
     const info = currentInfo[index];
     if (info.haveAnswered === false) {
@@ -245,9 +261,7 @@ export default function BasicVideoQuestionPage({ user }) {
               <Card
                 key={`card-${question.basic_id}`}
                 className="mb-2"
-                border={
-                  currentInfo[index].isDisableTheOption ? "success" : "danger"
-                }
+                border={renderBorder(index)}
               >
                 <Card.Header>
                   <Card.Title className="m-0">
@@ -427,20 +441,24 @@ export default function BasicVideoQuestionPage({ user }) {
             <Button
               variant="outline-secondary"
               onClick={() => {
-                if (checkPermission) {
-                  uploadTheAnswer(
-                    {
-                      checkID: videoID,
-                      accuracy: score,
-                      answer: JSON.stringify(selectedOptions),
-                    },
-                    false
-                  );
-                  if (score === 100) {
-                    navigate("/basic", { replace: true });
-                  }
-                } else {
+                if (answerCount < 2) {
                   navigate("/basic", { replace: true });
+                } else {
+                  if (checkPermission) {
+                    uploadTheAnswer(
+                      {
+                        checkID: videoID,
+                        accuracy: score,
+                        answer: JSON.stringify(selectedOptions),
+                      },
+                      false
+                    );
+                    if (score === 100) {
+                      navigate("/basic", { replace: true });
+                    }
+                  } else {
+                    handleCloseScoreModal();
+                  }
                 }
               }}
             >
