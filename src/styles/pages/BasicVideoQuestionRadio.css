@@ -1,4 +1,4 @@
-input[type='radio'] {
+.form-check-input[type=radio] {
     width: 20px;
     height: 20px;
     border-radius: 50%;
