@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -11,22 +11,22 @@ import {
   Modal,
   Row,
   Stack,
-} from 'react-bootstrap';
-import { toast } from 'react-toastify';
-import { RiAlertFill } from 'react-icons/ri';
-import { GoCheckCircleFill } from 'react-icons/go';
-import { RxCrossCircled } from 'react-icons/rx';
-import jsSHA from 'jssha';
+} from "react-bootstrap";
+import { toast } from "react-toastify";
+import { RiAlertFill } from "react-icons/ri";
+import { GoCheckCircleFill } from "react-icons/go";
+import { RxCrossCircled } from "react-icons/rx";
+import jsSHA from "jssha";
 
-import PageTitleHeading from '../../components/PageTitleHeading';
-import ToastAlert from '../../components/ToastAlert';
-import useModal from '../../js/useModal';
-import { post } from '../axios';
-import { clearUserSession } from '../../js/userAction';
-import styles from '../../styles/Form/ClientBasicVideoQuestionPage.module.scss';
+import PageTitleHeading from "../../components/PageTitleHeading";
+import ToastAlert from "../../components/ToastAlert";
+import useModal from "../../js/useModal";
+import { post } from "../axios";
+import { clearUserSession } from "../../js/userAction";
+import styles from "../../styles/Form/ClientBasicVideoQuestionPage.module.scss";
 
 export default function BasicVideoQuestionPage({ user }) {
-  const checkPermission = user.permission === 'ylhClient';
+  const checkPermission = user.permission === "ylhClient";
 
   const location = useLocation();
 
@@ -73,12 +73,12 @@ export default function BasicVideoQuestionPage({ user }) {
         handleCloseScoreModal();
       }
     } catch (error) {
-      if (error.response.data.error === 'Token expired') {
-        alert('登入逾時，請重新登入！');
+      if (error.response.data.error === "Token expired") {
+        alert("登入逾時，請重新登入！");
         clearUserSession();
-        navigate('/', { replace: true });
+        navigate("/", { replace: true });
       } else {
-        toast.error('上傳紀錄失敗，請稍後再試', {
+        toast.error("上傳紀錄失敗，請稍後再試", {
           autoClose: 3000,
         });
         setTimeout(() => {
@@ -173,9 +173,9 @@ export default function BasicVideoQuestionPage({ user }) {
   };
 
   const hashTheKeyText = (keyText) => {
-    const shaObj = new jsSHA('SHA-256', 'TEXT');
+    const shaObj = new jsSHA("SHA-256", "TEXT");
     shaObj.update(keyText);
-    const hash = shaObj.getHash('HEX');
+    const hash = shaObj.getHash("HEX");
     return hash;
   };
 
@@ -206,13 +206,13 @@ export default function BasicVideoQuestionPage({ user }) {
   const renderIcon = (index) => {
     const info = currentInfo[index];
     if (info.haveAnswered === false) {
-      return <RiAlertFill className='text-warning m-0 me-2 h3' />;
+      return <RiAlertFill className="text-warning m-0 me-2 h3" />;
     }
     if (info.isDisableTheOption) {
-      return <GoCheckCircleFill className='text-success m-0 me-2 h3' />;
+      return <GoCheckCircleFill className="text-success m-0 me-2 h3" />;
     }
     if (info.isDisableTheOption === false && haveFirstSubmit === true) {
-      return <RxCrossCircled className='text-danger m-0 me-2 h3' />;
+      return <RxCrossCircled className="text-danger m-0 me-2 h3" />;
     }
     return null;
   };
@@ -236,22 +236,22 @@ export default function BasicVideoQuestionPage({ user }) {
 
   return (
     <>
-      <PageTitleHeading text='基礎練習題目測驗' styleOptions={4} />
-      <Container className='pb-5'>
+      <PageTitleHeading text="基礎練習題目測驗" styleOptions={4} />
+      <Container className="pb-5">
         <Form noValidate onSubmit={handleSubmit}>
           {shuffledInfo.map((question, index) => {
             return (
               <Card
                 key={`card-${question.basic_id}`}
-                className='mb-2'
+                className="mb-2"
                 border={
-                  currentInfo[index].isDisableTheOption ? 'success' : 'danger'
+                  currentInfo[index].isDisableTheOption ? "success" : "danger"
                 }
               >
                 <Card.Header>
-                  <Card.Title className='m-0'>
+                  <Card.Title className="m-0">
                     {renderIcon(index)}
-                    <b className='me-2'>({index + 1})</b>
+                    <b className="me-2">({index + 1})</b>
                     {question.video_question}
                   </Card.Title>
                 </Card.Header>
@@ -262,14 +262,14 @@ export default function BasicVideoQuestionPage({ user }) {
                       return (
                         <Col
                           md={6}
-                          as='label'
+                          as="label"
                           key={`label-${key}`}
                           htmlFor={`basic${question.basic_id}${index2}`}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: "pointer" }}
                           className={styles.labelOption}
                         >
                           <Form.Check
-                            type='radio'
+                            type="radio"
                             label={question.choice[key][0]}
                             name={`basic${question.basic_id}`}
                             key={question.choice[key][0]}
@@ -282,19 +282,23 @@ export default function BasicVideoQuestionPage({ user }) {
                               )
                             }
                             disabled={currentInfo[index].isDisableTheOption}
+                            style={{
+                              borderColor: "black",
+                              borderWidth: "2px",
+                            }}
                             required
                           />
                           {question.choice[key][2] && (
-                            <div className='d-flex justify-content-center'>
+                            <div className="d-flex justify-content-center">
                               <Image
                                 src={`${question.choice[key][2]}`}
                                 alt={`basic${question.basic_id}${index2}`}
                                 rounded
                                 fluid
-                                className='mt-3'
+                                className="mt-3"
                                 style={{
-                                  maxHeight: '200px',
-                                  cursor: 'pointer',
+                                  maxHeight: "200px",
+                                  cursor: "pointer",
                                 }}
                               />
                             </div>
@@ -305,27 +309,29 @@ export default function BasicVideoQuestionPage({ user }) {
                   </Row>
                   {
                     // 若錯誤次數達到2次，顯示正確答案
-                    answerCount >= 2 && currentInfo[index].isDisableTheOption === false && (
-                      <Row>
-                        <Col>
-                          {
-                            (() => {
-                              const correctAnswerKey = Object.keys(question.choice).find(key => question.choice[key][1] === 1);
+                    answerCount >= 2 &&
+                      currentInfo[index].isDisableTheOption === false && (
+                        <Row>
+                          <Col>
+                            {(() => {
+                              const correctAnswerKey = Object.keys(
+                                question.choice
+                              ).find((key) => question.choice[key][1] === 1);
                               if (correctAnswerKey) {
                                 return (
                                   <p
                                     key={`correct-answer-${correctAnswerKey}`}
-                                    className='text-success m-0 fs-5'
+                                    className="text-success m-0 fs-5"
                                   >
-                                    正確答案為：{question.choice[correctAnswerKey][0]}
+                                    正確答案為：
+                                    {question.choice[correctAnswerKey][0]}
                                   </p>
                                 );
                               }
-                            })()
-                          }
-                        </Col>
-                      </Row>
-                    )
+                            })()}
+                          </Col>
+                        </Row>
+                      )
                   }
                 </CardBody>
               </Card>
@@ -334,21 +340,21 @@ export default function BasicVideoQuestionPage({ user }) {
           <Stack gap={1}>
             {score < 100 && answerCount < 2 ? (
               <Button
-                variant='danger'
-                type='submit'
-                size='md'
-                className='fixed-bottom'
+                variant="danger"
+                type="submit"
+                size="md"
+                className="fixed-bottom"
               >
                 送出答案
               </Button>
             ) : (
               <Button
-                variant='secondary'
-                type='button'
-                size='md'
-                className='fixed-bottom'
+                variant="secondary"
+                type="button"
+                size="md"
+                className="fixed-bottom"
                 onClick={() => {
-                  navigate('/basic', { replace: true });
+                  navigate("/basic", { replace: true });
                 }}
               >
                 回到基礎練習
@@ -379,20 +385,20 @@ export default function BasicVideoQuestionPage({ user }) {
           <Modal.Title>本次基礎練習結果</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h3 className={score >= 100 ? 'text-success' : 'text-danger'}>
+          <h3 className={score >= 100 ? "text-success" : "text-danger"}>
             {`本次分數為: ${score}分`}
             {score >= 100 && (
               <>
                 <br />
-                <b className='text-success'>你很棒喔，恭喜拿到滿分！</b>
+                <b className="text-success">你很棒喔，恭喜拿到滿分！</b>
               </>
             )}
           </h3>
           <p>
             {score < 100
               ? answerCount < 2
-                ? '是否要再重新練習看看呢？'
-                : '下次再努力，你一定可以拿到滿分的分數！'
+                ? "是否要再重新練習看看呢？"
+                : "下次再努力，你一定可以拿到滿分的分數！"
               : null}
           </p>
         </Modal.Body>
@@ -400,7 +406,7 @@ export default function BasicVideoQuestionPage({ user }) {
           <Stack gap={3}>
             {score < 100 && answerCount < 2 && (
               <Button
-                variant='outline-primary'
+                variant="outline-primary"
                 onClick={() => {
                   if (checkPermission) {
                     const data = {
@@ -418,7 +424,7 @@ export default function BasicVideoQuestionPage({ user }) {
               </Button>
             )}
             <Button
-              variant='outline-secondary'
+              variant="outline-secondary"
               onClick={() => {
                 if (checkPermission) {
                   uploadTheAnswer(
@@ -430,10 +436,10 @@ export default function BasicVideoQuestionPage({ user }) {
                     false
                   );
                   if (score === 100) {
-                    navigate('/basic', { replace: true });
+                    navigate("/basic", { replace: true });
                   }
                 } else {
-                  navigate('/basic', { replace: true });
+                  navigate("/basic", { replace: true });
                 }
               }}
             >
@@ -447,13 +453,13 @@ export default function BasicVideoQuestionPage({ user }) {
           <Modal.Title>尚有未完成的題目</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className='h3 text-danger'>請確認題目欄位是否有警告標誌</p>
-          <p className='h4'>請依照出現警告標誌進行作答</p>
+          <p className="h3 text-danger">請確認題目欄位是否有警告標誌</p>
+          <p className="h4">請依照出現警告標誌進行作答</p>
         </Modal.Body>
         <Modal.Footer>
           <Stack gap={1}>
             <Button
-              variant='outline-secondary'
+              variant="outline-secondary"
               onClick={handleCloseNotFinishModal}
             >
               確認
