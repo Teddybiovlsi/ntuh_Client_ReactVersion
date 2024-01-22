@@ -357,7 +357,7 @@ export default function Home({ user }) {
               onClick={handleShowLearnStatusModal}
             >
               <p className="text-center fs-5">
-                <FaBookReader className="fs-1" />
+                <FaBookReader />
                 學習狀態
               </p>
             </Button>
