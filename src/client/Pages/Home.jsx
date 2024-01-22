@@ -433,7 +433,7 @@ export default function Home({ user }) {
           <Modal.Title>學習狀態</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {loading === false && checkIsClient && (
+          {loading === false && checkIsClient ? (
             <Container>
               <Row>
                 <Col>
@@ -448,6 +448,8 @@ export default function Home({ user }) {
                 </Col>
               </Row>
             </Container>
+          ) : (
+            <p>用戶資訊載入中</p>
           )}
         </Modal.Body>
       </Modal>
