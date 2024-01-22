@@ -18,6 +18,7 @@ import {
   BsFillQuestionCircleFill,
 } from "react-icons/bs";
 import { AiFillSetting, AiTwotoneReconciliation } from "react-icons/ai";
+import { FaBookReader } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { get } from "../axios";
 import useModal from "../../js/useModal";
@@ -109,6 +110,12 @@ export default function Home({ user }) {
     handleShowChoseRecordModal,
   ] = useModal();
 
+  const [
+    showLearnStatusModal,
+    handleCloseLearnStatusModal,
+    handleShowLearnStatusModal,
+  ] = useModal();
+
   const [loading, setLoading] = useState(checkIsClient ? true : false);
   const [error, setError] = useState(null);
   const [usrInfo, setUsrInfo] = useState();
@@ -162,7 +169,7 @@ export default function Home({ user }) {
   return (
     <>
       <Container className="mt-3">
-        {checkIsClient && (
+        {/* {checkIsClient && (
           <Row>
             <h3 className="text-primary">個人資訊</h3>
           </Row>
@@ -244,7 +251,7 @@ export default function Home({ user }) {
               <Card.Text>用戶資訊載入中</Card.Text>
             </Card.Body>
           )
-        )}
+        )} */}
       </Container>
       <Container className="pb-4 my-4">
         <Card className={`py-4 ${styles.container_CardContainer}`}>
@@ -342,10 +349,24 @@ export default function Home({ user }) {
                 </Link>
               </Col>
             )}
+            {permission === "ylhClient" && (
+              <Col md={12} sm={12} xs={12} className="text-center  my-3">
+                <Link
+                  type="button"
+                  className={styles.recordContainer}
+                  onClick={handleShowLearnStatusModal}
+                >
+                  <Row>
+                    <FaBookReader className="fs-1" />
+                    <p className="text-center fs-5">學習狀態</p>
+                  </Row>
+                </Link>
+              </Col>
+            )}
           </Row>
         </Card>
       </Container>
-      {/*  */}
+      {/* 選擇衛教影音類型：基礎／練習／測驗 */}
       <Modal show={showChoseVideoModal} onHide={handleCloseChoseVideoModal}>
         <Modal.Header closeButton>
           <Modal.Title>請選擇欲觀看類型</Modal.Title>
@@ -408,6 +429,12 @@ export default function Home({ user }) {
             </Link>
           </div>
         </Modal.Body>
+      </Modal>
+      {/* 學習狀態Modal */}
+      <Modal show={showLearnStatusModal} onHide={handleCloseLearnStatusModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>學習狀態</Modal.Title>
+        </Modal.Header>
       </Modal>
     </>
   );
