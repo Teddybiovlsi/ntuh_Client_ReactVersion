@@ -356,7 +356,7 @@ export default function Home({ user }) {
               className={styles.learnStatusContainer}
               onClick={handleShowLearnStatusModal}
             >
-              <p className="text-center fs-5">
+              <p className="text-center fs-3 m-0">
                 <FaBookReader />
                 學習狀態
               </p>
