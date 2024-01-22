@@ -139,8 +139,7 @@ export default function Home({ user }) {
     } catch (err) {
       if (err.response) {
         const { status, data } = err.response;
-        console.log(status, data);
-        if (status === 404 && data.message === "請求錯誤") {
+        if (status === 401 && data.message === "請求錯誤") {
           handleSessionTimeout();
         } else {
           setError(data.message);
