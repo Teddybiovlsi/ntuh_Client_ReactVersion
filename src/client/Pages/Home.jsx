@@ -349,19 +349,17 @@ export default function Home({ user }) {
                 </Link>
               </Col>
             )}
-            {permission === "ylhClient" && (
-              <Col md={12} sm={12} xs={12} className="text-center  my-3">
-                <Button
-                  variant="outline-primary"
-                  className={styles.learnStatusContainer}
-                  onClick={handleShowLearnStatusModal}
-                >
-                  <FaBookReader className="fs-1" />
-                  <p className="text-center fs-5">學習狀態</p>
-                </Button>
-              </Col>
-            )}
           </Row>
+          {permission === "ylhClient" && (
+            <Button
+              variant="outline-primary"
+              className={styles.learnStatusContainer}
+              onClick={handleShowLearnStatusModal}
+            >
+              <FaBookReader className="fs-1" />
+              <p className="text-center fs-5">學習狀態</p>
+            </Button>
+          )}
         </Card>
       </Container>
       {/* 選擇衛教影音類型：基礎／練習／測驗 */}
