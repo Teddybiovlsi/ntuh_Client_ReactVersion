@@ -441,6 +441,8 @@ export default function Home({ user }) {
                   <h5>瀏覽影片次數</h5>
                   <p>{usrInfo.TotalWatchCount}次</p>
                 </Col>
+              </Row>
+              <Row>
                 <Col>
                   <h5>瀏覽影片時間</h5>
                   <p>{handleConvertTime(usrInfo.TotalWatchTime)}</p>
