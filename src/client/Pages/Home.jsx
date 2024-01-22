@@ -356,8 +356,10 @@ export default function Home({ user }) {
               className={styles.learnStatusContainer}
               onClick={handleShowLearnStatusModal}
             >
-              <FaBookReader className="fs-1" />
-              <p className="text-center fs-5">學習狀態</p>
+              <p className="text-center fs-5">
+                <FaBookReader className="fs-1" />
+                學習狀態
+              </p>
             </Button>
           )}
         </Card>
