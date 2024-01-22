@@ -434,18 +434,20 @@ export default function Home({ user }) {
           <Modal.Title>學習狀態</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Container>
-            <Row>
-              <Col>
-                <h5>瀏覽影片次數</h5>
-                <p>{usrInfo.TotalWatchCount}次</p>
-              </Col>
-              <Col>
-                <h5>瀏覽影片時間</h5>
-                <p>{handleConvertTime(usrInfo.TotalWatchTime)}</p>
-              </Col>
-            </Row>
-          </Container>
+          {loading === false && checkIsClient && (
+            <Container>
+              <Row>
+                <Col>
+                  <h5>瀏覽影片次數</h5>
+                  <p>{usrInfo.TotalWatchCount}次</p>
+                </Col>
+                <Col>
+                  <h5>瀏覽影片時間</h5>
+                  <p>{handleConvertTime(usrInfo.TotalWatchTime)}</p>
+                </Col>
+              </Row>
+            </Container>
+          )}
         </Modal.Body>
       </Modal>
     </>
