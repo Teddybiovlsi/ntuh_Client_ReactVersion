@@ -1,4 +1,5 @@
-# 台大衛教系統 React版本
+# 台大衛教系統 React 版本
+
 - 衛教系統一共分成兩大項：
   - 使用者模式
   - 訪客模式
@@ -6,26 +7,30 @@
 ## 訪客模式
 
 ### 訪客模式將會有以下限制：
+
 1. 無觀看紀錄
 2. 無基礎練習／練習／測驗紀錄
 3. 無更改設定功能
 
 ### 訪客模式流程
+
 1. 透過訪客登入
-2. Laravel API進行溝通取得臨時權杖(Token)
+2. Laravel API 進行溝通取得臨時權杖(Token)
 3. 進入首頁中進行部分限制操作
 
 ## 使用者模式
+
 ### 使用者模式功能：
+
 1. 可完整存取管理人員已勾選各類型(基礎練習/練習/測驗)影片與測驗題目
 2. 可設定用戶名、變更密碼與變更信箱
-3. 忘記密碼時，可透過忘記密碼功能透過信箱取回OTP密碼
+3. 忘記密碼時，可透過忘記密碼功能透過信箱取回 OTP 密碼
 
 ### 使用者模式流程
+
 1. 透過輸入帳號(病歷號)、密碼進行使用者登入
-2. Laravel API進行溝通取得權杖(若有按下記住我，則會依照權杖揮發日期進行確認)
+2. Laravel API 進行溝通取得權杖(若有按下記住我，則會依照權杖揮發日期進行確認)
 3. 進行使用者登入操作
-   
 
 ## 專案解說：
 
@@ -50,12 +55,12 @@
       - **[VideoList.jsx](./src/client/Pages/VideoList.jsx):** 客戶端影片列表頁面
       - **[VideoPlayer.jsx](./src/client/Pages/VideoPlayer.jsx):** 客戶端影片播放元件
   - **[components](./src/components/):** 整個專案頻繁調用的元件庫
-  - **[js](./src/js/):** 整個專案頻繁調用功能如:轉換時間、API調用、Modal視窗Hook
+  - **[js](./src/js/):** 整個專案頻繁調用功能如:轉換時間、API 調用、Modal 視窗 Hook
   - **[styles](./src/styles/):** 整個專案的樣式庫
   - **[App.jsx](./src/App.jsx):** 路由、未更改密碼提醒功能
-  - **[AuthProtected.jsx](./src/AuthProtected.jsx)** 路由保護，用於確認使用者LocalStorage或SessionStorage當中是否存在用戶資料
-  - **[‎PermissionProtected.jsx](./src/‎PermissionProtected.jsx)** 權限保護，避免訪客模式惡意嘗試無訪問權限路由
-  - **[‎RewritePasswordProtected.jsx](./src/‎RewritePasswordProtected.jsx)** OTP更改密碼保護，避免使用者在未輸入OTP認證碼情況下，惡意轉向修改密碼路由
+  - **[AuthProtected.jsx](./src/AuthProtected.jsx)** 路由保護，用於確認使用者 LocalStorage 或 SessionStorage 當中是否存在用戶資料
+  - **[PermissionProtected.jsx](./src/PermissionProtected.jsx)** 權限保護，避免訪客模式惡意嘗試無訪問權限路由
+  - **[RewritePasswordProtected.jsx](./src/RewritePasswordProtected.jsx)** OTP 更改密碼保護，避免使用者在未輸入 OTP 認證碼情況下，惡意轉向修改密碼路由
   - **[main.jsx](./src/main.jsx):** [主頁](./index.html)所調用的 React 檔案，**此專案底下使用嚴謹模式**
 
 ## 專案注意事項：
@@ -87,8 +92,9 @@ npm run dev
 ## 製作團隊
 
 本台大衛教系統係由 Dr.H.Group 研究團隊進行研發。<br>
-v1.0.0研發成員為：**顏銘德、高彬軒**<br>
+v1.0.0 研發成員為：**顏銘德、高彬軒**<br>
 本專案託管由：顏銘德負責，聯絡資訊：M11113005@yuntech.edu.tw
 
 ## 版本資訊
+
 主要版本號：1.0.0<br>
