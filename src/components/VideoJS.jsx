@@ -150,7 +150,10 @@ export const VideoJS = (props) => {
         }
       }
 
+      console.log("correctAnswer", correctAnswer);
+
       if (chosenAnswer === "noAnswer") {
+        setAnswer(correctAnswer);
         if (wrongAnswerCount < 2) {
           const data = {
             token: user.client_token,
@@ -175,7 +178,6 @@ export const VideoJS = (props) => {
           };
 
           uploadTheAnswer(data);
-          setAnswer(correctAnswer);
         }
 
         setShouldReset(true);
