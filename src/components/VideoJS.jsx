@@ -126,6 +126,7 @@ export const VideoJS = (props) => {
     // console.log("optionChecked", optionChecked);
     // 如果為警告訊息，則直接接續撥放影片
     if (info[tempQuestionNum - 1].video_is_question === 0) {
+      console.log("info[tempQuestionNum - 1].video_is_question", 0);
       const data = {
         token: user.client_token,
         videoID: videoID,
@@ -153,6 +154,7 @@ export const VideoJS = (props) => {
       console.log("correctAnswer", correctAnswer);
 
       if (chosenAnswer === "noAnswer") {
+        console.log("noAnswer");
         setAnswer(correctAnswer);
         if (wrongAnswerCount < 2) {
           const data = {
