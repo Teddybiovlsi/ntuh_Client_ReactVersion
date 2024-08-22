@@ -175,6 +175,7 @@ export const VideoJS = (props) => {
           };
 
           uploadTheAnswer(data);
+          setAnswer(correctAnswer);
         }
 
         setShouldReset(true);
