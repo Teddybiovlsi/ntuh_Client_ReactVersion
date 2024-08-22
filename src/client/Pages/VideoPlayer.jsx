@@ -32,7 +32,7 @@ export default function VideoPlayer() {
     // playbackRates: [0.5, 1, 1.5, 2],
     responsive: true,
     fluid: true,
-    muted: true,
+    muted: false,
     sources: [
       {
         src: videoPath,

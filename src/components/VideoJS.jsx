@@ -117,7 +117,7 @@ export const VideoJS = (props) => {
 
     let chosenAnswer = answer || optionChecked || "noAnswer";
 
-    console.log("chosenAnswer", chosenAnswer);
+    // console.log("chosenAnswer", chosenAnswer);
 
     // console.log("chosenAnswer is", chosenAnswer);
 
@@ -126,7 +126,7 @@ export const VideoJS = (props) => {
     // console.log("optionChecked", optionChecked);
     // 如果為警告訊息，則直接接續撥放影片
     if (info[tempQuestionNum - 1].video_is_question === 0) {
-      console.log("info[tempQuestionNum - 1].video_is_question", 0);
+      // console.log("info[tempQuestionNum - 1].video_is_question", 0);
       const data = {
         token: user.client_token,
         videoID: videoID,
@@ -151,7 +151,7 @@ export const VideoJS = (props) => {
         }
       }
 
-      console.log("correctAnswer", correctAnswer);
+      // console.log("correctAnswer", correctAnswer);
 
       if (chosenAnswer === "noAnswer") {
         console.log("noAnswer");
@@ -186,7 +186,7 @@ export const VideoJS = (props) => {
         setWrongAnswerCount((wrongAnswerCount) => wrongAnswerCount + 1);
         setWrongModal(true);
       } else {
-        console.log("correctAnswer", correctAnswer);
+        // console.log("correctAnswer", correctAnswer);
 
         if (optionChecked === correctAnswer) {
           setAnswerState([
