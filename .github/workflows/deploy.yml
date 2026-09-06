@@ -37,6 +37,22 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      # secret 若未設定，建置仍會成功但產出的版本不帶 Authorization header，
+      # 屬於難以察覺的靜默失敗，因此在建置前先明確檢查。
+      - name: Verify required secrets
+        env:
+          VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
+        run: |
+          if [ -z "$VITE_API_BASIC_AUTH" ]; then
+            echo "::error::缺少 secret VITE_API_BASIC_AUTH。"
+            echo "::error::請至 Settings -> Secrets and variables -> Actions -> Repository secrets 新增，格式為 帳號:密碼（勿自行 base64）。"
+            exit 1
+          fi
+          case "$VITE_API_BASIC_AUTH" in
+            *:*) : ;;
+            *) echo "::error::VITE_API_BASIC_AUTH 格式錯誤，應為 帳號:密碼"; exit 1 ;;
+          esac
+          echo "secret 檢查通過"
       - name: Build
         run: npm run build
         env:
@@ -45,6 +61,18 @@ jobs:
           # 使用 secrets 只是避免值出現在原始碼與版本歷史中。
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
+      # 確認憑證真的被編進 bundle。secret 為空時 Vite 會把該分支消除，
+      # 建置仍會成功，因此必須檢查產物而非僅檢查環境變數。
+      - name: Verify bundle contains auth header
+        env:
+          VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
+        run: |
+          if ! grep -rqF "$VITE_API_BASIC_AUTH" dist/assets/*.js; then
+            echo "::error::建置產物中找不到 API 憑證，Authorization header 不會送出。"
+            echo "::error::請確認 secret VITE_API_BASIC_AUTH 已正確設定。"
+            exit 1
+          fi
+          echo "bundle 驗證通過：憑證已編入，Authorization header 會正常送出"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
