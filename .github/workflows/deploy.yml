@@ -39,6 +39,12 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+        env:
+          # 於 repo Settings -> Secrets and variables -> Actions 設定。
+          # 注意：Vite 會把這些值內嵌進輸出的 JS，瀏覽器端仍可見，
+          # 使用 secrets 只是避免值出現在原始碼與版本歷史中。
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
