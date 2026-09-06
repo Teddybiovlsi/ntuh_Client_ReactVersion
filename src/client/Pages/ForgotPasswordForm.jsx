@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container } from "react-bootstrap";
 import { post } from "../axios";
+import { getErrorMessage } from "../../js/api";
 import ForgotPasswordSendEmailForm from "../Form/ForgotPasswordSendEmailForm";
 import ForgotPasswordSendVerifyCodeForm from "../Form/ForgotPasswordSendVerifyCodeForm";
 import PageTitleHeading from "../../components/PageTitleHeading";
@@ -55,7 +56,7 @@ export default function ForgotPasswordForm() {
     try {
       const response = await post(`visitor/findAccount`, userToRewrite);
     } catch (error) {
-      const errorMessage = error.response.data.error;
+      const errorMessage = getErrorMessage(error);
       let alertMessage = ERROR_MESSAGES.GENERAL_ERROR;
       console.log(error);
 
@@ -80,7 +81,7 @@ export default function ForgotPasswordForm() {
         state: { verifyCode: verifyCode, user: initUserValues },
       });
     } catch (error) {
-      const errorMessage = error.response.data.error;
+      const errorMessage = getErrorMessage(error);
       let alertMessage = ERROR_MESSAGES.GENERAL_ERROR;
 
       console.log(error);

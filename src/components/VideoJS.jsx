@@ -9,6 +9,7 @@ import {
   Row,
   Stack,
 } from "react-bootstrap";
+import useFullscreenExitHandler from "../js/useFullscreenExitHandler";
 import BtnBootstrap from "./BtnBootstrap";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
@@ -64,7 +65,7 @@ export const VideoJS = (props) => {
         console.log("上傳成功");
         console.log(response.data);
       } catch (error) {
-        if (error.response.data.error === "Token expired") {
+        if (error.response?.data?.error === "Token expired") {
           alert("登入逾時，請重新登入！");
           clearUserSession();
           navigate("/", { replace: true });
@@ -209,8 +210,6 @@ export const VideoJS = (props) => {
           };
 
           uploadTheAnswer(data);
-
-          console.log("data", data);
 
           setCorrectModal(true);
         } else {
@@ -453,6 +452,10 @@ export const VideoJS = (props) => {
     const player = playerRef.current;
 
     return () => {
+      // 清除倒數計時器，避免元件卸載後仍持續呼叫 setState
+      clearInterval(countDownIntervalId.current);
+      clearTimeout(timeoutId.current);
+
       if (player && !player.isDisposed()) {
         player.dispose();
         playerRef.current = null;
@@ -481,7 +484,7 @@ export const VideoJS = (props) => {
         ...answerState,
         {
           token: user.client_token,
-          videoID: VideoID,
+          videoID: videoID,
           quizID: [shuffledInfo.quiz_id],
           answerStatus: [false],
           already_watch_time: haveWatchedTime,
@@ -491,29 +494,8 @@ export const VideoJS = (props) => {
     }
   }, [sendstate]);
 
-  document.addEventListener("fullscreenchange", exitHandler);
-  document.addEventListener("webkitfullscreenchange", exitHandler);
-  document.addEventListener("mozfullscreenchange", exitHandler);
-  document.addEventListener("MSFullscreenChange", exitHandler);
-  // 離開全螢幕時，將icon轉換成進入全螢幕的icon，透過classList的replace方法
-  function exitHandler() {
-    if (
-      !document.fullscreenElement &&
-      !document.webkitIsFullScreen &&
-      !document.mozFullScreen &&
-      !document.msFullscreenElement
-    ) {
-      document
-        .getElementById("fullscreenBtn")
-        .classList.replace(
-          "vjs-icon-fullscreen-exit",
-          "vjs-icon-fullscreen-enter"
-        );
-      document
-        .getElementById("video-container_Container_player")
-        .classList.remove("fullscreen");
-    }
-  }
+  // 離開全螢幕時把 icon 換回「進入全螢幕」樣式（監聽器會在卸載時自動移除）
+  useFullscreenExitHandler();
 
   return (
     <div id="video-container">

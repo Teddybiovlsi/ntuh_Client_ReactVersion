@@ -40,14 +40,6 @@ export default function App() {
   const [PWDModal, handleClosePWDModal, handleOpenPWDModal] = useModal();
 
   useEffect(() => {
-    var allCookies = document.cookie.split(";");
-    for (var i = 0; i < allCookies.length; i++) {
-      document.cookie =
-        allCookies[i] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    }
-  }, [location]);
-
-  useEffect(() => {
     if (user === null) return;
     const lastChangedDate = new Date(user.client_password_last_changed_date);
     const now = new Date();

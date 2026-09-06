@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BasicVideoJS from "../../components/BasicVideoJS";
 import LoadingComponent from "../../components/LoadingComponent";
-import { post } from "../axios";
 import "video.js/dist/video-js.css";
 
 import PageTitleHeading from "../../components/PageTitleHeading";
 import "../../components/videoqa.css";
-import { postViewCount } from "../../js/api";
+import { postViewCount, getErrorMessage } from "../../js/api";
 import { Container } from "react-bootstrap";
 
 export default function BasicVideoPlayer({ user }) {
@@ -26,20 +25,15 @@ export default function BasicVideoPlayer({ user }) {
     latestWatchTime = 0,
   } = location?.state || {};
 
+  const [loading, setLoading] = useState(true);
+
   // 使用 useEffect 鉤子來在 location.state 為 null 或 undefined 時顯示警告並導航到首頁
   useEffect(() => {
     if (!location.state) {
       alert("請先選擇影片！");
-      navigate("/");
+      navigate("/", { replace: true });
     }
-  }, [location.state]);
-
-  // 如果 location.state 為 null 或 undefined，則不渲染任何內容
-  if (!location.state) {
-    return null;
-  }
-
-  const [loading, setLoading] = useState(true);
+  }, [location.state, navigate]);
 
   const videoJsOptions = {
     controls: true,
@@ -58,15 +52,15 @@ export default function BasicVideoPlayer({ user }) {
   };
 
   useEffect(() => {
+    if (!location.state) return;
+
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const permission = user.permission;
-        const token = user.client_token || user.guestInfo;
-        const reponse = await postViewCount(permission, token, videoID);
+        const permission = user?.permission;
+        const token = user?.client_token || user?.guestInfo;
+        await postViewCount(permission, token, videoID);
       } catch (error) {
-        console.log(error);
-        alert("影片發生錯誤，請稍後再試");
+        alert(getErrorMessage(error, "影片發生錯誤，請稍後再試"));
         navigate("/Home", { replace: true });
       } finally {
         setLoading(false);
@@ -75,6 +69,11 @@ export default function BasicVideoPlayer({ user }) {
 
     fetchData();
   }, []);
+
+  // 所有 hook 都已呼叫完畢後才做早退判斷，以符合 Hooks 規則
+  if (!location.state) {
+    return null;
+  }
 
   if (loading)
     return <LoadingComponent text="載入中..." title="基礎練習用衛教資訊" />;

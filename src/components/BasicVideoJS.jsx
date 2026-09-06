@@ -6,6 +6,7 @@ import { getUserSession } from "../js/userAction";
 import "video.js/dist/video-js.css";
 import "./videoqa.css";
 import { postViewTime } from "../js/api";
+import useFullscreenExitHandler from "../js/useFullscreenExitHandler";
 
 export const BasicVideoJS = (props) => {
   const user = getUserSession();
@@ -19,6 +20,8 @@ export const BasicVideoJS = (props) => {
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
+  // 以 ref 保存上傳計時器，讓卸載時的 cleanup 也能清除它
+  const intervalUploadRef = useRef(null);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -131,7 +134,6 @@ export const BasicVideoJS = (props) => {
   useEffect(() => {
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
-      let intervalUpload = null;
 
       // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode.
       const videoElement = document.createElement("video-js");
@@ -166,12 +168,12 @@ export const BasicVideoJS = (props) => {
       });
       player.on("pause", () => {
         console.log("player is paused");
-        clearInterval(intervalUpload);
+        clearInterval(intervalUploadRef.current);
       });
 
       player.on("play", () => {
         // add the current playing time to the cookie after 5 intervals
-        intervalUpload = setInterval(() => {
+        intervalUploadRef.current = setInterval(() => {
           uploadTheCurrentTime(player.currentTime());
         }, 5000);
       });
@@ -232,6 +234,9 @@ export const BasicVideoJS = (props) => {
     const player = playerRef.current;
 
     return () => {
+      // 清除觀看時間上傳計時器，避免卸載後仍持續發送請求
+      clearInterval(intervalUploadRef.current);
+
       if (player && !player.isDisposed()) {
         player.dispose();
         playerRef.current = null;
@@ -239,29 +244,8 @@ export const BasicVideoJS = (props) => {
     };
   }, [playerRef]);
 
-  document.addEventListener("fullscreenchange", exitHandler);
-  document.addEventListener("webkitfullscreenchange", exitHandler);
-  document.addEventListener("mozfullscreenchange", exitHandler);
-  document.addEventListener("MSFullscreenChange", exitHandler);
-  // 離開全螢幕時，將icon轉換成進入全螢幕的icon，透過classList的replace方法
-  function exitHandler() {
-    if (
-      !document.fullscreenElement &&
-      !document.webkitIsFullScreen &&
-      !document.mozFullScreen &&
-      !document.msFullscreenElement
-    ) {
-      document
-        .getElementById("fullscreenBtn")
-        .classList.replace(
-          "vjs-icon-fullscreen-exit",
-          "vjs-icon-fullscreen-enter"
-        );
-      document
-        .getElementById("video-container_Container_player")
-        .classList.remove("fullscreen");
-    }
-  }
+  // 離開全螢幕時把 icon 換回「進入全螢幕」樣式（監聽器會在卸載時自動移除）
+  useFullscreenExitHandler();
 
   return (
     <div id="video-container">

@@ -74,7 +74,7 @@ export default function BasicVideoQuestionPage({ user }) {
         handleCloseScoreModal();
       }
     } catch (error) {
-      if (error.response.data.error === "Token expired") {
+      if (error.response?.data?.error === "Token expired") {
         alert("登入逾時，請重新登入！");
         clearUserSession();
         navigate("/", { replace: true });

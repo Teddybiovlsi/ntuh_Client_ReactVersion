@@ -13,6 +13,7 @@ import ToastAlert from "../../components/ToastAlert";
 import { post } from "../axios";
 import { toast } from "react-toastify";
 import { clearUserSession } from "../../js/userAction";
+import { getErrorMessage } from "../../js/api";
 
 const { Formik } = formik;
 
@@ -44,7 +45,6 @@ export default function RewritePasswordPage() {
   const rewritePasswordSubmit = async (userToRewrite) => {
     let clientSubmit = toast.loading("上傳資料中...");
     try {
-      console.log(userToRewrite);
       const res = await post(`visitor/renewPassword`, userToRewrite);
       toast.update(clientSubmit, {
         render: "密碼重設成功，3秒後將回到登入頁面",
@@ -57,15 +57,15 @@ export default function RewritePasswordPage() {
         navigate("/");
       }, 2000);
     } catch (error) {
-      const { status, data } = error.response;
-      console.log(data.error);
-      if (status === 404 && data.message === "請求錯誤") {
+      // 逾時 / 網路中斷時 error.response 為 undefined，需先取預設值再讀取
+      const { status, data } = error.response || {};
+      if (status === 404 && data?.message === "請求錯誤") {
         alert("登入逾時，請重新登入");
         clearUserSession();
         navigate("/");
       } else {
         toast.update(clientSubmit, {
-          render: data.message,
+          render: getErrorMessage(error),
           type: "error",
           autoClose: 2000,
           isLoading: false,

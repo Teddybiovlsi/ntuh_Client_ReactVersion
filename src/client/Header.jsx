@@ -39,8 +39,7 @@ export default function Header({ expand = "lg" }) {
             <img
               src={ImageOfYLHLogo}
               alt="台大醫院雲林分院衛教系統"
-              className={`d-inline-block align-top ${styles.logo}`}
-              fluid="true"
+              className={`d-inline-block align-top img-fluid ${styles.logo}`}
             />
           </Navbar.Brand>
         </LinkContainer>

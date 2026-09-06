@@ -10,6 +10,7 @@ import ToastAlert from "./ToastAlert";
 import { toast } from "react-toastify";
 import { post } from "../client/axios";
 import { getUserSession } from "../js/userAction";
+import useFullscreenExitHandler from "../js/useFullscreenExitHandler";
 
 export const ChapterVideoJS = (props) => {
   const user = getUserSession();
@@ -246,29 +247,8 @@ export const ChapterVideoJS = (props) => {
     }
   }, [sendstate]);
 
-  document.addEventListener("fullscreenchange", exitHandler);
-  document.addEventListener("webkitfullscreenchange", exitHandler);
-  document.addEventListener("mozfullscreenchange", exitHandler);
-  document.addEventListener("MSFullscreenChange", exitHandler);
-  // 離開全螢幕時，將icon轉換成進入全螢幕的icon，透過classList的replace方法
-  function exitHandler() {
-    if (
-      !document.fullscreenElement &&
-      !document.webkitIsFullScreen &&
-      !document.mozFullScreen &&
-      !document.msFullscreenElement
-    ) {
-      document
-        .getElementById("fullscreenBtn")
-        .classList.replace(
-          "vjs-icon-fullscreen-exit",
-          "vjs-icon-fullscreen-enter"
-        );
-      document
-        .getElementById("video-container_Container_player")
-        .classList.remove("fullscreen");
-    }
-  }
+  // 離開全螢幕時把 icon 換回「進入全螢幕」樣式（監聽器會在卸載時自動移除）
+  useFullscreenExitHandler();
 
   function handleSubmitAnswer() {
     let answer = "";
@@ -394,7 +374,7 @@ export const ChapterVideoJS = (props) => {
       }, 2000);
     } catch (err) {
       console.log("err", err);
-      console.log("err", err.response.data);
+
       toast.update(id, {
         render: "上傳失敗，請稍後再試",
         type: "error",

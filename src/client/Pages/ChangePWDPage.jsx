@@ -13,6 +13,7 @@ import useModal from "../../js/useModal";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { clearUserSession } from "../../js/userAction";
+import { getErrorMessage } from "../../js/api";
 import { post } from "../axios";
 
 const { Formik } = formik;
@@ -63,23 +64,24 @@ export default function ChangePWDPage({ user }) {
         navigate("/");
       }, 2000);
     } catch (err) {
-      console.log(err);
       if (err.response) {
-        console.log(err.response);
         const { status, data } = err.response;
 
         if (status === 404 && data.message === "請求錯誤") {
           handleSessionTimeout();
         } else {
-          toast.error(data.message, {
+          toast.error(getErrorMessage(err), {
             autoClose: 2000,
           });
         }
-        if (updateType === "password") setPassWordConfirmModalShow(false);
       } else {
-        // 處理非 API 回應的錯誤
-        // ...
+        // 逾時 / 網路中斷等沒有回應的錯誤
+        toast.error(getErrorMessage(err), {
+          autoClose: 2000,
+        });
       }
+
+      if (updateType === "password") handleClosePWDConfirmModal();
     }
   };
 

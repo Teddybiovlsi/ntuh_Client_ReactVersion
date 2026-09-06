@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { get } from "../axios";
+import { getErrorMessage } from "../../js/api";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import LoadingComponent from "../../components/LoadingComponent";
 import { AiFillLock } from "react-icons/ai";
@@ -114,7 +115,7 @@ export default function VideoList({
         setLoading(false);
       }, 2000);
     } catch (error) {
-      const errorMessage = error.response.data.message;
+      const errorMessage = getErrorMessage(error);
 
       if (errorMessage === "發生錯誤，請重新登入") {
         if (sessionStorage.getItem("user")) sessionStorage.clear();

@@ -11,12 +11,16 @@ export default function VideoOnlyPlayer({ user }) {
 
   const [loading, setLoading] = useState(true);
 
-  if (!location.state) {
-    alert("請先選擇影片！");
-    return <Navigate to="/" replace />;
-  }
+  // location.state 可能為 null，需給預設值，
+  // 且早退判斷必須放在所有 hook 之後（見檔案下方）
+  const { info, videoPath, videoID, latestWatchTime } = location.state || {};
 
-  const { info, videoPath, videoID, latestWatchTime } = location?.state;
+  // 在 effect 中提示並導頁，避免在 render 階段產生副作用
+  useEffect(() => {
+    if (!location.state) {
+      alert("請先選擇影片！");
+    }
+  }, [location.state]);
 
   const videoJsOptions = {
     controls: true,
@@ -60,8 +64,15 @@ export default function VideoOnlyPlayer({ user }) {
       }
     };
 
-    fetchData();
+    if (location.state) {
+      fetchData();
+    }
   }, []);
+
+  // 所有 hook 都已呼叫完畢後才做早退判斷，以符合 Hooks 規則
+  if (!location.state) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading)
     return <LoadingComponent text="載入中..." title="基礎練習用衛教資訊" />;

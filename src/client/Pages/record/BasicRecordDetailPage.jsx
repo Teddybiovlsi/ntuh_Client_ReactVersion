@@ -176,7 +176,10 @@ export default function BasicRecordDetailPage() {
               {recordProfile &&
                 recordProfile.map((recordProfile, index) => {
                   return (
-                    <Accordion.Item eventKey={recordProfile.questionContent}>
+                    <Accordion.Item
+                      key={recordProfile.questionContent ?? index}
+                      eventKey={recordProfile.questionContent}
+                    >
                       <Accordion.Header>
                         <b
                           className={

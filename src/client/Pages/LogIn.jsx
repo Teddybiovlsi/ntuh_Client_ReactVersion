@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Form, Col, Row, Stack } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { MdEmojiPeople } from "react-icons/md";
@@ -10,6 +10,7 @@ import BtnBootstrap from "../../components/BtnBootstrap";
 import ToastAlert from "../../components/ToastAlert";
 import { get, post } from "../axios";
 import { getUserSession, setUserSession } from "../../js/userAction";
+import { getErrorMessage } from "../../js/api";
 
 export default function LogIn() {
   let navigate = useNavigate();
@@ -26,14 +27,15 @@ export default function LogIn() {
 
   const [tempuser, setTempUser] = useState(null);
   const [validated, setValidated] = useState(false);
+  // 送出中旗標，避免重複點擊觸發多次登入請求
+  const [submitting, setSubmitting] = useState(false);
 
   const user = getUserSession();
 
   useEffect(() => {
-    if (!checkuserInfo) {
-      if (user.permission === "ylhClient") {
-        navigate("/Home");
-      }
+    // user 可能為 null，需先檢查再讀取 permission
+    if (!checkuserInfo && user?.permission === "ylhClient") {
+      navigate("/Home");
     }
   }, [checkuserInfo]);
 
@@ -61,15 +63,15 @@ export default function LogIn() {
    * @returns {Object} userInfo - 後端回傳的使用者資料。
    */
   const fetchaLoginData = async (data) => {
+    if (submitting) return;
+    setSubmitting(true);
+
     let clientSubmit = toast.loading("登入中...");
     try {
-      // console.log(data);
       const response = await post("client/login", data);
 
       const userInfo = response.data;
-      console.log(userInfo);
       setTempUser(userInfo);
-      // console.log(userInfo);
 
       toast.update(clientSubmit, {
         render: "登入成功，3秒後將回到當前頁面",
@@ -82,24 +84,14 @@ export default function LogIn() {
         navigate("/Home");
       }, 3000);
     } catch (error) {
-      // console.log(error.response.data);
-      // console.log(error.code);
-      if (error.code === "ECONNABORTED") {
-        toast.update(clientSubmit, {
-          render: "連線逾時，請稍後再試",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } else {
-        console.log(error.response.data);
-        toast.update(clientSubmit, {
-          render: `${error.response.data.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      }
+      // 逾時 / 網路中斷時 error.response 為 undefined，需統一處理
+      toast.update(clientSubmit, {
+        render: getErrorMessage(error, "登入失敗，請稍後再試"),
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      setSubmitting(false);
     }
   };
 
@@ -112,6 +104,9 @@ export default function LogIn() {
    * @returns {string} guestInfo.expires_in - 訪客臨時權杖的逾期時間。
    */
   const fetchGuestLoginData = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+
     try {
       const response = await get("guest/temporaryToken");
       const guestInfo = response.data;
@@ -119,8 +114,12 @@ export default function LogIn() {
       setUserSession(guestInfo, false);
       navigate("/Home");
     } catch (error) {
-      console.error(error);
-      throw error;
+      // 先前這裡直接 re-throw，但呼叫端沒有 catch，
+      // 導致訪客登入失敗時完全靜默、使用者毫無感知。
+      toast.error(getErrorMessage(error, "訪客登入失敗，請稍後再試"), {
+        autoClose: 3000,
+      });
+      setSubmitting(false);
     }
   };
 
@@ -131,9 +130,18 @@ export default function LogIn() {
     }
   }, [tempuser]);
 
-  if (!localStorage.getItem("user") || !sessionStorage.getItem("user")) {
-    return (
-      <Container>
+  // 使用者資料只會存在於 localStorage 或 sessionStorage 其中之一，
+  // 因此這裡必須用 && ：兩者皆無才代表未登入。
+  // （原本誤用 || 會恆為 true，導致已登入者仍看到登入表單）
+  const isLoggedOut =
+    !localStorage.getItem("user") && !sessionStorage.getItem("user");
+
+  if (!isLoggedOut) {
+    return <Navigate to="/Home" replace />;
+  }
+
+  return (
+    <Container>
         <h1 className="text-center">歡迎光臨衛教系統</h1>
         <p className="text-primary text-center fs-3">請登入</p>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -193,12 +201,14 @@ export default function LogIn() {
                 btnSize="md"
                 variant="outline-primary"
                 btnType="submit"
+                disabled={submitting}
                 text="登入"
               />
               <BtnBootstrap
                 btnSize="md"
                 variant="outline-secondary"
                 btnType="button"
+                disabled={submitting}
                 onClickEventName={() => {
                   fetchGuestLoginData();
                 }}
@@ -213,7 +223,6 @@ export default function LogIn() {
           </Row>
         </Form>
         <ToastAlert />
-      </Container>
-    );
-  }
+    </Container>
+  );
 }

@@ -20,6 +20,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FaLock } from "react-icons/fa";
 
 import { get } from "../axios";
+import { getErrorMessage } from "../../js/api";
 import BtnBootstrap from "../../components/BtnBootstrap";
 import LoadingComponent from "../../components/LoadingComponent";
 import PageTitleHeading from "../../components/PageTitleHeading";
@@ -130,7 +131,7 @@ export default function BasicVideoList({ loadingText = "資訊載入中", user }
         setLoading(false);
       }, 2000);
     } catch (error) {
-      const errorMessage = error.response.data.message;
+      const errorMessage = getErrorMessage(error);
       if (errorMessage === "發生錯誤，請重新登入") {
         clearUserSession();
 
