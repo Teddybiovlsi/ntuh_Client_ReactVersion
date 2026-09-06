@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "vite build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview",
     "watch": "npm-watch",
     "test": "vitest",
