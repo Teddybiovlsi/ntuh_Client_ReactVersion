@@ -84,6 +84,37 @@ npm run dev
 - **[package-lock.json]**
 - **[package.json]**
 
+## 環境變數設定
+
+API 位址與憑證由環境變數提供，不再寫死於程式碼中。
+
+### 本機開發
+
+複製 `.env.example` 為 `.env`（放在專案根目錄，與 `package.json` 同層）後填入實際值：
+
+```bash
+cp .env.example .env
+```
+
+| 變數 | 說明 |
+| --- | --- |
+| `VITE_API_BASE_URL` | 後端 API 位址，結尾需保留斜線 |
+| `VITE_API_BASIC_AUTH` | Basic 驗證憑證，格式為 `帳號:密碼`（程式會自動做 base64，請勿自行編碼） |
+
+`.env` 已列於 `.gitignore`，不會被提交。
+
+### GitHub Actions 部署
+
+部署由 `.github/workflows/deploy.yml` 自動執行，其環境變數來自 repo 的 secrets。
+請至 **Settings → Secrets and variables → Actions → Repository secrets** 新增與上表同名的兩個項目。
+
+若 `VITE_API_BASIC_AUTH` 未設定，workflow 會在建置前直接失敗並顯示錯誤訊息，
+不會產出沒有 Authorization header 的版本。
+
+> **注意**：Vite 在 build 時會把 `import.meta.env.*` 的值直接內嵌進輸出的 JavaScript，
+> 因此這些值在瀏覽器端仍然看得到，使用環境變數只是把設定與程式碼分離、方便日後更換，
+> 並非加密。若需要真正的機密性，必須改由後端代理，不能放在前端。
+
 ## 代辦事項
 
 1. 新增基礎練習／練習／測驗整體完成率於影片清單中
