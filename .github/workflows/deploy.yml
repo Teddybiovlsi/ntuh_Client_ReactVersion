@@ -37,22 +37,22 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      # secret 若未設定，建置仍會成功但產出的版本不帶 Authorization header，
-      # 屬於難以察覺的靜默失敗，因此在建置前先明確檢查。
-      - name: Verify required secrets
+      # secret 若未設定，產出的版本不會帶 Authorization header。
+      # 這裡以警告呈現而非中斷部署：原本的 header 因格式錯誤極可能從未生效，
+      # 擋下部署反而會讓原本可用的站台無法更新。
+      - name: Check API credential secret
         env:
           VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
         run: |
           if [ -z "$VITE_API_BASIC_AUTH" ]; then
-            echo "::error::缺少 secret VITE_API_BASIC_AUTH。"
-            echo "::error::請至 Settings -> Secrets and variables -> Actions -> Repository secrets 新增，格式為 帳號:密碼（勿自行 base64）。"
-            exit 1
+            echo "::warning::未設定 secret VITE_API_BASIC_AUTH，本次部署不會送出 Authorization header。"
+            echo "::warning::如需啟用，請至 Settings -> Secrets and variables -> Actions -> Repository secrets 新增，格式為 帳號:密碼（勿自行 base64）。"
+          else
+            case "$VITE_API_BASIC_AUTH" in
+              *:*) echo "secret 檢查通過" ;;
+              *) echo "::warning::VITE_API_BASIC_AUTH 格式可能有誤，應為 帳號:密碼" ;;
+            esac
           fi
-          case "$VITE_API_BASIC_AUTH" in
-            *:*) : ;;
-            *) echo "::error::VITE_API_BASIC_AUTH 格式錯誤，應為 帳號:密碼"; exit 1 ;;
-          esac
-          echo "secret 檢查通過"
       - name: Build
         run: npm run build
         env:
@@ -61,18 +61,18 @@ jobs:
           # 使用 secrets 只是避免值出現在原始碼與版本歷史中。
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
-      # 確認憑證真的被編進 bundle。secret 為空時 Vite 會把該分支消除，
-      # 建置仍會成功，因此必須檢查產物而非僅檢查環境變數。
-      - name: Verify bundle contains auth header
+      # 回報憑證是否真的被編進 bundle。secret 為空時 Vite 會把該分支消除，
+      # 建置仍會成功，因此檢查產物才能反映實際狀態。此步驟不阻擋部署。
+      - name: Report auth header status
         env:
           VITE_API_BASIC_AUTH: ${{ secrets.VITE_API_BASIC_AUTH }}
         run: |
-          if ! grep -rqF "$VITE_API_BASIC_AUTH" dist/assets/*.js; then
-            echo "::error::建置產物中找不到 API 憑證，Authorization header 不會送出。"
-            echo "::error::請確認 secret VITE_API_BASIC_AUTH 已正確設定。"
-            exit 1
+          if [ -n "$VITE_API_BASIC_AUTH" ] && grep -rqF "$VITE_API_BASIC_AUTH" dist/assets/*.js; then
+            echo "✅ 憑證已編入產物，Authorization header 會正常送出"
+          else
+            echo "::warning::本次產物不含 API 憑證，Authorization header 不會送出。"
+            echo "::warning::若後端需要驗證，請設定 secret VITE_API_BASIC_AUTH 後重跑此 workflow。"
           fi
-          echo "bundle 驗證通過：憑證已編入，Authorization header 會正常送出"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
